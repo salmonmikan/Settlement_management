@@ -15,9 +15,20 @@ CREATE TABLE staff (
 );
 
 -- 社員データを登録
-INSERT INTO staff (staff_id, name, furigana, birth_date, address, hire_date, department, position) VALUES
-('S0001', '石井 和也', 'イシイ カズヤ', '1966-05-04', '愛知県岡崎市3丁目4-12', '2015-10-29', '営業部', '部長'),
-('S0006', '佐藤 和也', 'サトウ カズヤ', '2002-03-28', '愛知県豊橋市3丁目9-9', '2024-06-30', '営業部', '主任');
+INSERT INTO staff (
+  staff_id, password, name, furigana, birth_date, address, hire_date, department, position
+) VALUES
+-- 部長: 石井 和也
+('S0001', 'pass123', '石井 和也', 'イシイ カズヤ', '1966-05-04',
+ '愛知県岡崎市3丁目4-12', '2015-10-29', '営業部', '部長'),
+
+-- 主任: 佐藤 和也
+('S0006', 'pass456', '佐藤 和也', 'サトウ カズヤ', '2002-03-28',
+ '愛知県豊橋市3丁目9-9', '2024-06-30', '営業部', '主任'),
+
+-- 一般社員: 田中 太郎
+('S0009', 'pass789', '田中 太郎', 'タナカ タロウ', '1998-07-15',
+ '愛知県名古屋市1丁目2-3', '2023-04-01', '営業部', '一般社員');
 
 -- 出張手当のルールを定義するテーブル
 CREATE TABLE trip_allowance_rule (
