@@ -5,12 +5,28 @@
   <meta charset="UTF-8">
   <title>出張費申請 - 交通費明細</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <style>
+    .remove-btn {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #888;
+      cursor: pointer;
+    }
+    .d-none {
+      display: none;
+    }
+  </style>
   <script>
     function addTransBlock() {
       const container = document.getElementById("trans-container");
       const template = document.querySelector(".trans-block");
       const clone = template.cloneNode(true);
       clone.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
+      clone.querySelector(".remove-btn").classList.remove("d-none");
       container.appendChild(clone);
     }
     function removeBlock(btn) {
@@ -33,9 +49,9 @@
       <input type="hidden" name="endDateHidden" value="<%= request.getParameter("endDateHidden") %>">
       <input type="hidden" name="totalDays" value="<%= request.getParameter("totalDays") %>">
 
-      <div id="trans-container">
+      <div style="display: flex; flex-direction: column; gap: 10px"  id="trans-container">
         <div class="form-section trans-block">
-          <button type="button" class="remove-btn" onclick="removeBlock(this)">×</button>
+          <button type="button" class="remove-btn d-none" onclick="removeBlock(this)">×</button>
           <div class="form-group">
             <label>訪問先</label>
             <input type="text" name="transProject[]" placeholder="例:株式会社AAA">

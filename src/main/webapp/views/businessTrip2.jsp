@@ -12,8 +12,8 @@
   <style>
     .remove-btn {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 1px;
+      right: 1px;
       background: none;
       border: none;
       font-size: 1.2rem;
