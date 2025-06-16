@@ -88,3 +88,41 @@ CREATE TABLE business_trip_expense (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+-- プロジェクト管理テーブル
+CREATE TABLE project_manage (
+  project_code VARCHAR(20) PRIMARY KEY,
+  project_name VARCHAR(100),
+  department_name VARCHAR(100),
+  remarks TEXT,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO project_manage (project_code, project_name, department_name) VALUES
+  ('EDLCE001', 'Delta-college（大阪）', '教育事業部'),
+  ('MKHRF004', '研修／資格取得', '管理部'),
+  ('MSALY001', '営業全般', '管理部'),
+  ('MKNR1001', '管理全般', '管理部'),
+  ('MSOMF002', '採用業務', '管理部'),
+  ('IISTB001', 'アイスタディ富士電機カスタマイズ', 'ITソリューション部'),
+  ('IKSMB005', '島根案件（導入支援）', 'ITソリューション事業部'),
+  ('ENBCD001', '（NBCC） SF基礎セミナー', 'カスタマーサポート部'),
+  ('CHKSC001', 'ハウキン', 'カスタマーサポート部'),
+  ('CTECBC001', '東海ECシステム開発', 'カスタマーサポート部'),
+  ('CTZKC001', '都築電気日報管理システム保守サポート', 'カスタマーサポート部'),
+  ('ECLAE001', '（FLM）講師派遣', '教育事業部'),
+  ('EFULE001', '（フルネス）講師派遣', '教育事業部'),
+  ('EHLAE001', '（ロジLA）講師派遣', '教育事業部'),
+  ('EHPEE001', '（日本HP）講師派遣', '教育事業部'),
+  ('ESEPE001', '（SEプラス）講師派遣', '教育事業部'),
+  ('EPROE001', '（ProVision）1社研修', '教育事業部'),
+  ('EAIXE001', '（AIX）1社研修', '教育事業部'),
+  ('EDNAE001', '（DeNA）1社研修', '教育事業部'),
+  ('EKHRE001', '(khronos）新人研修・大阪', '教育事業部'),
+  ('EKHRE002', '(khronos）個別研修・大阪', '教育事業部'),
+  ('EKHRE101', '(khronos）新人研修・東京', '教育事業部'),
+  ('EKHRE102', '(khronos）個別研修・東京', '教育事業部'),
+  ('EKHRE201', '(khronos）新人研修・中部', '教育事業部'),
+  ('EKHRE202', '(khronos）個別研修・中部', '教育事業部'),
+  ('EKHRE004', '(khronos）教育・運営', '教育事業部'),
+  ('ESALY001', '営業全般（大阪）', '教育事業部'),
+  ('ESALY101', '営業全般（東京）', '教育事業部');

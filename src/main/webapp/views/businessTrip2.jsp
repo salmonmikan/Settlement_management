@@ -58,6 +58,15 @@
           </div>
 
           <div class="form-group">
+            <label>負担者</label>
+            <select name="burden[]" onchange="handleBurdenChange(this)" required>
+              <option value="">選択してください</option>
+              <option value="会社">会社</option>
+              <option value="自己">自己</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label>宿泊費</label>
             <input type="number" name="hotelFee[]" readonly>
           </div>
@@ -73,15 +82,6 @@
           </div>
 
           <div class="form-group">
-            <label>負担者</label>
-            <select name="burden[]" onchange="calcTotal(this)" required>
-              <option value="">選択してください</option>
-              <option value="会社">会社</option>
-              <option value="自己">自己</option>
-            </select>
-          </div>
-
-          <div class="form-group">
             <label>合計</label>
             <input type="number" name="expenseTotal[]" readonly>
           </div>
@@ -93,7 +93,9 @@
 
           <div class="form-group">
             <label>領収書添付（日当・宿泊費）</label>
-            <input type="file" name="receiptDaily[]" multiple>
+            <input type="file" name="receiptDaily[]" multiple id="fileInput">
+            <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
+            <ul id="fileList"></ul>
           </div>
 
           <div style="text-align: center;">
@@ -115,6 +117,7 @@
     const startDate = new Date("<%= startDate %>");
     const endDate = new Date("<%= endDate %>");
     const diffDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    let filesToUpload = [];
 
     function updateAllowanceAndHotel(elem) {
       const block = elem.closest(".allowance-block");
@@ -143,9 +146,9 @@
         dailyFee = 1000;
       }
 
-      block.querySelector("input[name='hotelFee[]']").value = hotelFee;
+      block.setAttribute('data-hotel-fee', hotelFee);
       block.querySelector("input[name='dailyAllowance[]']").value = dailyFee;
-      calcTotal(block);
+      handleBurdenChange(block.querySelector("select[name='burden[]']"));
     }
 
     function calcTotal(elem) {
@@ -155,12 +158,23 @@
       const hotelFee = parseInt(block.querySelector("input[name='hotelFee[]']").value || 0);
       const daily = parseInt(block.querySelector("input[name='dailyAllowance[]']").value || 0);
 
+      const total = (burden === "自己") ? (hotelFee + daily) * days : daily * days;
+      block.querySelector("input[name='expenseTotal[]']").value = total;
+    }
+
+    function handleBurdenChange(select) {
+      const block = select.closest(".allowance-block");
+      const burden = select.value;
+      const hotelFeeInput = block.querySelector("input[name='hotelFee[]']");
+      const calculated = parseInt(block.getAttribute('data-hotel-fee') || 0);
+
       if (burden === "自己") {
-        const total = (hotelFee + daily) * days;
-        block.querySelector("input[name='expenseTotal[]']").value = total;
+        hotelFeeInput.value = calculated;
       } else {
-        block.querySelector("input[name='expenseTotal[]']").value = 0;
+        hotelFeeInput.value = "";
       }
+
+      calcTotal(select);
     }
 
     function addAllowanceBlock() {
@@ -190,6 +204,21 @@
         }
         updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
       }
+
+      document.getElementById("fileInput").addEventListener("change", function(e) {
+        const newFiles = Array.from(e.target.files);
+        filesToUpload.push(...newFiles);
+
+        const list = document.getElementById("fileList");
+        list.innerHTML = "";
+        filesToUpload.forEach(file => {
+          const li = document.createElement("li");
+          li.textContent = file.name;
+          list.appendChild(li);
+        });
+
+        e.target.value = "";
+      });
     };
   </script>
 </body>
