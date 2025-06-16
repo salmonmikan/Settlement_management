@@ -29,6 +29,7 @@
       clone.querySelector(".remove-btn").classList.remove("d-none");
       container.appendChild(clone);
     }
+
     function removeBlock(btn) {
       const block = btn.closest(".trans-block");
       const allBlocks = document.querySelectorAll(".trans-block");
@@ -37,6 +38,24 @@
       } else {
         alert("最低1つの明細が必要です");
       }
+    }
+
+    function calcFareTotal(elem) {
+      const block = elem.closest('.trans-block');
+      const amountInput = block.querySelector("input[name='fareAmount[]']") || block.querySelector("input[name='expenseTotal[]']");
+      const type = block.querySelector("select[name='transTripType[]']").value;
+      const burden = block.querySelector("select[name='burden[]']").value;
+      const totalInput = block.querySelectorAll("input[name='expenseTotal[]']")[1] || block.querySelector("input[name='expenseTotal[]']");
+
+      const amount = parseInt(amountInput.value || 0);
+
+      let total = 0;
+      if (burden === "自己") {
+        const multiplier = (type === "往復") ? 2 : 1;
+        total = amount * multiplier;
+      }
+
+      totalInput.value = total;
     }
   </script>
 </head>
@@ -49,29 +68,25 @@
       <input type="hidden" name="endDateHidden" value="<%= request.getParameter("endDateHidden") %>">
       <input type="hidden" name="totalDays" value="<%= request.getParameter("totalDays") %>">
 
-      <div style="display: flex; flex-direction: column; gap: 10px"  id="trans-container">
+      <div style="display: flex; flex-direction: column; gap: 10px" id="trans-container">
         <div class="form-section trans-block">
           <button type="button" class="remove-btn d-none" onclick="removeBlock(this)">×</button>
+
           <div class="form-group">
             <label>訪問先</label>
-            <input type="text" name="transProject[]" placeholder="例:株式会社AAA">
+            <input type="text" name="transProject[]" placeholder="例:株式会社AAA" required>
           </div>
+
           <div class="form-group">
             <label>出発</label>
-            <input type="text" name="departure[]" placeholder="例:東京">
+            <input type="text" name="departure[]" placeholder="例:東京" required>
           </div>
+
           <div class="form-group">
             <label>到着</label>
-            <input type="text" name="arrival[]" placeholder="例:大阪">
+            <input type="text" name="arrival[]" placeholder="例:大阪" required>
           </div>
-          <div class="form-group">
-            <label>区分</label>
-            <select name="transTripType[]">
-              <option value="">選択してください</option>
-              <option value="片道">片道</option>
-              <option value="往復">往復</option>
-            </select>
-          </div>
+
           <div class="form-group">
             <label>交通機関</label>
             <select name="transport[]">
@@ -85,26 +100,45 @@
               <option value="他の">他の</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label>金額（税込）</label>
+            <input type="number" name="fareAmount[]" step="100" onchange="calcFareTotal(this)">
+          </div>
+
+          <div class="form-group">
+            <label>区分</label>
+            <select name="transTripType[]" onchange="calcFareTotal(this)">
+              <option value="">選択してください</option>
+              <option value="片道">片道</option>
+              <option value="往復">往復</option>
+            </select>
+          </div>
+
           <div class="form-group">
             <label>負担者</label>
-            <select name="burden[]">
+            <select name="burden[]" onchange="calcFareTotal(this)">
               <option value="">選択してください</option>
               <option value="会社">会社</option>
               <option value="自己">自己</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label>金額（税込）</label>
-            <input type="number" name="expenseTotal[]" step="100">
+            <label>合計</label>
+            <input type="number" name="expenseTotal[]" readonly>
           </div>
+
           <div class="form-group">
             <label>摘要</label>
             <textarea name="transMemo[]" placeholder="メモなど"></textarea>
           </div>
+
           <div class="form-group">
             <label>領収書添付（交通費）</label>
             <input type="file" name="receiptTrans[]" multiple>
           </div>
+
           <div style="text-align: center;">
             <button type="button" class="plus-btn" onclick="addTransBlock()">＋</button>
           </div>
