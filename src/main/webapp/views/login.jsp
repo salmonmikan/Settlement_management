@@ -31,7 +31,7 @@
 		<% if (error != null) { %>
 		  <div style="color:red; text-align:center;"><%= error %></div>
 		<% } %>
-        <button type="submit" class="login-btn">ログインします</button>
+        <button type="smit" class="login-btn">ログインします</button>
       </form>
     </div>
   </div>
