@@ -13,7 +13,7 @@
 </head>
 <body>
   <div class="page-container">
-    <h2>出張費申請 - Step 1: 出張情報</h2>
+    <h2>出張情報</h2>
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" id="step1Form">
       <input type="hidden" name="step" value="1">
       <div class="form-section">

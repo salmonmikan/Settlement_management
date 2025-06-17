@@ -25,7 +25,7 @@
 </head>
 <body>
   <div class="page-container">
-    <h2>出張費申請 - 日当・宿泊費明細</h2>
+    <h2>日当・宿泊費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
       <!-- ✅ step input đặt đúng vị trí -->

@@ -68,7 +68,7 @@ if (staffName == null) {
 	</head>
 	<body>
 	  <div class="page-container">
-	    <h2>出張費申請 - 交通費明細</h2>
+	    <h2>交通費申請</h2>
 	
 	    <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
           <input type="hidden" name="step" value="3">

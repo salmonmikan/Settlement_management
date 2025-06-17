@@ -87,9 +87,8 @@
 
     <!-- ボタン -->
     <div class="btn-section">
-	  <form action="<%= request.getContextPath() %>/businessTrip" method="post" style="display:inline;">
-	    <input type="hidden" name="step" value="3Back">
-	    <button type="submit">戻る</button>
+	  <form action="<%= request.getContextPath() %>/businessTripConfirmBack" method="get" style="display:inline;">
+		  <button type="submit">戻る</button>
 	  </form>
 	  <form action="<%= request.getContextPath() %>/dummySubmit" method="post" style="display:inline;">
 		  <button type="submit">送信</button>

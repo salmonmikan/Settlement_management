@@ -23,13 +23,13 @@ public class HomeServlet extends HttpServlet {
 
  
         switch (position) {
-            case "manager":
-                resp.sendRedirect(req.getContextPath() + "/views/managerMain.jsp");
-                break;
-            case "staff":
-            default:
-                resp.sendRedirect(req.getContextPath() + "/views/staffMenu.jsp");
-                break;
-        }
+	        case "manager":
+	            req.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(req, resp);
+	            break;
+	        case "staff":
+	        default:
+	            req.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(req, resp);
+	            break;
+	    }
     }
 }
