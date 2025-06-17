@@ -5,6 +5,7 @@ USE abc_system;
 -- 社員情報を管理するテーブル
 CREATE TABLE staff (
   staff_id VARCHAR(10) PRIMARY KEY, -- 社員ID
+  password VARCHAR(255), -- password fix ebara
   name VARCHAR(50),                 -- 氏名
   furigana VARCHAR(50),             -- フリガナ
   birth_date DATE,                  -- 生年月日
