@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>申請一覧 - ABC株式会社</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
   	/* application_list layout fix */
 	.page-container {

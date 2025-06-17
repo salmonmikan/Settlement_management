@@ -8,7 +8,8 @@
 <head>
   <meta charset="UTF-8">
   <title>管理ダッシュボード - ABC株式会社</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
     .panel-fullheight {
       flex: 1;

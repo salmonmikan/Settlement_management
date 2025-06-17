@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>社員情報登録 - Step 2</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
 </head>
 <body>
   <div class="center-viewport">
