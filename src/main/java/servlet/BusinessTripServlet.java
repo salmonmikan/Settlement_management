@@ -1,6 +1,5 @@
 package servlet;
 
-
 import dao.ProjectDAO;
 import model.Project;
 
@@ -19,12 +18,14 @@ import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
 
 @MultipartConfig
-@WebServlet("/businessTrip")
+@WebServlet(urlPatterns = {"/businessTrip", "/businessTripStep2Back", "/businessTripStep3Back"})
 public class BusinessTripServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String path = request.getServletPath();
         try {
             List<Project> projectList = new ProjectDAO().getAllProjects();
             request.setAttribute("projectList", projectList);
@@ -33,7 +34,13 @@ public class BusinessTripServlet extends HttpServlet {
             request.setAttribute("projectList", new ArrayList<>());
         }
 
-        request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+        if ("/businessTripStep2Back".equals(path)) {
+            request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+        } else if ("/businessTripStep3Back".equals(path)) {
+            request.getRequestDispatcher("/WEB-INF/views/businessTrip2.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+        }
     }
 
     @Override
