@@ -16,8 +16,8 @@
   </script>
 </head>
 <body>
-  <div class="center-viewport">
-    <div class="login-wrapper">
+  <div class="">
+    <div class="">
       <div class="login-title">ログイン</div>
       <form action="<%= request.getContextPath() %>/LoginServlet" method="post">
         <div class="login-form-group">
