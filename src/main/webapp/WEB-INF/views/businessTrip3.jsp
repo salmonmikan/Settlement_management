@@ -68,7 +68,7 @@ if (staffName == null) {
 	</head>
 	<body>
 	  <div class="page-container">
-	    <h2>出張費申請 - 交通費明細</h2>
+	    <h2>交通費申請</h2>
 	
 	    <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
           <input type="hidden" name="step" value="3">
@@ -82,17 +82,17 @@ if (staffName == null) {
 	
 	          <div class="form-group">
 	            <label>訪問先</label>
-	            <input type="text" name="transProject[]" placeholder="例:株式会社AAA" required>
+	            <input type="text" name="transProject[]" placeholder="例:株式会社AAA">
 	          </div>
 	
 	          <div class="form-group">
 	            <label>出発</label>
-	            <input type="text" name="departure[]" placeholder="例:東京" required>
+	            <input type="text" name="departure[]" placeholder="例:東京">
 	          </div>
 	
 	          <div class="form-group">
 	            <label>到着</label>
-	            <input type="text" name="arrival[]" placeholder="例:大阪" required>
+	            <input type="text" name="arrival[]" placeholder="例:大阪">
 	          </div>
 	
 	          <div class="form-group">
@@ -154,9 +154,9 @@ if (staffName == null) {
 	      </div>
 	
 	      <div class="btn-section">
-	        <button type="button" onclick="window.location.href='businessTrip2.jsp'">戻る</button>
-	        <button type="submit">確認</button>
-	      </div>
+			  <button type="button" onclick="window.location.href='<%= request.getContextPath() %>/businessTripStep3Back'">戻る</button>
+			  <button type="submit">確認</button>
+		  </div>
 	    </form>
 	  </div>
 	

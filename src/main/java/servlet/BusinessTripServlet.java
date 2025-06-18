@@ -1,6 +1,5 @@
 package servlet;
 
-
 import dao.ProjectDAO;
 import model.Project;
 
@@ -19,22 +18,35 @@ import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
 
 @MultipartConfig
-@WebServlet("/businessTrip")
+@WebServlet(urlPatterns = {"/businessTrip", "/businessTripStep2Back", "/businessTripStep3Back","/businessTripConfirmBack"})
 public class BusinessTripServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            List<Project> projectList = new ProjectDAO().getAllProjects();
-            request.setAttribute("projectList", projectList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("projectList", new ArrayList<>());
-        }
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
 
-        request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
-    }
+	    String path = request.getServletPath();
+	    try {
+	        List<Project> projectList = new ProjectDAO().getAllProjects();
+	        request.setAttribute("projectList", projectList);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        request.setAttribute("projectList", new ArrayList<>());
+	    }
+
+	    if ("/businessTripStep2Back".equals(path)) {
+	        // step2 → back → step1
+	        request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+	    } else if ("/businessTripStep3Back".equals(path)) {
+	        // step3 → back → step2
+	        request.getRequestDispatcher("/WEB-INF/views/businessTrip2.jsp").forward(request, response);
+	    } else if ("/businessTripConfirmBack".equals(path)) {
+	        // confirm → back → step3
+	        request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
+	    } else {
+	        request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+	    }
+	}
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

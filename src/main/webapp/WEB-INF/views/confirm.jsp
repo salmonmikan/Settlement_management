@@ -87,11 +87,13 @@
 
     <!-- ボタン -->
     <div class="btn-section">
-      <button type="button" onclick="history.back()">戻る</button>
-      <form action="<%= request.getContextPath() %>/businessTripSubmit" method="post" style="display:inline;">
-        <button type="submit">送信</button>
+	  <form action="<%= request.getContextPath() %>/businessTripConfirmBack" method="get" style="display:inline;">
+		  <button type="submit">戻る</button>
+	  </form>
+	  <form action="<%= request.getContextPath() %>/dummySubmit" method="post" style="display:inline;">
+		  <button type="submit">送信</button>
       </form>
-    </div>
+	</div>
   </div>
 
   <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>

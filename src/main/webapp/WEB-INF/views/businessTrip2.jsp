@@ -25,7 +25,7 @@
 </head>
 <body>
   <div class="page-container">
-    <h2>出張費申請 - 日当・宿泊費明細</h2>
+    <h2>日当・宿泊費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
       <!-- ✅ step input đặt đúng vị trí -->
@@ -39,7 +39,7 @@
 
           <div class="form-group">
             <label>地域区分</label>
-            <select name="regionType[]" required onchange="updateAllowanceAndHotel(this)">
+            <select name="regionType[]" onchange="updateAllowanceAndHotel(this)">
               <option value="">選択してください</option>
               <option value="物価高水準地域">東京</option>
               <option value="上記以外">東京以外</option>
@@ -49,7 +49,7 @@
 
           <div class="form-group">
             <label>出徒区分</label>
-            <select name="tripType[]" required onchange="updateAllowanceAndHotel(this)">
+            <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
               <option value="">選択してください</option>
               <option value="短期出張">短期出張</option>
               <option value="長期出張">長期出張</option>
@@ -64,7 +64,7 @@
 
           <div class="form-group">
             <label>負担者</label>
-            <select name="burden[]" onchange="handleBurdenChange(this)" required>
+            <select name="burden[]" onchange="handleBurdenChange(this)" >
               <option value="">選択してください</option>
               <option value="会社">会社</option>
               <option value="自己">自己</option>
