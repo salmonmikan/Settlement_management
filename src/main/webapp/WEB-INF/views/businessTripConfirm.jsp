@@ -5,7 +5,8 @@
 <head>
   <meta charset="UTF-8">
   <title>出張費申請内容確認</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
 </head>
 <body>
   <div class="page-container">

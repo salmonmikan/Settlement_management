@@ -5,6 +5,7 @@ USE abc_system;
 -- 社員情報を管理するテーブル
 CREATE TABLE staff (
   staff_id VARCHAR(10) PRIMARY KEY, -- 社員ID
+  password VARCHAR(255), -- password fix ebara
   name VARCHAR(50),                 -- 氏名
   furigana VARCHAR(50),             -- フリガナ
   birth_date DATE,                  -- 生年月日
@@ -90,14 +91,14 @@ CREATE TABLE business_trip_expense (
 );
 -- プロジェクト管理テーブル
 CREATE TABLE project_manage (
-  project_code VARCHAR(20) PRIMARY KEY,
+  project_id VARCHAR(20) PRIMARY KEY,
   project_name VARCHAR(100),
   department_name VARCHAR(100),
   remarks TEXT,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO project_manage (project_code, project_name, department_name) VALUES
+INSERT INTO project_manage (project_id, project_name, department_name) VALUES
   ('EDLCE001', 'Delta-college（大阪）', '教育事業部'),
   ('MKHRF004', '研修／資格取得', '管理部'),
   ('MSALY001', '営業全般', '管理部'),

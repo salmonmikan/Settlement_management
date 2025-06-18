@@ -16,7 +16,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("views/login.jsp"); // hoặc "login.jsp" nếu login.jsp đặt trực tiếp trong webapp/
+    	request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
     }
 
     // Xử lý POST (submit form đăng nhập)
@@ -36,11 +36,11 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("staffName", staff.getName()); 
             session.setAttribute("position", staff.getPosition());
 
-            response.sendRedirect(request.getContextPath() + "/views/staffMenu.jsp");
+            request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
         } else {
         	System.out.println("Login failed - user not found");
             request.setAttribute("error", "IDまたはパスワードが違います");
-            request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }
     }
 }

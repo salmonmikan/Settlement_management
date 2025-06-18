@@ -11,7 +11,8 @@
 <head>
   <meta charset="UTF-8">
   <title>スタッフダッシュボード - ABC株式会社システム</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
 </head>
 <body>
 
@@ -25,7 +26,6 @@
 		  <div class="menu-block">
 		    <h3>メニュー</h3>
 		    <ul>
-		      <li><a href="#">個人設定</a></li>
 		      <li><a href="#">パスワード変更</a></li>
 		      <li><a href="#">申請一覧</a></li>
 		    </ul>
@@ -42,7 +42,7 @@
           <h4>申請する</h4>
           <div class="btn-section">
             <a href="#">交通費申請</a>
-            <a href="<%= request.getContextPath() %>/views/businessTrip1.jsp">出張費申請</a>
+            <a href="<%= request.getContextPath() %>/businessTrip">出張費申請</a>
             <a href="#">立替金申請</a>
           </div>
         </div>

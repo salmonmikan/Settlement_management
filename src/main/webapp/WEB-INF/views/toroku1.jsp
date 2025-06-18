@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>アカウント登録 - Step 1</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
 </head>
 <body>
   <!-- Bao bọc nội dung trong center-viewport -->

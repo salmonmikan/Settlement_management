@@ -8,7 +8,8 @@
 <head>
   <meta charset="UTF-8">
   <title>出張費申請 - 日当・宿泊費明細</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
     .remove-btn {
       position: absolute;
@@ -25,9 +26,13 @@
 <body>
   <div class="page-container">
     <h2>出張費申請 - 日当・宿泊費明細</h2>
-    <form action="businessTrip3.jsp" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="startDateHidden" value="<%= startDate %>">
+
+    <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
+      <!-- ✅ step input đặt đúng vị trí -->
+      <input type="hidden" name="step" value="2">
       <input type="hidden" name="endDateHidden" value="<%= endDate %>">
+      <input type="hidden" name="startDateHidden" value="<%= startDate %>">
+
       <div style="display: flex; flex-direction: column; gap: 10px" id="allowance-container">
         <div class="form-section allowance-block" style="position: relative;">
           <button type="button" class="remove-btn" onclick="removeBlock(this)">×</button>
@@ -93,9 +98,9 @@
 
           <div class="form-group">
             <label>領収書添付（日当・宿泊費）</label>
-            <input type="file" name="receiptDaily[]" multiple id="fileInput">
+            <input type="file" name="receiptDaily[]" multiple class="fileInput">
             <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
-            <ul id="fileList"></ul>
+            <ul class="fileList"></ul>
           </div>
 
           <div style="text-align: center;">
@@ -105,7 +110,7 @@
       </div>
 
       <div class="btn-section">
-        <button type="button" onclick="window.location.href='businessTrip1.jsp'">戻る</button>
+        <button type="button" onclick="window.location.href='<%= request.getContextPath() %>/businessTripStep2Back'">戻る</button>
         <button type="submit">次へ</button>
       </div>
     </form>
@@ -117,7 +122,6 @@
     const startDate = new Date("<%= startDate %>");
     const endDate = new Date("<%= endDate %>");
     const diffDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-    let filesToUpload = [];
 
     function updateAllowanceAndHotel(elem) {
       const block = elem.closest(".allowance-block");
@@ -157,7 +161,6 @@
       const days = parseInt(block.querySelector("input[name='days[]']").value || 0);
       const hotelFee = parseInt(block.querySelector("input[name='hotelFee[]']").value || 0);
       const daily = parseInt(block.querySelector("input[name='dailyAllowance[]']").value || 0);
-
       const total = (burden === "自己") ? (hotelFee + daily) * days : daily * days;
       block.querySelector("input[name='expenseTotal[]']").value = total;
     }
@@ -181,8 +184,25 @@
       const container = document.getElementById("allowance-container");
       const template = document.querySelector(".allowance-block");
       const clone = template.cloneNode(true);
+
+      // Clear all input/select values
       clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
       clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
+
+      // Reset event listeners for file inputs
+      const fileInput = clone.querySelector(".fileInput");
+      const fileList = clone.querySelector(".fileList");
+      fileInput.addEventListener("change", function(e) {
+        const newFiles = Array.from(e.target.files);
+        fileList.innerHTML = "";
+        newFiles.forEach(file => {
+          const li = document.createElement("li");
+          li.textContent = file.name;
+          fileList.appendChild(li);
+        });
+        e.target.value = "";
+      });
+
       container.appendChild(clone);
     }
 
@@ -204,21 +224,6 @@
         }
         updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
       }
-
-      document.getElementById("fileInput").addEventListener("change", function(e) {
-        const newFiles = Array.from(e.target.files);
-        filesToUpload.push(...newFiles);
-
-        const list = document.getElementById("fileList");
-        list.innerHTML = "";
-        filesToUpload.forEach(file => {
-          const li = document.createElement("li");
-          li.textContent = file.name;
-          list.appendChild(li);
-        });
-
-        e.target.value = "";
-      });
     };
   </script>
 </body>
