@@ -7,7 +7,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>管理ダッシュボード - ABC株式会社</title>
+  <title> - ABC株式会社</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
   <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
@@ -32,7 +32,7 @@
 <body>
 
   <div class="page-container">
-    <h1>管理者メニュー</h1>
+    <h1>メニュー</h1>
 
     <div class="staff-dashboard-wrapper">
 
@@ -41,18 +41,8 @@
         <div class="menu-block">
           <h3>メニュー</h3>
           <ul>
-            <li><a href="<%= request.getContextPath() %>/app">申請一覧</a></li>
-            <hr>
-            <li><a href="#">承認申請一覧</a></li>
-            <li><a href="#">承認履歴</a></li>
-            <hr>
-            <li><a href="#">プロジェクト管理</a></li>
-            <li><a href="#">社員管理</a></li>
-            <li><a href="department.jsp">部署管理</a></li>
-            <li><a href="#">役職管理</a></li>
-            <hr>
             <li><a href="#">支払い管理</a></li>
-            <li><a href="#">パスワード変更</a></li>
+            <li><a href="#">個人設定</a></li>
           </ul>
         </div>
         <div class="welcome-message">
@@ -63,7 +53,7 @@
       <!-- Main content -->
       <div class="staff-main-content">
 		
-		<div class="panel" style="max-height: 150px;">
+		<div class="panel">
           <h4>申請する</h4>
           <div class="btn-section">
             <a href="#">交通費申請</a>
