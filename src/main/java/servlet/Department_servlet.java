@@ -2,7 +2,6 @@ package servlet;
 
 import java.io.IOException;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,8 +22,7 @@ public class Department_servlet extends HttpServlet {
         DepartmentDAO dao = new DepartmentDAO();
         session.setAttribute("department", dao.all_get());
  
-
-        RequestDispatcher rd = req.getRequestDispatcher("/department.jsp");
-		rd.forward(req, resp);
+        // リダイレクトで更新する
+        resp.sendRedirect("department.jsp"); // 部署一覧のJSPなど
     }
 }

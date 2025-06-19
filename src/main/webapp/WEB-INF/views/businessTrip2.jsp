@@ -48,7 +48,7 @@
           </div>
 
           <div class="form-group">
-            <label>出徒区分</label>
+            <label>出張区分</label>
             <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
               <option value="">選択してください</option>
               <option value="短期出張">短期出張</option>
