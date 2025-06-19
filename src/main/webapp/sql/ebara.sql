@@ -4,5 +4,8 @@ CREATE TABLE department_master (
 );
 
 INSERT INTO department_master (department_id, department_name) VALUES
-('D001', '営業部'),
-('D002', '管理部');
+('D001', '管理部'),
+('D002', '営業部'),
+('D003', '総務部'),
+('D004', '経理部'),
+('D005', '生育部');
