@@ -13,7 +13,7 @@ import dao.ProjectDAO;
 import model.ProjectList;
 
 // プロジェクト管理表示用
-@WebServlet("/project_management")
+@WebServlet("/project_management_view")
 public class ProjectManagementServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
