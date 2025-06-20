@@ -23,7 +23,7 @@ public class ProjectDAO {
         return list;
     }
     
-    // プロジェクト管理画面用
+    // プロジェクト管理画面表示用
     public List<ProjectList> getAllProject_management() throws Exception {
         List<ProjectList> list = new ArrayList<>();
         Connection conn = util.DBConnection.getConnection();
@@ -71,4 +71,6 @@ public class ProjectDAO {
         rs.close(); stmt.close(); conn.close();
         return list;
     }
+    
+    // プロジェクト管理-新規登録
 }

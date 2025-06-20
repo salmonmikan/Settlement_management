@@ -19,14 +19,14 @@
 <body>
 
 	<nav>
-		ようこそ、<%= staffName %> 様！
+		精算管理システム
 		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
     	<button type="submit"  title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
 		</form>
 	</nav>
 
   <div class="page-container">
-    <h1>スタッフメニュー</h1>
+    <p style="text-align: right;">ようこそ、<%= staffName %> さん！</p>
 
     <div class="staff-dashboard-wrapper">
 
@@ -38,10 +38,6 @@
 		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧</a></li>
 		      <li><a href="#">パスワード変更</a></li>
 		    </ul>
-		  </div>
-		  
-		  <div class="welcome-message">
-		    ようこそ、<%= staffName %> さん！
 		  </div>
 	  </div>
 

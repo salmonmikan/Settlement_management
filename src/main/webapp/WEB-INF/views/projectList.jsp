@@ -72,8 +72,8 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 	<div class="page-container">
 		<h2>プロジェクト一覧</h2>
 		<div class="action-toolbar">
-			<div class="spacer"></div>
-			<button class="" onclick="">＋ 新規追加</button>
+		  <div class="spacer"></div>
+		  <button onclick="location.href='projectControl?action=add'">＋ 新規追加</button>
 		</div>
 		<table>
 			<thead>
@@ -110,8 +110,8 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 				%>
 			</tbody>
 		</table>
-		<a href="<%=request.getContextPath()%>/employeeRegisterPage"
-			class="center-link">プロジェクト登録はこちら</a>
+<!--		<a href="<%=request.getContextPath()%>/employeeRegisterPage"-->
+<!--			class="center-link">プロジェクト登録はこちら</a>-->
 	</div>
 </body>
 </html>
