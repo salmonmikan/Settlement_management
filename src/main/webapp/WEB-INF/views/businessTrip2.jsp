@@ -97,11 +97,11 @@
           </div>
 
           <div class="form-group">
-            <label>領収書添付（日当・宿泊費）</label>
-            <input type="file" name="receiptDaily[]" multiple class="fileInput">
-            <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
-            <ul class="fileList"></ul>
-          </div>
+			  <label>領収書添付（日当・宿泊費）</label>
+			  <input type="file" name="receiptStep2_0[]" multiple class="fileInput">
+			  <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
+			  <ul class="fileList"></ul>
+		  </div>
 
           <div style="text-align: center;">
             <button type="button" class="plus-btn" onclick="addAllowanceBlock()">＋</button>
@@ -181,30 +181,34 @@
     }
 
     function addAllowanceBlock() {
-      const container = document.getElementById("allowance-container");
-      const template = document.querySelector(".allowance-block");
-      const clone = template.cloneNode(true);
+    	  const container = document.getElementById("allowance-container");
+    	  const blocks = document.querySelectorAll(".allowance-block");
+    	  const index = blocks.length;
 
-      // Clear all input/select values
-      clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
-      clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
+    	  const template = document.querySelector(".allowance-block");
+    	  const clone = template.cloneNode(true);
 
-      // Reset event listeners for file inputs
-      const fileInput = clone.querySelector(".fileInput");
-      const fileList = clone.querySelector(".fileList");
-      fileInput.addEventListener("change", function(e) {
-        const newFiles = Array.from(e.target.files);
-        fileList.innerHTML = "";
-        newFiles.forEach(file => {
-          const li = document.createElement("li");
-          li.textContent = file.name;
-          fileList.appendChild(li);
-        });
-        e.target.value = "";
-      });
+    	  // Clear old values
+    	  clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
+    	  clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
 
-      container.appendChild(clone);
-    }
+    	  // ✅ Fix: reset file input name + multiple
+    	  const fileInput = clone.querySelector(".fileInput");
+    	  fileInput.name = `receiptStep2_${index}[]`;
+    	  fileInput.setAttribute("multiple", true); // <-- Đây là dòng quan trọng
+
+    	  container.appendChild(clone);
+    	  
+    	  fileInput.addEventListener("change", function(e) {
+    		  const fileList = clone.querySelector(".fileList");
+    		  fileList.innerHTML = "";
+    		  Array.from(e.target.files).forEach(file => {
+    		    const li = document.createElement("li");
+    		    li.textContent = file.name;
+    		    fileList.appendChild(li);
+    		  });
+    		});
+    	}
 
     function removeBlock(btn) {
       const blocks = document.querySelectorAll(".allowance-block");
@@ -216,15 +220,27 @@
     }
 
     window.onload = function() {
-      const firstBlock = document.querySelector(".allowance-block");
-      if (firstBlock) {
-        const daysInput = firstBlock.querySelector("input[name='days[]']");
-        if (daysInput.value === "" || parseInt(daysInput.value) <= 1) {
-          daysInput.value = diffDays;
-        }
-        updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
-      }
-    };
+    	  const firstBlock = document.querySelector(".allowance-block");
+    	  if (firstBlock) {
+    	    const daysInput = firstBlock.querySelector("input[name='days[]']");
+    	    if (daysInput.value === "" || parseInt(daysInput.value) <= 1) {
+    	      daysInput.value = diffDays;
+    	    }
+    	    updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
+
+    	    // ✅ Gán sự kiện change cho input file đầu tiên
+    	    const fileInput = firstBlock.querySelector("input[type='file']");
+    	    const fileList = firstBlock.querySelector(".fileList");
+    	    fileInput.addEventListener("change", function(e) {
+    	      fileList.innerHTML = "";
+    	      Array.from(e.target.files).forEach(file => {
+    	        const li = document.createElement("li");
+    	        li.textContent = file.name;
+    	        fileList.appendChild(li);
+    	      });
+    	    });
+    	  }
+    	};
   </script>
 </body>
 </html>

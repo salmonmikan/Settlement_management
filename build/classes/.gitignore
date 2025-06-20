@@ -1,4 +1,6 @@
-/model/
-/dao/
-/servlet/
 /bean/
+/dao/
+/listener/
+/model/
+/servlet/
+/util/
