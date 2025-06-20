@@ -50,12 +50,11 @@
             <li><a href="<%= request.getContextPath() %>/app">申請一覧</a></li>
             <hr>
             <li><a href="#">承認申請一覧</a></li>
-            <li><a href="#">承認履歴</a></li>
             <hr>
-            <li><a href="#">プロジェクト管理</a></li>
             <li><a href="<%= request.getContextPath() %>/employeeList">社員管理</a></li>
             <li><a href="department.jsp">部署管理</a></li>
             <li><a href="#">役職管理</a></li>
+            <li><a href="<%= request.getContextPath() %>/project_management">プロジェクト管理</a></li>
             <hr>
             <li><a href="#">支払い管理</a></li>
             <li><a href="#">パスワード変更</a></li>
@@ -83,7 +82,7 @@
           <ul>
             <li><a href="approvalList.jsp?status=pending">未提出: 1件</a></li>
             <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
-            <li><a href="approvalList.jsp?status=approved">差し戻し: 1件</a></li>
+            <li><a href="approvalList.jsp?status=approved">差戻: 1件</a></li>
           </ul>
         </div>
 

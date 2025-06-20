@@ -34,8 +34,7 @@
 		    <h3>メニュー</h3>
 		    <ul>
 		      <li><a href="#">申請一覧</a></li>
-		      <li><a href="#">承認する</a></li>
-		      <li><a href="#">承認履歴</a></li>
+		      <li><a href="#">承認一覧</a></li>
 		       <hr>
 		      <li><a href="#">パスワード変更</a></li>
 		    </ul>
@@ -62,7 +61,7 @@
           <ul>
             <li><a href="approvalList.jsp?status=pending">未提出: 1件</a></li>
             <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
-            <li><a href="approvalList.jsp?status=approved">差し戻し: 1件</a></li>
+            <li><a href="approvalList.jsp?status=approved">差戻: 1件</a></li>
           </ul>
         </div>
       </div>
