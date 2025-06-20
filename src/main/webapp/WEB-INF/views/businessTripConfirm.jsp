@@ -1,59 +1,143 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="java.util.*" %>
+<%@ page import="bean.BusinessTripBean.*, java.util.*" %>
+<%
+  BusinessTripBean bt = (BusinessTripBean) session.getAttribute("businessTripBean");
+  Step1Data s1 = bt.getStep1Data();
+  List<Step2Detail> s2List = bt.getStep2List();
+  List<Step3Detail> s3List = bt.getStep3List();
+  int totalAmount = bt.getTotalStep2Amount() + bt.getTotalStep3Amount();
+  Map<String, List<String>> receiptMap = (Map<String, List<String>>) session.getAttribute("receiptMap");
+%>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>出張費申請内容確認</title>
+  <title>出張費申請 - 内容確認</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
-  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
+  <style>
+    .confirmPage-total {
+      margin-top: 10px;
+      text-align: right;
+      background-color: #e0f7fa;
+      padding: 5px 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="page-container">
-    <h2>出張費申請 - 内容確認</h2>
+    <h2>出張費申請内容の確認</h2>
+    <p>以下の内容で申請します。間違いがなければ「送信」をクリックしてください。</p>
 
-    <form style="display:flex; flex-direction: column; gap: 10px" action="submitFinal" method="post">
-      <div class="form-section">
-        <h3>出張情報</h3>
-        <p><strong>出張期間:</strong> <%= request.getParameter("startDate") %> ～ <%= request.getParameter("endDate") %></p>
-        <p><strong>地域区分:</strong> <%= request.getParameter("regionType") %></p>
-        <p><strong>出張区分:</strong> <%= request.getParameter("tripType") %></p>
-        <p><strong>PJコード:</strong> <%= request.getParameter("projectCode") %></p>
-        <p><strong>出張報告:</strong><br><%= request.getParameter("tripReport") %></p>
-      </div>
+    <!-- Step1 -->
+    <div class="form-section">
+      <h3>基本情報</h3>
+      <table>
+        <tr><th>出張期間</th><td><%= s1.getStartDate() %> ～ <%= s1.getEndDate() %></td></tr>
+        <tr><th>PJコード</th><td><%= s1.getProjectCode() %></td></tr>
+        <tr><th>出張報告</th><td><%= s1.getReport() %></td></tr>
+        <tr><th>合計日数</th><td><%= s1.getTotalDays() %>日間</td></tr>
+      </table>
+    </div>
 
-      <div class="form-section">
-        <h3>日当・宿泊費明細</h3>
-        <p><strong>宿泊先:</strong> <%= request.getParameter("hotel") %></p>
-        <p><strong>宿泊費:</strong> <%= request.getParameter("hotelFee") %></p>
-        <p><strong>日当:</strong> <%= request.getParameter("dailyAllowance") %></p>
-        <p><strong>日数:</strong> <%= request.getParameter("days") %></p>
-        <p><strong>負担者:</strong> <%= request.getParameter("burden") %></p>
-        <p><strong>合計:</strong> <%= request.getParameter("expenseTotal") %></p>
-        <p><strong>摘要:</strong><br><%= request.getParameter("memo") %></p>
-      </div>
+    <!-- Step2 -->
+    <div class="form-section">
+      <h3>日当・宿泊費明細</h3>
+      <table>
+        <tr>
+          <th>地域区分</th><th>出徒区分</th><th>負担者</th><th>宿泊先</th>
+          <th>日当</th><th>宿泊費</th><th>日数</th><th>合計</th><th>摘要</th>
+        </tr>
+        <% for (Step2Detail s2 : s2List) { %>
+        <tr>
+          <td><%= s2.getRegionType() %></td>
+          <td><%= s2.getTripType() %></td>
+          <td><%= s2.getBurden() %></td>
+          <td><%= s2.getHotel() %></td>
+          <td><%= s2.getDailyAllowance() %></td>
+          <td><%= s2.getHotelFee() %></td>
+          <td><%= s2.getDays() %></td>
+          <td><%= s2.getExpenseTotal() %></td>
+          <td><%= s2.getMemo() %></td>
+        </tr>
+        <% } %>
+      </table>
+      <p class="confirmPage-total">日当・宿泊費 合計: <%= bt.getTotalStep2Amount() %> 円</p>
 
-      <div class="form-section">
-        <h3>交通費明細</h3>
-        <p><strong>訪問先:</strong> <%= request.getParameter("transProject") %></p>
-        <p><strong>出発:</strong> <%= request.getParameter("departure") %></p>
-        <p><strong>到着:</strong> <%= request.getParameter("arrival") %></p>
-        <p><strong>区分:</strong> <%= request.getParameter("transTripType") %></p>
-        <p><strong>交通機関:</strong> <%= request.getParameter("transport") %></p>
-        <p><strong>負担者:</strong> <%= request.getParameter("burden") %></p>
-        <p><strong>金額（税込）:</strong> <%= request.getParameter("expenseTotal") %></p>
-        <p><strong>摘要:</strong><br><%= request.getParameter("transMemo") %></p>
-      </div>
+      <% 
+        List<String> step2Files = receiptMap != null ? receiptMap.getOrDefault("step2", Collections.emptyList()) : Collections.emptyList();
+        if (!step2Files.isEmpty()) {
+      %>
+        <div class="form-section">
+          <h4>日当・宿泊費 領収書ファイル:</h4>
+          <ul>
+            <% for (int i = 0; i < step2Files.size(); i++) {
+                 String file = step2Files.get(i);
+                 String original = file.substring(file.indexOf("_") + 1);
+            %>
+              <li><%= original %></li>
+              <input type="hidden" name="receiptStep2_<%= i %>" value="<%= file %>">
+            <% } %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
 
-      <div class="btn-section">
-        <button type="button" onclick="history.back()">戻る</button>
-        <button type="submit">申請</button>
-      </div>
-    </form>
+    <!-- Step3 -->
+    <div class="form-section">
+      <h3>交通費明細</h3>
+      <table>
+        <tr>
+          <th>訪問先</th><th>出発</th><th>到着</th><th>交通機関</th>
+          <th>金額</th><th>区分</th><th>負担者</th><th>合計</th><th>摘要</th>
+        </tr>
+        <% for (Step3Detail s3 : s3List) { %>
+        <tr>
+          <td><%= s3.getTransProject() %></td>
+          <td><%= s3.getDeparture() %></td>
+          <td><%= s3.getArrival() %></td>
+          <td><%= s3.getTransport() %></td>
+          <td><%= s3.getFareAmount() %></td>
+          <td><%= s3.getTransTripType() %></td>
+          <td><%= s3.getTransBurden() %></td>
+          <td><%= s3.getTransExpenseTotal() %></td>
+          <td><%= s3.getTransMemo() %></td>
+        </tr>
+        <% } %>
+      </table>
+      <p class="confirmPage-total">交通費 合計: <%= bt.getTotalStep3Amount() %> 円</p>
+
+      <% 
+        List<String> step3Files = receiptMap != null ? receiptMap.getOrDefault("step3", Collections.emptyList()) : Collections.emptyList();
+        if (!step3Files.isEmpty()) {
+      %>
+        <div class="form-section">
+          <h4>交通費 領収書ファイル:</h4>
+          <ul>
+            <% for (int i = 0; i < step3Files.size(); i++) {
+                 String file = step3Files.get(i);
+                 String original = file.substring(file.indexOf("_") + 1);
+            %>
+              <li><%= original %></li>
+              <input type="hidden" name="receiptStep3_<%= i %>" value="<%= file %>">
+            <% } %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="confirmPage-total">総合計金額: <%= totalAmount %> 円</div>
+
+    <div class="btn-section">
+      <form action="<%= request.getContextPath() %>/businessTripConfirmBack" method="get" style="display:inline;">
+        <button type="submit">戻る</button>
+      </form>
+      <form action="<%= request.getContextPath() %>/submitBusinessTrip" method="post" enctype="multipart/form-data">
+        <button type="submit">送信</button>
+      </form>
+    </div>
   </div>
 
-  <div class="footer">
-    &copy; 2025 ABC株式会社 - All rights reserved.
-  </div>
+  <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 </body>
 </html>

@@ -25,7 +25,7 @@
 </head>
 <body>
   <div class="page-container">
-    <h2>出張費申請 - 日当・宿泊費明細</h2>
+    <h2>日当・宿泊費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
       <!-- ✅ step input đặt đúng vị trí -->
@@ -39,7 +39,7 @@
 
           <div class="form-group">
             <label>地域区分</label>
-            <select name="regionType[]" required onchange="updateAllowanceAndHotel(this)">
+            <select name="regionType[]" onchange="updateAllowanceAndHotel(this)">
               <option value="">選択してください</option>
               <option value="物価高水準地域">東京</option>
               <option value="上記以外">東京以外</option>
@@ -48,8 +48,8 @@
           </div>
 
           <div class="form-group">
-            <label>出徒区分</label>
-            <select name="tripType[]" required onchange="updateAllowanceAndHotel(this)">
+            <label>出張区分</label>
+            <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
               <option value="">選択してください</option>
               <option value="短期出張">短期出張</option>
               <option value="長期出張">長期出張</option>
@@ -64,7 +64,7 @@
 
           <div class="form-group">
             <label>負担者</label>
-            <select name="burden[]" onchange="handleBurdenChange(this)" required>
+            <select name="burden[]" onchange="handleBurdenChange(this)" >
               <option value="">選択してください</option>
               <option value="会社">会社</option>
               <option value="自己">自己</option>
@@ -97,11 +97,11 @@
           </div>
 
           <div class="form-group">
-            <label>領収書添付（日当・宿泊費）</label>
-            <input type="file" name="receiptDaily[]" multiple class="fileInput">
-            <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
-            <ul class="fileList"></ul>
-          </div>
+			  <label>領収書添付（日当・宿泊費）</label>
+			  <input type="file" name="receiptStep2_0[]" multiple class="fileInput">
+			  <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
+			  <ul class="fileList"></ul>
+		  </div>
 
           <div style="text-align: center;">
             <button type="button" class="plus-btn" onclick="addAllowanceBlock()">＋</button>
@@ -181,30 +181,34 @@
     }
 
     function addAllowanceBlock() {
-      const container = document.getElementById("allowance-container");
-      const template = document.querySelector(".allowance-block");
-      const clone = template.cloneNode(true);
+    	  const container = document.getElementById("allowance-container");
+    	  const blocks = document.querySelectorAll(".allowance-block");
+    	  const index = blocks.length;
 
-      // Clear all input/select values
-      clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
-      clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
+    	  const template = document.querySelector(".allowance-block");
+    	  const clone = template.cloneNode(true);
 
-      // Reset event listeners for file inputs
-      const fileInput = clone.querySelector(".fileInput");
-      const fileList = clone.querySelector(".fileList");
-      fileInput.addEventListener("change", function(e) {
-        const newFiles = Array.from(e.target.files);
-        fileList.innerHTML = "";
-        newFiles.forEach(file => {
-          const li = document.createElement("li");
-          li.textContent = file.name;
-          fileList.appendChild(li);
-        });
-        e.target.value = "";
-      });
+    	  // Clear old values
+    	  clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
+    	  clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
 
-      container.appendChild(clone);
-    }
+    	  // ✅ Fix: reset file input name + multiple
+    	  const fileInput = clone.querySelector(".fileInput");
+    	  fileInput.name = `receiptStep2_${index}[]`;
+    	  fileInput.setAttribute("multiple", true); // <-- Đây là dòng quan trọng
+
+    	  container.appendChild(clone);
+    	  
+    	  fileInput.addEventListener("change", function(e) {
+    		  const fileList = clone.querySelector(".fileList");
+    		  fileList.innerHTML = "";
+    		  Array.from(e.target.files).forEach(file => {
+    		    const li = document.createElement("li");
+    		    li.textContent = file.name;
+    		    fileList.appendChild(li);
+    		  });
+    		});
+    	}
 
     function removeBlock(btn) {
       const blocks = document.querySelectorAll(".allowance-block");
@@ -216,15 +220,27 @@
     }
 
     window.onload = function() {
-      const firstBlock = document.querySelector(".allowance-block");
-      if (firstBlock) {
-        const daysInput = firstBlock.querySelector("input[name='days[]']");
-        if (daysInput.value === "" || parseInt(daysInput.value) <= 1) {
-          daysInput.value = diffDays;
-        }
-        updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
-      }
-    };
+    	  const firstBlock = document.querySelector(".allowance-block");
+    	  if (firstBlock) {
+    	    const daysInput = firstBlock.querySelector("input[name='days[]']");
+    	    if (daysInput.value === "" || parseInt(daysInput.value) <= 1) {
+    	      daysInput.value = diffDays;
+    	    }
+    	    updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
+
+    	    // ✅ Gán sự kiện change cho input file đầu tiên
+    	    const fileInput = firstBlock.querySelector("input[type='file']");
+    	    const fileList = firstBlock.querySelector(".fileList");
+    	    fileInput.addEventListener("change", function(e) {
+    	      fileList.innerHTML = "";
+    	      Array.from(e.target.files).forEach(file => {
+    	        const li = document.createElement("li");
+    	        li.textContent = file.name;
+    	        fileList.appendChild(li);
+    	      });
+    	    });
+    	  }
+    	};
   </script>
 </body>
 </html>

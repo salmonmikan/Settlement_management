@@ -1,30 +1,41 @@
 package servlet;
 
-
-import dao.ProjectDAO;
-import model.Project;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
+
 import jakarta.servlet.http.*;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.*;
+
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
+import dao.ProjectDAO;
+import model.Project;
 
 @MultipartConfig
-@WebServlet("/businessTrip")
+@WebServlet(urlPatterns = {"/businessTrip", "/businessTripStep2Back", "/businessTripStep3Back", "/businessTripConfirmBack"})
 public class BusinessTripServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String path = request.getServletPath();
         try {
             List<Project> projectList = new ProjectDAO().getAllProjects();
             request.setAttribute("projectList", projectList);
@@ -33,7 +44,19 @@ public class BusinessTripServlet extends HttpServlet {
             request.setAttribute("projectList", new ArrayList<>());
         }
 
-        request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+        switch (path) {
+            case "/businessTripStep2Back":
+                request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+                break;
+            case "/businessTripStep3Back":
+                request.getRequestDispatcher("/WEB-INF/views/businessTrip2.jsp").forward(request, response);
+                break;
+            case "/businessTripConfirmBack":
+                request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
+                break;
+            default:
+                request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+        }
     }
 
     @Override
@@ -52,13 +75,54 @@ public class BusinessTripServlet extends HttpServlet {
             bean = new BusinessTripBean();
         }
 
+        String uploadPath = getServletContext().getRealPath("/uploads");
+        new File(uploadPath).mkdirs();
+        Collection<Part> parts = request.getParts();
+        List<String> step2Files = new ArrayList<>();
+        List<String> step3Files = new ArrayList<>();
+
+        
+        for (Part part : parts) {
+            String submittedFileName = part.getSubmittedFileName();
+            if (submittedFileName != null && part.getSize() > 0) {
+                String original = Paths.get(submittedFileName).getFileName().toString();
+                String stored = UUID.randomUUID() + "_" + original;
+                part.write(uploadPath + File.separator + stored);
+
+                String partName = part.getName();
+                if (partName != null && partName.startsWith("receiptStep2_")) {
+                    step2Files.add("uploads/" + stored);
+                } else if (partName != null && partName.startsWith("receiptStep3_")) {
+                    step3Files.add("uploads/" + stored);
+                }
+            }
+        }
+
+        Map<String, List<String>> receiptMap = (Map<String, List<String>>) session.getAttribute("receiptMap");
+        if (receiptMap == null) receiptMap = new HashMap<>();
+        if (!step2Files.isEmpty()) receiptMap.put("step2", step2Files);
+        if (!step3Files.isEmpty()) receiptMap.put("step3", step3Files);
+        session.setAttribute("receiptMap", receiptMap);
+
         switch (step) {
             case "1":
+                String tripReport = request.getParameter("tripReport");
+
+                if (tripReport != null && (
+                        tripReport.contains("HttpServletRequest") ||
+                        tripReport.contains("System.out") ||
+                        tripReport.contains("public class") ||
+                        tripReport.contains("ServletException") ||
+                        tripReport.contains("@Override"))
+                ) {
+                    tripReport = "※ 入力内容に不正なコードが含まれていたため、削除されました。";
+                }
+
                 Step1Data s1 = new Step1Data(
                         request.getParameter("startDate"),
                         request.getParameter("endDate"),
                         request.getParameter("projectCode"),
-                        request.getParameter("tripReport"),
+                        tripReport,
                         request.getParameter("totalDays")
                 );
                 bean.setStep1Data(s1);
@@ -79,13 +143,11 @@ public class BusinessTripServlet extends HttpServlet {
 
                 List<Step2Detail> step2List = new ArrayList<>();
                 for (int i = 0; i < regionTypes.length; i++) {
-                    Step2Detail detail = new Step2Detail(
+                    step2List.add(new Step2Detail(
                             regionTypes[i], tripTypes[i], hotels[i], burdens[i],
                             hotelFees[i], dailyAllowances[i], days[i], totals[i], memos[i]
-                    );
-                    step2List.add(detail);
+                    ));
                 }
-
                 bean.setStep2List(step2List);
                 session.setAttribute("businessTripBean", bean);
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
@@ -104,20 +166,26 @@ public class BusinessTripServlet extends HttpServlet {
 
                 List<Step3Detail> step3List = new ArrayList<>();
                 for (int i = 0; i < transProjects.length; i++) {
-                    Step3Detail detail = new Step3Detail(
+                    step3List.add(new Step3Detail(
                             transProjects[i], departures[i], arrivals[i], transports[i],
                             fares[i], tripType3[i], burden3[i], totals3[i], memos3[i]
-                    );
-                    step3List.add(detail);
+                    ));
                 }
 
                 bean.setStep3List(step3List);
+
+                int total2 = bean.getStep2List().stream().mapToInt(s -> Integer.parseInt(s.getExpenseTotal())).sum();
+                int total3 = bean.getStep3List().stream().mapToInt(s -> Integer.parseInt(s.getTransExpenseTotal())).sum();
+
+                bean.setTotalStep2Amount(total2);
+                bean.setTotalStep3Amount(total3);
+
                 session.setAttribute("businessTripBean", bean);
-                request.getRequestDispatcher("/WEB-INF/views/confirm.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/businessTripConfirm.jsp").forward(request, response);
                 break;
 
             default:
-                request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
+            	response.sendRedirect(request.getContextPath() + "/home");
         }
     }
 }

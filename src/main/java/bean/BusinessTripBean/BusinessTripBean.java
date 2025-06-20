@@ -8,6 +8,22 @@ public class BusinessTripBean {
     private List<Step2Detail> step2List;
     private List<Step3Detail> step3List;
 
+    private int totalStep2Amount;
+    private int totalStep3Amount;
+
+    public int getTotalStep2Amount() {
+        return totalStep2Amount;
+    }
+    public void setTotalStep2Amount(int totalStep2Amount) {
+        this.totalStep2Amount = totalStep2Amount;
+    }
+
+    public int getTotalStep3Amount() {
+        return totalStep3Amount;
+    }
+    public void setTotalStep3Amount(int totalStep3Amount) {
+        this.totalStep3Amount = totalStep3Amount;
+    }
     // ✅ Constructor mặc định (fix lỗi gạch đỏ khi new)
     public BusinessTripBean() {
         this.step2List = new ArrayList<>();
@@ -19,6 +35,10 @@ public class BusinessTripBean {
         this.step1Data = step1Data;
         this.step2List = step2List;
         this.step3List = step3List;
+    }
+    
+    public int getTotalAmount() {
+        return getTotalStep2Amount() + getTotalStep3Amount();
     }
 
     // Getter & Setter

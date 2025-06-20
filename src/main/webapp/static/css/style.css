@@ -1,4 +1,5 @@
 /* ==== 共通設定 ==== */
+
 :root {
   --primary-color: #00a1bb;
   --primary-color-hover: #00889d;
@@ -26,11 +27,21 @@ body {
   min-height: 100vh;
 }
 
+/*logout*/
+nav {
+	text-align: end;
+	margin-top: 20px;
+	margin-right: 35px;
+}
+.logoutForm {
+	margin-top: 10px;
+	margin-right: 20px;
+}
 .page-container {
   width: 100%;
   max-width: 800px;
   min-width: 400px;
-  margin: 0 auto;
+  margin: auto;
   padding: 2rem 1.5rem;
   box-sizing: border-box;
 }
@@ -286,6 +297,17 @@ textarea {
 }
 
 /* ==== business_trip.css ==== */
+.confirm-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;	
+}
+
+.confirmPage-total {
+  text-align: right;
+  margin-top: 10px;
+}
+
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -340,6 +362,7 @@ textarea {
   font-weight: 600;
   color: #007b91;
 }
+
 
 /* ==== application_list.css（追加分） ==== */
 table {

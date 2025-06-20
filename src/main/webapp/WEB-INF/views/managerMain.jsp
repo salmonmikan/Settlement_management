@@ -9,6 +9,7 @@
   <meta charset="UTF-8">
   <title>管理ダッシュボード - ABC株式会社</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
   <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
     .panel-fullheight {
@@ -30,7 +31,12 @@
   </style>
 </head>
 <body>
-
+	<nav>
+		ようこそ、<%= staffName %> 様！
+		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
+    	<button type="submit"  title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
+		</form>
+	</nav>
   <div class="page-container">
     <h1>管理者メニュー</h1>
 
@@ -47,7 +53,7 @@
             <li><a href="#">承認履歴</a></li>
             <hr>
             <li><a href="#">プロジェクト管理</a></li>
-            <li><a href="#">社員管理</a></li>
+            <li><a href="<%= request.getContextPath() %>/employeeList">社員管理</a></li>
             <li><a href="department.jsp">部署管理</a></li>
             <li><a href="#">役職管理</a></li>
             <hr>
@@ -68,7 +74,7 @@
           <div class="btn-section">
             <a href="#">交通費申請</a>
             <a href="<%= request.getContextPath() %>/businessTrip">出張費申請</a>
-            <a href="#">立替金申請</a>
+            <a href="<%= request.getContextPath() %>/reimbursement">立替金申請</a>
           </div>
         </div>
         <!-- 承認処理 -->

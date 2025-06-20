@@ -1,12 +1,16 @@
 package servlet;
 
-import dao.StaffDAO;
-import model.Staff;
+import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-import java.io.IOException;
+import dao.StaffDAO;
+import model.Staff;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -26,6 +30,7 @@ public class LoginServlet extends HttpServlet {
 
         String staffId = request.getParameter("staffId");
         String password = request.getParameter("password");
+        
 
         StaffDAO dao = new StaffDAO();
         Staff staff = dao.findByIdAndPassword(staffId, password);
@@ -34,9 +39,22 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("staffId", staff.getStaffId());
             session.setAttribute("staffName", staff.getName()); 
+            
+            //画面遷移by son
             session.setAttribute("position", staff.getPosition());
-
-            request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
+            session.setAttribute("department", staff.getDepartment());
+            
+            String position = (String) session.getAttribute("position");
+            String department = (String) session.getAttribute("department");
+            
+            if(("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
+            	request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
+            }else if("一般社員".equals(position) && "管理部".equals(department)) {
+            	request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
+            }else if("部長".equals(position) && "営業部".equals(department)) {
+            	request.getRequestDispatcher("/WEB-INF/views/buchougamen.jsp").forward(request, response);
+            }
+            
         } else {
         	System.out.println("Login failed - user not found");
             request.setAttribute("error", "IDまたはパスワードが違います");
