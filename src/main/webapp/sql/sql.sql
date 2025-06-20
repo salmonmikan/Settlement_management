@@ -227,3 +227,42 @@ INSERT INTO department_master (department_id, department_name) VALUES
 ('D001', '営業部'),
 ('D002', '管理部');
 >>>>>>> refs/remotes/origin/develop
+
+
+
+
+CREATE TABLE personal_info (
+    employee_id   VARCHAR(5) PRIMARY KEY,
+    full_name     VARCHAR(20),
+    furigana      VARCHAR(20),
+    birth_date    DATE,
+    address       VARCHAR(50),
+    join_date     DATE
+);
+
+
+CREATE TABLE account_info (
+    employee_id   VARCHAR(5) PRIMARY KEY,
+    login_id      VARCHAR(5) UNIQUE,
+    password      VARCHAR(255), -- nên dùng HASH sau này
+    FOREIGN KEY (employee_id) REFERENCES personal_info(employee_id)
+);
+
+CREATE TABLE specification_info (
+    employee_id     VARCHAR(5) PRIMARY KEY,
+    department_id   VARCHAR(5),
+    position_id     VARCHAR(5),
+    FOREIGN KEY (employee_id) REFERENCES personal_info(employee_id)
+);
+
+-- 役職管理: Quản lý chức vụ
+CREATE TABLE position_master (
+    position_id VARCHAR(5) PRIMARY KEY,
+    position_name VARCHAR(20) NOT NULL
+);
+
+INSERT INTO position_master (position_id, position_name) VALUES
+('P0001', '管理責任者'),
+('P0002', '部長'),
+('P0003', '主任'),
+('P0004', '一般社員');
