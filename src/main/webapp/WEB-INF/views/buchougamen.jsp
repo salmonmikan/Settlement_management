@@ -33,7 +33,7 @@
 		  <div class="menu-block">
 		    <h3>メニュー</h3>
 		    <ul>
-		      <li><a href="#">申請一覧</a></li>
+		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧</a></li>
 		      <li><a href="#">承認する</a></li>
 		      <li><a href="#">承認履歴</a></li>
 		       <hr>

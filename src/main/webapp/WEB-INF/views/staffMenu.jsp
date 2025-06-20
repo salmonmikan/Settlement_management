@@ -36,7 +36,7 @@
 		    <h3>メニュー</h3>
 		    <ul>
 		      <li><a href="#">パスワード変更</a></li>
-		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧を見る</a></li>
+		      <li><a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧</a></li>
 		    </ul>
 		  </div>
 		  
@@ -58,9 +58,9 @@
         </div>
 
         <div class="panel">
-          <h4>申請一覧</h4>
+          <h4>申請状況</h4>
           <ul>
-            <li><a href="approvalList.jsp?status=pending">未提出: 1件</a></li>
+            <li><a href="approvalList.jsp?status=pending">未提出</a></li>
             <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
             <li><a href="approvalList.jsp?status=approved">差し戻し: 1件</a></li>
           </ul>

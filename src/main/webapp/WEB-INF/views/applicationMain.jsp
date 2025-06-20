@@ -22,6 +22,29 @@
       justify-content: center;
       gap: 1rem;
     }
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal.hidden { display: none; }
+    .modal-content {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      min-width: 300px;
+      text-align: center;
+    }
+    .modal-buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -46,11 +69,12 @@
               <th>金額（含税）</th>
               <th>
                 <select id="statusFilter" class="status-filter-button">
-                  <option value="">すべて</option>
-                  <option value="未提出">未提出</option>
-                  <option value="提出済">提出済</option>
-                  <option value="差戻し">差戻し</option>
-                  <option value="承認済">承認済</option>
+                	<option value="">すべて</option>
+					<option value="未提出">未提出</option>
+					<option value="提出済み">提出済み</option>
+					<option value="差戻し">差戻し</option>
+					<option value="承認済">承認済</option>
+					<option value="支払い済">支払い済</option>
                 </select>
               </th>
             </tr>
@@ -69,11 +93,28 @@
           </tbody>
         </table>
       </div>
+      　<% Boolean submitted = (Boolean) request.getAttribute("submitSuccess"); %>
+		<% if (submitted != null && submitted) { %>
+		  <div style="color: rgb(127, 15, 59); margin: 0 auto;">
+		    提出が完了しました。
+		  </div>
+		<% } %>
       <div class="btn-section">
         <button type="button" onclick="history.back()">戻る</button>
-        <button type="submit">提出</button>
+        <button type="submit" onclick="return confirmSubmit()">提出</button>
       </div>
     </form>
+  </div>
+
+  <!-- 提出確認モーダル -->
+  <div id="submitModal" class="modal hidden">
+    <div class="modal-content">
+      <p>選択された申請を提出しますか？</p>
+      <div class="modal-buttons">
+        <button type="button" onclick="closeModal()">キャンセル</button>
+        <button type="button" onclick="submitForm()">提出</button>
+      </div>
+    </div>
   </div>
 
   <div class="footer">
@@ -84,6 +125,7 @@
     const checkboxes = document.querySelectorAll('.row-check');
     const editBtn = document.getElementById('editBtn');
     const deleteBtn = document.getElementById('deleteBtn');
+    const modal = document.getElementById('submitModal');
 
     document.getElementById('selectAll').addEventListener('change', function () {
       checkboxes.forEach(cb => cb.checked = this.checked);
@@ -114,6 +156,34 @@
         window.location.href = `detail.jsp?id=${id}`;
       });
     });
+
+    function confirmSubmit() {
+      const checked = document.querySelectorAll('.row-check:checked');
+      if (checked.length === 0) {
+        alert("提出する申請を選択してください。");
+        return false;
+      }
+
+      for (const cb of checked) {
+        const row = cb.closest('tr');
+        const status = row.getAttribute('data-status');
+        if (status !== '未提出') {
+          alert("未提出の申請のみ提出可能です。");
+          return false;
+        }
+      }
+
+      modal.classList.remove('hidden');
+      return false;
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+    }
+
+    function submitForm() {
+      document.querySelector('form').submit();
+    }
   </script>
 </body>
 </html>
