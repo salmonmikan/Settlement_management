@@ -286,6 +286,17 @@ textarea {
 }
 
 /* ==== business_trip.css ==== */
+.confirm-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;	
+}
+
+.confirmPage-total {
+  text-align: right;
+  margin-top: 10px;
+}
+
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -340,6 +351,7 @@ textarea {
   font-weight: 600;
   color: #007b91;
 }
+
 
 /* ==== application_list.css（追加分） ==== */
 table {

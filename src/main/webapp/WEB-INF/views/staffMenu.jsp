@@ -27,7 +27,7 @@
 		    <h3>メニュー</h3>
 		    <ul>
 		      <li><a href="#">パスワード変更</a></li>
-		      <li><a href="#">申請一覧</a></li>
+		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧を見る</a></li>
 		    </ul>
 		  </div>
 		  
@@ -42,7 +42,7 @@
           <h4>申請する</h4>
           <div class="btn-section">
             <a href="#">交通費申請</a>
-            <a href="<%= request.getContextPath() %>/businessTrip">出張費申請</a>
+            <a href="<%= request.getContextPath() %>/createApplication?type=出張費">出張費申請</a>
             <a href="#">立替金申請</a>
           </div>
         </div>

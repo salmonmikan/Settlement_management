@@ -1,4 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="model.Application" %>
+<%@ page import="java.util.List" %>
+<%
+  List<Application> applications = (List<Application>) request.getAttribute("applications");
+%>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -7,30 +12,16 @@
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
   <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
-  	/* application_list layout fix */
-	.page-container {
-	  display: flex;
-	  flex-direction: column;
-	  flex: 1;
-	}
-	
-	form {
-	  display: flex;
-	  flex-direction: column;
-	}
-	
-	.table-area {
-	  flex: 1;
-	  padding-bottom: 1rem;
-	}
-	
-	.btn-section {
-	  margin-top: auto; /* đẩy nút xuống nếu còn trống */
-	  padding-top: 1.5rem;
-	  display: flex;
-	  justify-content: center;
-	  gap: 1rem;
-	}
+    .page-container { display: flex; flex-direction: column; flex: 1; }
+    form { display: flex; flex-direction: column; }
+    .table-area { flex: 1; padding-bottom: 1rem; }
+    .btn-section {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -52,7 +43,7 @@
               <th>申請ID</th>
               <th>申請種別</th>
               <th>申請時間</th>
-              <th>金額（税込）</th>
+              <th>金額（含税）</th>
               <th>
                 <select id="statusFilter" class="status-filter-button">
                   <option value="">すべて</option>
@@ -65,55 +56,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="clickable-row" data-id="101" data-status="未提出">
-              <td><input type="checkbox" class="row-check" name="appIds" value="101"></td>
-              <td>101</td><td>出張費</td><td>2025/05/07 11:43:26</td><td>28,000円</td><td>未提出</td>
-            </tr>
-            <tr class="clickable-row" data-id="102" data-status="提出済">
-              <td><input type="checkbox" class="row-check" name="appIds" value="102"></td>
-              <td>102</td><td>交通費</td><td>2025/05/14 12:41:54</td><td>1,200円</td><td>提出済</td>
-            </tr>
-            <tr class="clickable-row" data-id="103" data-status="差戻し">
-              <td><input type="checkbox" class="row-check" name="appIds" value="103"></td>
-              <td>103</td><td>出張費</td><td>2025/05/21 11:43:26</td><td>15,500円</td><td class="status-returned">差戻し</td>
-            </tr>
-            <tr class="clickable-row" data-id="104" data-status="承認済">
-              <td><input type="checkbox" class="row-check" name="appIds" value="104"></td>
-              <td>104</td><td>立換金</td><td>2025/05/24 11:43:26</td><td>12,000円</td><td>承認済</td>
-            </tr>
-            <tr class="clickable-row" data-id="101" data-status="未提出">
-              <td><input type="checkbox" class="row-check" name="appIds" value="101"></td>
-              <td>101</td><td>出張費</td><td>2025/05/07 11:43:26</td><td>28,000円</td><td>未提出</td>
-            </tr>
-            <tr class="clickable-row" data-id="102" data-status="提出済">
-              <td><input type="checkbox" class="row-check" name="appIds" value="102"></td>
-              <td>102</td><td>交通費</td><td>2025/05/14 12:41:54</td><td>1,200円</td><td>提出済</td>
-            </tr>
-            <tr class="clickable-row" data-id="103" data-status="差戻し">
-              <td><input type="checkbox" class="row-check" name="appIds" value="103"></td>
-              <td>103</td><td>出張費</td><td>2025/05/21 11:43:26</td><td>15,500円</td><td class="status-returned">差戻し</td>
-            </tr>
-            <tr class="clickable-row" data-id="104" data-status="承認済">
-              <td><input type="checkbox" class="row-check" name="appIds" value="104"></td>
-              <td>104</td><td>立換金</td><td>2025/05/24 11:43:26</td><td>12,000円</td><td>承認済</td>
-            </tr>
-            <tr class="clickable-row" data-id="101" data-status="未提出">
-              <td><input type="checkbox" class="row-check" name="appIds" value="101"></td>
-              <td>101</td><td>出張費</td><td>2025/05/07 11:43:26</td><td>28,000円</td><td>未提出</td>
-            </tr>
-            <tr class="clickable-row" data-id="102" data-status="提出済">
-              <td><input type="checkbox" class="row-check" name="appIds" value="102"></td>
-              <td>102</td><td>交通費</td><td>2025/05/14 12:41:54</td><td>1,200円</td><td>提出済</td>
-            </tr>
-            <tr class="clickable-row" data-id="103" data-status="差戻し">
-              <td><input type="checkbox" class="row-check" name="appIds" value="103"></td>
-              <td>103</td><td>出張費</td><td>2025/05/21 11:43:26</td><td>15,500円</td><td class="status-returned">差戻し</td>
-            </tr>
-            <tr class="clickable-row" data-id="104" data-status="承認済">
-              <td><input type="checkbox" class="row-check" name="appIds" value="104"></td>
-              <td>104</td><td>立換金</td><td>2025/05/24 11:43:26</td><td>12,000円</td><td>承認済</td>
-            </tr>
-            
+            <% for (Application app : applications) { %>
+              <tr class="clickable-row" data-id="<%= app.getApplicationId() %>" data-status="<%= app.getStatus() %>">
+                <td><input type="checkbox" class="row-check" name="appIds" value="<%= app.getApplicationId() %>"></td>
+                <td><%= app.getApplicationId() %></td>
+                <td><%= app.getApplicationType() %></td>
+                <td><%= app.getApplicationDate().toLocalDateTime().toString().replace('T', ' ') %></td>
+                <td><%= String.format("%,d円", app.getAmount()) %></td>
+                <td><%= app.getStatus() %></td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>

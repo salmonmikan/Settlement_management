@@ -6,16 +6,33 @@
   <meta charset="UTF-8">
   <title>出張費申請 - Step 1</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
-  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <script>
-    const contextPath = "<%= request.getContextPath() %>";
+    function setHiddenFields() {
+      const startInput = document.getElementById("startDate");
+      const endInput = document.getElementById("endDate");
+      const start = new Date(startInput.value);
+      const end = new Date(endInput.value);
+      if (end < start) {
+        alert("終了日は開始日より後の日付を選択してください。");
+        return false;
+      }
+      const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+      document.getElementById("totalDays").value = totalDays;
+      document.getElementById("startDateHidden").value = startInput.value;
+      document.getElementById("endDateHidden").value = endInput.value;
+      return true;
+    }
   </script>
 </head>
 <body>
   <div class="page-container">
     <h2>出張情報</h2>
-    <form action="<%= request.getContextPath() %>/businessTrip" method="post" id="step1Form">
+    <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data" onsubmit="return setHiddenFields()">
       <input type="hidden" name="step" value="1">
+      <input type="hidden" name="totalDays" id="totalDays">
+      <input type="hidden" name="startDateHidden" id="startDateHidden">
+      <input type="hidden" name="endDateHidden" id="endDateHidden">
+
       <div class="form-section">
         <div class="form-group">
           <label>出張期間</label>
@@ -40,10 +57,6 @@
           <label>出張報告</label>
           <textarea name="tripReport" class="hokoku-text" placeholder="業務内容や目的を入力してください"></textarea>
         </div>
-
-        <input type="hidden" name="totalDays" id="totalDays">
-        <input type="hidden" name="startDateHidden" id="startDateHidden">
-        <input type="hidden" name="endDateHidden" id="endDateHidden">
       </div>
 
       <div class="btn-section">
@@ -53,21 +66,5 @@
     </form>
   </div>
   <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
-
-  <script>
-    document.getElementById("step1Form").addEventListener("submit", function(e) {
-      const start = new Date(this.startDate.value);
-      const end = new Date(this.endDate.value);
-      if (end < start) {
-        alert("終了日は開始日より後の日付を選択してください。");
-        e.preventDefault();
-        return;
-      }
-      const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
-      document.getElementById("totalDays").value = totalDays;
-      document.getElementById("startDateHidden").value = this.startDate.value;
-      document.getElementById("endDateHidden").value = this.endDate.value;
-    });
-  </script>
 </body>
 </html>
