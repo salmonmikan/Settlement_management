@@ -19,14 +19,14 @@
 <body>
 
 	<nav>
-		ようこそ、<%= staffName %> 様！
+		精算管理システム
 		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
     	<button type="submit"  title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
 		</form>
 	</nav>
 
   <div class="page-container">
-    <h1>スタッフメニュー</h1>
+    <p style="text-align: right;">ようこそ、<%= staffName %> さん！</p>
 
     <div class="staff-dashboard-wrapper">
 
@@ -35,13 +35,9 @@
 		  <div class="menu-block">
 		    <h3>メニュー</h3>
 		    <ul>
+		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧</a></li>
 		      <li><a href="#">パスワード変更</a></li>
-		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧を見る</a></li>
 		    </ul>
-		  </div>
-		  
-		  <div class="welcome-message">
-		    ようこそ、<%= staffName %> さん！
 		  </div>
 	  </div>
 
@@ -62,7 +58,7 @@
           <ul>
             <li><a href="approvalList.jsp?status=pending">未提出: 1件</a></li>
             <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
-            <li><a href="approvalList.jsp?status=approved">差し戻し: 1件</a></li>
+            <li><a href="approvalList.jsp?status=approved">差戻: 1件</a></li>
           </ul>
         </div>
       </div>
