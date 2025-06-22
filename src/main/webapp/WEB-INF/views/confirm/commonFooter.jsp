@@ -36,8 +36,7 @@
 	<% } %>
 </div>
 
-<%-- DEBUG 用 (削除してもOK) --%>
-<% out.println("📌DEBUG: app_id = " + appIdObj); %>
+
 
 <div class="footer">
   &copy; 2025 ABC株式会社 - All rights reserved.

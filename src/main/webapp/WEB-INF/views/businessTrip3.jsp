@@ -22,78 +22,85 @@ if (staffName == null) {
     .d-none { display: none; }
   </style>
   <script>
-    function addTransBlock() {
-      const container = document.getElementById("trans-container");
-      const blocks = document.querySelectorAll(".trans-block");
-      const index = blocks.length;
+function addTransBlock() {
+  const container = document.getElementById("trans-container");
+  const blocks = document.querySelectorAll(".trans-block");
+  const index = blocks.length;
 
-      const template = document.querySelector(".trans-block");
-      const clone = template.cloneNode(true);
+  const template = document.querySelector(".trans-block");
+  const clone = template.cloneNode(true);
 
-      clone.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
-      clone.querySelector(".remove-btn").classList.remove("d-none");
+  clone.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
+  clone.querySelector(".remove-btn").classList.remove("d-none");
 
-      const fileInput = clone.querySelector("input[type='file']");
-      fileInput.name = receiptStep3_${index}[];
-      fileInput.setAttribute("multiple", true);
+  const fileInput = clone.querySelector("input[type='file']");
+  fileInput.name = `receiptStep3_${index}[]`;
+  fileInput.setAttribute("multiple", true);
 
-      const fileList = clone.querySelector(".fileList");
+  const fileList = clone.querySelector(".fileList");
+  fileList.innerHTML = "";
+  fileInput.addEventListener("change", function(e) {
+    fileList.innerHTML = "";
+    Array.from(e.target.files).forEach(file => {
+      const li = document.createElement("li");
+      li.textContent = file.name;
+      fileList.appendChild(li);
+    });
+  });
+
+  container.appendChild(clone);
+}
+
+function removeBlock(btn) {
+  const block = btn.closest(".trans-block");
+  const allBlocks = document.querySelectorAll(".trans-block");
+  if (allBlocks.length > 1) {
+    block.remove();
+  } else {
+    alert("最低1つの明細が必要です");
+  }
+}
+
+function calcFareTotal(elem) {
+	  const block = elem.closest('.trans-block');
+	  const amountInput = block.querySelector("input[name='fareAmount[]']");
+	  const tripType = block.querySelector("select[name='transTripType[]']").value;
+	  const burden = block.querySelector("select[name='burden[]']").value;
+	  const totalInput = block.querySelector("input[name='expenseTotal[]']");
+
+	  const amount = parseInt(amountInput.value || 0);
+
+	  if (burden === "自己") {
+	    const multiplier = (tripType === "往復") ? 2 : 1;
+	    totalInput.value = amount * multiplier;
+	  } else {
+	    totalInput.value = 0;
+	  }
+	}
+
+window.onload = function() {
+  const firstBlock = document.querySelector(".trans-block");
+  if (firstBlock) {
+    const fileInput = firstBlock.querySelector("input[type='file']");
+    const fileList = firstBlock.querySelector(".fileList");
+
+    fileInput.addEventListener("change", function(e) {
       fileList.innerHTML = "";
-      fileInput.addEventListener("change", function(e) {
-        fileList.innerHTML = "";
-        Array.from(e.target.files).forEach(file => {
-          const li = document.createElement("li");
-          li.textContent = file.name;
-          fileList.appendChild(li);
-        });
+      Array.from(e.target.files).forEach(file => {
+        const li = document.createElement("li");
+        li.textContent = file.name;
+        fileList.appendChild(li);
       });
+    });
 
-      container.appendChild(clone);
+    // ✅ Gọi để set 合計 ban đầu nếu có dữ liệu
+    const fareInput = firstBlock.querySelector("input[name='fareAmount[]']");
+    if (fareInput && fareInput.value) {
+      calcFareTotal(fareInput);
     }
-
-    function removeBlock(btn) {
-      const block = btn.closest(".trans-block");
-      const allBlocks = document.querySelectorAll(".trans-block");
-      if (allBlocks.length > 1) {
-        block.remove();
-      } else {
-        alert("最低1つの明細が必要です");
-      }
-    }
-
-    function calcFareTotal(elem) {
-      const block = elem.closest('.trans-block');
-      const amountInput = block.querySelector("input[name='fareAmount[]']");
-      const type = block.querySelector("select[name='transTripType[]']").value;
-      const burden = block.querySelector("select[name='burden[]']").value;
-      const totalInput = block.querySelector("input[name='expenseTotal[]']");
-
-      const amount = parseInt(amountInput.value || 0);
-      let total = 0;
-      if (burden === "自己") {
-        const multiplier = (type === "往復") ? 2 : 1;
-        total = amount * multiplier;
-      }
-      totalInput.value = total;
-    }
-
-    window.onload = function() {
-      const firstBlock = document.querySelector(".trans-block");
-      if (firstBlock) {
-        const fileInput = firstBlock.querySelector("input[type='file']");
-        const fileList = firstBlock.querySelector(".fileList");
-
-        fileInput.addEventListener("change", function(e) {
-          fileList.innerHTML = "";
-          Array.from(e.target.files).forEach(file => {
-            const li = document.createElement("li");
-            li.textContent = file.name;
-            fileList.appendChild(li);
-          });
-        });
-      }
-    };
-  </script>
+  }
+};
+</script>
 </head>
 <body>
   <div class="page-container">

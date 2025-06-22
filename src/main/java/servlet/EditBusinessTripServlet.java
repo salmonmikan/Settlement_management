@@ -6,16 +6,13 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.util.List;
-import java.io.IOException;
 
 @WebServlet("/editBusinessTrip")
 public class EditBusinessTripServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-        	System.out.println("🛠 appId param = " + request.getParameter("id"));
             int appId = Integer.parseInt(request.getParameter("id"));
 
             BusinessTripDAO dao = new BusinessTripDAO();
@@ -31,8 +28,7 @@ public class EditBusinessTripServlet extends HttpServlet {
             rd.forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "編集画面の読み込みに失敗しました。");
-            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+            response.sendRedirect("applicationMain.jsp");
         }
     }
 }

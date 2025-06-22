@@ -32,11 +32,11 @@ public class ApplicationDetailServlet extends HttpServlet {
             if ("出張費".equals(type)) {
                 BusinessTripDAO dao = new BusinessTripDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
-                request.setAttribute("businessTripBean", bean);
+                
+                request.setAttribute("businessTripBean", bean); // dùng cho confirm.jsp
+                request.getSession().setAttribute("businessTripBean", bean); // dùng cho JSP step1/2/3
                 
                 request.setAttribute("isDetailMode", true);
-                
-                // Nếu có receiptMap thì cũng set như confirm
             }
             // TODO: xử lý cho 交通費 và 立替金 nếu cần
 

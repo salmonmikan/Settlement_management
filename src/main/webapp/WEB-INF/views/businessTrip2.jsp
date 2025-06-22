@@ -2,6 +2,16 @@
 <%
   String startDate = request.getParameter("startDateHidden");
   String endDate = request.getParameter("endDateHidden");
+
+  if ((startDate == null || startDate.isEmpty()) || (endDate == null || endDate.isEmpty())) {
+    bean.BusinessTripBean.BusinessTripBean tripBean = (bean.BusinessTripBean.BusinessTripBean) session.getAttribute("businessTripBean");
+    if (tripBean != null && tripBean.getStep1Data() != null) {
+      startDate = tripBean.getStep1Data().getStartDate();
+      endDate = tripBean.getStep1Data().getEndDate();
+    }
+  }
+  if (startDate == null) startDate = "";
+  if (endDate == null) endDate = "";
 %>
 <% Boolean editMode = (Boolean) request.getAttribute("editMode"); %>
 <% Integer applicationId = (Integer) request.getAttribute("applicationId"); %>
@@ -27,6 +37,14 @@
   </style>
 </head>
 <body>
+  <%
+	  bean.BusinessTripBean.BusinessTripBean tripBean = (bean.BusinessTripBean.BusinessTripBean) session.getAttribute("businessTripBean");
+	  out.println("<!-- DEBUG: tripBean = " + tripBean + " -->");
+	  if (tripBean != null && tripBean.getStep1Data() != null) {
+	    out.println("<!-- DEBUG: startDate = " + tripBean.getStep1Data().getStartDate() + " -->");
+	    out.println("<!-- DEBUG: endDate = " + tripBean.getStep1Data().getEndDate() + " -->");
+	  }
+	%>
   <div class="page-container">
     <h2>日当・宿泊費申請</h2>
 
@@ -42,28 +60,28 @@
       <input type="hidden" name="startDateHidden" value="<%= startDate %>">
 
       <div style="display: flex; flex-direction: column; gap: 10px" id="allowance-container">
-        <div class="form-section allowance-block" style="position: relative;">
+        <div class="form-section allowance-block" style="position: relative;" data-hotel-fee="">
           <button type="button" class="remove-btn" onclick="removeBlock(this)">×</button>
 
           <div class="form-group">
-            <label>地域区分</label>
-            <select name="regionType[]" onchange="updateAllowanceAndHotel(this)">
-              <option value="">選択してください</option>
-              <option value="物価高水準地域">東京</option>
-              <option value="上記以外">東京以外</option>
-              <option value="会社施設・縁故先宿泊">会社施設・縁故先宿泊</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>出張区分</label>
-            <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
-              <option value="">選択してください</option>
-              <option value="短期出張">短期出張</option>
-              <option value="長期出張">長期出張</option>
-              <option value="研修出張">研修出張</option>
-            </select>
-          </div>
+			  <label>地域区分</label>
+			  <select name="regionType[]" onchange="updateAllowanceAndHotel(this)">
+			    <option value="">選択してください</option>
+			    <option value="物価高水準地域" ${s2.regionType == '物価高水準地域' ? 'selected' : ''}>東京</option>
+			    <option value="上記以外" ${s2.regionType == '上記以外' ? 'selected' : ''}>東京以外</option>
+			    <option value="会社施設・縁故先宿泊" ${s2.regionType == '会社施設・縁故先宿泊' ? 'selected' : ''}>会社施設・縁故先宿泊</option>
+			  </select>
+			</div>
+			
+			<div class="form-group">
+			  <label>出張区分</label>
+			  <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
+			    <option value="">選択してください</option>
+			    <option value="短期出張" ${s2.tripType == '短期出張' ? 'selected' : ''}>短期出張</option>
+			    <option value="長期出張" ${s2.tripType == '長期出張' ? 'selected' : ''}>長期出張</option>
+			    <option value="研修出張" ${s2.tripType == '研修出張' ? 'selected' : ''}>研修出張</option>
+			  </select>
+			</div>
 
           <div class="form-group">
             <label>宿泊先</label>
@@ -127,9 +145,10 @@
   <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
   <script>
-    const startDate = new Date("<%= startDate %>");
-    const endDate = new Date("<%= endDate %>");
-    const diffDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+  const startDate = new Date("<%= startDate != null ? startDate : "" %>");
+  const endDate = new Date("<%= endDate != null ? endDate : "" %>");
+  const diffDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    
 
     function updateAllowanceAndHotel(elem) {
       const block = elem.closest(".allowance-block");
@@ -196,26 +215,27 @@
     	  const template = document.querySelector(".allowance-block");
     	  const clone = template.cloneNode(true);
 
-    	  // Clear old values
     	  clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
     	  clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
 
-    	  // ✅ Fix: reset file input name + multiple
     	  const fileInput = clone.querySelector(".fileInput");
-    	  fileInput.name = receiptStep2_${index}[];
-    	  fileInput.setAttribute("multiple", true); // <-- Đây là dòng quan trọng
+    	  fileInput.name = `receiptStep2_${index}[]`;
+    	  fileInput.setAttribute("multiple", true);
 
     	  container.appendChild(clone);
-    	  
+
     	  fileInput.addEventListener("change", function(e) {
-    		  const fileList = clone.querySelector(".fileList");
-    		  fileList.innerHTML = "";
-    		  Array.from(e.target.files).forEach(file => {
-    		    const li = document.createElement("li");
-    		    li.textContent = file.name;
-    		    fileList.appendChild(li);
-    		  });
-    		});
+    	    const fileList = clone.querySelector(".fileList");
+    	    fileList.innerHTML = "";
+    	    Array.from(e.target.files).forEach(file => {
+    	      const li = document.createElement("li");
+    	      li.textContent = file.name;
+    	      fileList.appendChild(li);
+    	    });
+    	  });
+
+    	  // ✅ Gọi sau khi gán xong để tránh lỗi
+    	  updateAllowanceAndHotel(clone.querySelector("select[name='regionType[]']"));
     	}
 
     function removeBlock(btn) {
@@ -234,6 +254,8 @@
     	    if (daysInput.value === "" || parseInt(daysInput.value) <= 1) {
     	      daysInput.value = diffDays;
     	    }
+    	    console.log("auto-set daysInput =", daysInput);
+    	    console.log("before value =", daysInput.value);
     	    updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
 
     	    // ✅ Gán sự kiện change cho input file đầu tiên
