@@ -181,7 +181,10 @@ public class BusinessTripServlet extends HttpServlet {
                 bean.setTotalStep3Amount(total3);
 
                 session.setAttribute("businessTripBean", bean);
-                request.getRequestDispatcher("/WEB-INF/views/businessTripConfirm.jsp").forward(request, response);
+             // ✅ Sau khi validate + tạo BusinessTripBean + save vào session
+
+                request.setAttribute("application_type", "出張費");  // QUAN TRỌNG
+                request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp").forward(request, response);
                 break;
 
             default:

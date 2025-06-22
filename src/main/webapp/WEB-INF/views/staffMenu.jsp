@@ -39,10 +39,6 @@
 		      <li><a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧</a></li>
 		    </ul>
 		  </div>
-		  
-		  <div class="welcome-message">
-		    ようこそ、<%= staffName %> さん！
-		  </div>
 	  </div>
 
       <!-- Main content -->

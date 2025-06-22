@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
             }else if("一般社員".equals(position) && "管理部".equals(department)) {
             	request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
             }else if("部長".equals(position) && "営業部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/buchougamen.jsp").forward(request, response);
+            	request.getRequestDispatcher("/WEB-INF/views/buchouMain.jsp").forward(request, response);
             }
             
         } else {

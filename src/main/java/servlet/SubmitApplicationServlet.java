@@ -1,12 +1,15 @@
+// SubmitApplicationServlet.java
 package servlet;
 
 import dao.ApplicationDAO;
-
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import model.Application;
 import jakarta.servlet.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/submitApplication")
 public class SubmitApplicationServlet extends HttpServlet {
@@ -18,38 +21,63 @@ public class SubmitApplicationServlet extends HttpServlet {
         String staffId = (String) session.getAttribute("staffId");
         String[] appIds = request.getParameterValues("appIds");
 
-        if (appIds != null && staffId != null) {
-            try {
-                ApplicationDAO dao = new ApplicationDAO();
+        if (appIds == null || appIds.length == 0 || staffId == null) {
+            response.sendRedirect("applicationMain");
+            return;
+        }
 
-                // Tìm 部長 trong cùng phòng ban
-                String managerId = dao.findManagerId(staffId);
+        try {
+            ApplicationDAO dao = new ApplicationDAO();
+
+            // Check if all applications are still "未提出"
+            for (String idStr : appIds) {
+                int appId = Integer.parseInt(idStr);
+                String status = dao.getApplicationStatus(appId);
+
+                if (!"未提出".equals(status)) {
+                    request.setAttribute("message", "未提出の申請のみ提出可能です。");
+                    request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
+                    return;
+                }
+            }
+
+            // Get the position of current user
+            String position = dao.getStaffPosition(staffId);
+
+            // Get approver (部長 if not self)
+            String managerId = null;
+            if (!"部長".equals(position)) {
+                managerId = dao.findManagerId(staffId);
                 if (managerId == null) {
                     request.setAttribute("error", "部長が見つかりませんでした。");
                     request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
                     return;
                 }
-
-                for (String idStr : appIds) {
-                    int appId = Integer.parseInt(idStr);
-                    dao.submitApplicationIfNotYet(appId, staffId);
-                    // Nếu có approver_id: dao.setApprover(appId, managerId);
-                }
-
-                // Đánh dấu flag để hiển thị message sau khi redirect
-                session.setAttribute("submitSuccess", true);
-
-                // Tránh lỗi IllegalStateException
-                response.sendRedirect("applicationMain");
-                return;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("error", "提出中にエラーが発生しました。");
-                request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
             }
-        } else {
-            request.setAttribute("error", "申請が選択されていません。");
+
+            // Update applications
+            for (String idStr : appIds) {
+                int appId = Integer.parseInt(idStr);
+                dao.submitApplicationIfNotYet(appId, staffId);
+                // Optional: dao.setApprover(appId, managerId);
+            }
+
+            session.setAttribute("submitSuccess", true);
+            response.sendRedirect("applicationMain");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "提出中にエラーが発生しました。");
+
+            try {
+                ApplicationDAO dao = new ApplicationDAO();
+                List<Application> apps = dao.getApplicationsByStaffId(staffId);
+                request.setAttribute("applications", apps);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                request.setAttribute("applications", new ArrayList<Application>());
+            }
+
             request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
         }
     }

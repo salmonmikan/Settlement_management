@@ -18,12 +18,27 @@ public class ApplicationListServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
+
+        // ✅ Đưa position ra để dùng trong JSP
+        String position = (String) session.getAttribute("position");
+        request.setAttribute("position", position);
+
+        // ✅ Hiển thị message thành công (tồn tại từ submit)
         Boolean submitSuccess = (Boolean) session.getAttribute("submitSuccess");
         if (submitSuccess != null && submitSuccess) {
             request.setAttribute("submitSuccess", true);
-            session.removeAttribute("submitSuccess"); // 
+            session.removeAttribute("submitSuccess");
         }
-        String staffId = (String) session.getAttribute("staffId"); // staffId phải được set sau khi login
+
+        // ✅ Hiển thị message lỗi nếu có
+        String message = (String) session.getAttribute("message");
+        if (message != null) {
+            request.setAttribute("message", message);
+            session.removeAttribute("message");
+        }
+
+        // ✅ Lấy danh sách application
+        String staffId = (String) session.getAttribute("staffId");
 
         List<Application> applications;
         try {

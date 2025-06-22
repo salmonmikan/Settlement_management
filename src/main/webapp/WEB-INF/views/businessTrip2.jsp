@@ -3,6 +3,9 @@
   String startDate = request.getParameter("startDateHidden");
   String endDate = request.getParameter("endDateHidden");
 %>
+<% Boolean editMode = (Boolean) request.getAttribute("editMode"); %>
+<% Integer applicationId = (Integer) request.getAttribute("applicationId"); %>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -28,6 +31,11 @@
     <h2>日当・宿泊費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
+	  <% if (editMode != null && editMode) { %>
+	    <input type="hidden" name="applicationId" value="<%= applicationId %>">
+	  <% } %>
+	  
       <!-- ✅ step input đặt đúng vị trí -->
       <input type="hidden" name="step" value="2">
       <input type="hidden" name="endDateHidden" value="<%= endDate %>">
@@ -194,7 +202,7 @@
 
     	  // ✅ Fix: reset file input name + multiple
     	  const fileInput = clone.querySelector(".fileInput");
-    	  fileInput.name = `receiptStep2_${index}[]`;
+    	  fileInput.name = receiptStep2_${index}[];
     	  fileInput.setAttribute("multiple", true); // <-- Đây là dòng quan trọng
 
     	  container.appendChild(clone);

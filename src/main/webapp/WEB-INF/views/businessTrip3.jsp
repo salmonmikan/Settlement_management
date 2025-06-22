@@ -6,6 +6,11 @@ if (staffName == null) {
   return;
 }
 %>
+<% Boolean editMode = (Boolean) request.getAttribute("editMode"); %>
+<% Integer applicationId = (Integer) request.getAttribute("applicationId"); %>
+
+<input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
+<input type="hidden" name="applicationId" value="<%= applicationId != null ? applicationId : "" %>">
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -29,7 +34,7 @@ if (staffName == null) {
       clone.querySelector(".remove-btn").classList.remove("d-none");
 
       const fileInput = clone.querySelector("input[type='file']");
-      fileInput.name = `receiptStep3_${index}[]`;
+      fileInput.name = receiptStep3_${index}[];
       fileInput.setAttribute("multiple", true);
 
       const fileList = clone.querySelector(".fileList");
@@ -95,6 +100,10 @@ if (staffName == null) {
     <h2>交通費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
+	  <% if (editMode != null && editMode) { %>
+	    <input type="hidden" name="applicationId" value="<%= applicationId %>">
+	  <% } %>
       <input type="hidden" name="step" value="3">
       <input type="hidden" name="startDateHidden" value="<%= request.getParameter("startDateHidden") %>">
       <input type="hidden" name="endDateHidden" value="<%= request.getParameter("endDateHidden") %>">

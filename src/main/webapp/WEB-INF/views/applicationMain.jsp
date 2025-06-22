@@ -45,6 +45,26 @@
       justify-content: center;
       gap: 2rem;
     }
+    .custom-message {
+	  margin: 10px auto;
+	  width: fit-content;
+	  padding: 10px 20px;
+	  border-radius: 6px;
+	  font-weight: bold;
+	  text-align: center;
+	}
+	
+	.custom-message.error {
+	  background-color: #ffe5e5;
+	  color: #d32f2f;
+	  border: 1px solid #d32f2f;
+	}
+	
+	.custom-message.success {
+	  background-color: #e0f7fa;
+	  color: #00796b;
+	  border: 1px solid #00796b;
+	}
   </style>
 </head>
 <body>
@@ -100,12 +120,31 @@
 		  </div>
 		<% } %>
       <div class="btn-section">
-        <button type="button" onclick="history.back()">戻る</button>
+        <%
+		  String position = (String) request.getAttribute("position");
+		  String menuPath = "staffMenu";
+		  if ("部長".equals(position)) {
+		    menuPath = "buchouMenu";
+		  } else if ("管理部".equals(position)) {
+		    menuPath = "manageMenu";
+		  }
+		%>
+		<button type="button" onclick="location.href='<%= request.getContextPath() %>/menu'">戻る</button>
         <button type="submit" onclick="return confirmSubmit()">提出</button>
       </div>
     </form>
   </div>
-
+    <%
+	  String msg = (String) session.getAttribute("message");
+	  if (msg != null) {
+	%>
+	  <div class="custom-message error">
+	    <%= msg %>
+	  </div>
+	<%
+	    session.removeAttribute("message"); // tránh hiển thị lại sau refresh
+	  }
+	%>
   <!-- 提出確認モーダル -->
   <div id="submitModal" class="modal hidden">
     <div class="modal-content">
@@ -121,69 +160,98 @@
     &copy; 2025 ABC株式会社 - All rights reserved.
   </div>
 
-  <script>
-    const checkboxes = document.querySelectorAll('.row-check');
-    const editBtn = document.getElementById('editBtn');
-    const deleteBtn = document.getElementById('deleteBtn');
-    const modal = document.getElementById('submitModal');
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    document.getElementById('selectAll').addEventListener('change', function () {
-      checkboxes.forEach(cb => cb.checked = this.checked);
-      updateToolbarState();
-    });
-
-    checkboxes.forEach(cb => cb.addEventListener('change', updateToolbarState));
-
-    function updateToolbarState() {
-      const checked = document.querySelectorAll('.row-check:checked');
-      editBtn.disabled = (checked.length !== 1);
-      deleteBtn.disabled = (checked.length === 0);
-    }
-
-    document.getElementById('statusFilter').addEventListener('change', function () {
-      const selected = this.value;
-      const rows = document.querySelectorAll('#applicationTable tbody tr');
-      rows.forEach(row => {
-        const status = row.getAttribute('data-status');
-        row.style.display = (!selected || selected === status) ? '' : 'none';
-      });
-    });
-
-    document.querySelectorAll('.clickable-row').forEach(row => {
-      row.addEventListener('click', function (e) {
-        if (e.target.tagName === 'INPUT') return;
-        const id = this.dataset.id;
-        window.location.href = `detail.jsp?id=${id}`;
-      });
-    });
-
-    function confirmSubmit() {
-      const checked = document.querySelectorAll('.row-check:checked');
-      if (checked.length === 0) {
-        alert("提出する申請を選択してください。");
-        return false;
-      }
-
-      for (const cb of checked) {
-        const row = cb.closest('tr');
-        const status = row.getAttribute('data-status');
-        if (status !== '未提出') {
-          alert("未提出の申請のみ提出可能です。");
-          return false;
-        }
-      }
-
-      modal.classList.remove('hidden');
-      return false;
-    }
-
-    function closeModal() {
-      modal.classList.add('hidden');
-    }
-
-    function submitForm() {
-      document.querySelector('form').submit();
-    }
-  </script>
+	<script>
+	  const checkboxes = document.querySelectorAll('.row-check');
+	  const editBtn = document.getElementById('editBtn');
+	  const deleteBtn = document.getElementById('deleteBtn');
+	  const modal = document.getElementById('submitModal');
+	
+	  document.getElementById('selectAll').addEventListener('change', function () {
+	    checkboxes.forEach(cb => cb.checked = this.checked);
+	    updateToolbarState();
+	  });
+	
+	  checkboxes.forEach(cb => cb.addEventListener('change', updateToolbarState));
+	
+	  function updateToolbarState() {
+	    const checked = document.querySelectorAll('.row-check:checked');
+	    editBtn.disabled = (checked.length !== 1);
+	    deleteBtn.disabled = (checked.length === 0);
+	  }
+	
+	  document.getElementById('statusFilter').addEventListener('change', function () {
+	    const selected = this.value;
+	    const rows = document.querySelectorAll('#applicationTable tbody tr');
+	    rows.forEach(row => {
+	      const status = row.getAttribute('data-status');
+	      row.style.display = (!selected || selected === status) ? '' : 'none';
+	    });
+	  });
+	
+	  document.querySelectorAll('.clickable-row').forEach(row => {
+	    row.addEventListener('click', function (e) {
+	      if (e.target.tagName === 'INPUT') return;
+	      const id = this.dataset.id;
+	      window.location.href = 'applicationDetail?id=' + id;
+	    });
+	  });
+	
+	  function confirmSubmit() {
+	    const checked = document.querySelectorAll('.row-check:checked');
+	    if (checked.length === 0) {
+	      Swal.fire({
+	        title: '注意',
+	        text: '提出する申請を選択してください。',
+	        confirmButtonText: 'OK',
+	        confirmButtonColor: '#00a1bb'
+	      });
+	      return false;
+	    }
+	
+	    for (const cb of checked) {
+	      const row = cb.closest('tr');
+	      const status = row.getAttribute('data-status');
+	      if (status !== '未提出') {
+	        Swal.fire({
+	          title: '注意',
+	          text: '未提出の申請のみ提出可能です。',
+	          confirmButtonText: 'OK',
+	          confirmButtonColor: '#00a1bb'
+	        });
+	        return false;
+	      }
+	    }
+	
+	    modal.classList.remove('hidden');
+	    return false;
+	  }
+	
+	  function closeModal() {
+	    modal.classList.add('hidden');
+	  }
+	
+	  function submitForm() {
+	    document.querySelector('form').submit();
+	  }
+	
+	  window.addEventListener("pageshow", function () {
+	    document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
+	    document.getElementById('submitModal').classList.add('hidden');
+	    updateToolbarState();
+	  });
+	</script>
+	
+	<script>
+	<% if (request.getAttribute("message") != null) { %>
+	  Swal.fire({
+	    icon: 'warning',
+	    title: '注意',
+	    text: '<%= request.getAttribute("message") %>',
+	    confirmButtonText: 'OK'
+	  });
+	<% } %>
+	</script>
 </body>
 </html>

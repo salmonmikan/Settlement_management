@@ -47,7 +47,7 @@
         <div class="menu-block">
           <h3>メニュー</h3>
           <ul>
-            <li><a href="<%= request.getContextPath() %>/app">申請一覧</a></li>
+           <li><a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧</a></li>
             <hr>
             <li><a href="#">承認申請一覧</a></li>
             <li><a href="#">承認履歴</a></li>
@@ -60,9 +60,6 @@
             <li><a href="#">支払い管理</a></li>
             <li><a href="#">パスワード変更</a></li>
           </ul>
-        </div>
-        <div class="welcome-message">
-          ようこそ、<%= staffName %> さん！（管理者）
         </div>
       </div>
 

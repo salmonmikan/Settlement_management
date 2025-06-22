@@ -33,16 +33,12 @@
 		  <div class="menu-block">
 		    <h3>メニュー</h3>
 		    <ul>
-		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧</a></li>
+		      <li><a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧</a></li>
 		      <li><a href="#">承認する</a></li>
 		      <li><a href="#">承認履歴</a></li>
 		       <hr>
 		      <li><a href="#">パスワード変更</a></li>
 		    </ul>
-		  </div>
-		  
-		  <div class="welcome-message">
-		    ようこそ、<%= staffName %> 様！
 		  </div>
 	  </div>
 
