@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
-		String staffName = (String) session.getAttribute("staffName");
+		String staffName = (String) session.getAttribute("fullName");
 		if (staffName == null) {
 			response.sendRedirect(request.getContextPath() + "/views/login.jsp");
 			return;
@@ -39,10 +39,7 @@
 		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧を見る</a></li>
 		    </ul>
 		  </div>
-		  
-		  <div class="welcome-message">
-		    ようこそ、<%= staffName %> さん！
-		  </div>
+		 
 	  </div>
 
       <!-- Main content -->

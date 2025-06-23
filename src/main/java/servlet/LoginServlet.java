@@ -1,5 +1,4 @@
 package servlet;
-
 import java.io.IOException;
 
 import jakarta.servlet.ServletException;
@@ -9,54 +8,50 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import dao.StaffDAO;
-import model.Staff;
+import dao.EmployeeDAO;
+import model.Employee;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
 
-    // Xử lý GET (ví dụ: người dùng mở trực tiếp Servlet bằng URL)
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
     }
 
-    // Xử lý POST (submit form đăng nhập)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String staffId = request.getParameter("staffId");
+        String loginId = request.getParameter("staffId");
         String password = request.getParameter("password");
-        
 
-        StaffDAO dao = new StaffDAO();
-        Staff staff = dao.findByIdAndPassword(staffId, password);
+        EmployeeDAO dao = new EmployeeDAO();
+        Employee emp = dao.login(loginId, password);  // DAOでハッシュを処理した。
 
-        if (staff != null) {
+        if (emp != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("staffId", staff.getStaffId());
-            session.setAttribute("staffName", staff.getName()); 
-            
-            //画面遷移by son
-            session.setAttribute("position", staff.getPosition());
-            session.setAttribute("department", staff.getDepartment());
-            
-            String position = (String) session.getAttribute("position");
-            String department = (String) session.getAttribute("department");
-            
-            if(("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
-            }else if("一般社員".equals(position) && "管理部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
-            }else if("部長".equals(position) && "営業部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/buchougamen.jsp").forward(request, response);
+            session.setAttribute("staffId", emp.getEmployeeId());
+            session.setAttribute("fullName", emp.getFullName());
+            session.setAttribute("position", emp.getPositionId());    
+            session.setAttribute("department", emp.getDepartmentId());
+
+            // 画面遷移（部署管理作成できたら、これは修正）
+            String position = emp.getPositionId();
+            String department = emp.getDepartmentId();
+
+            if (("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
+                request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
+            } else if ("一般社員".equals(position) && "管理部".equals(department)) {
+                request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
+            } else if ("部長".equals(position) && "営業部".equals(department)) {
+                request.getRequestDispatcher("/WEB-INF/views/buchougamen.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "未定義のロールです");
+                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             }
-            
         } else {
-        	System.out.println("Login failed - user not found");
             request.setAttribute("error", "IDまたはパスワードが違います");
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }

@@ -1,7 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
-  String staffName = "石井 和也"; // demo用
-  String role = "admin"; // manager/admin で切り替え可能
+		String staffName = (String) session.getAttribute("fullName");
+		if (staffName == null) {
+			response.sendRedirect(request.getContextPath() + "/views/login.jsp");
+			return;
+		};
 %>
 <!DOCTYPE html>
 <html lang="ja">
@@ -54,15 +57,12 @@
             <hr>
             <li><a href="#">プロジェクト管理</a></li>
             <li><a href="<%= request.getContextPath() %>/employeeList">社員管理</a></li>
-            <li><a href="department.jsp">部署管理</a></li>
+            <li><a href="<%= request.getContextPath() %>/department">部署管理</a></li>
             <li><a href="#">役職管理</a></li>
             <hr>
             <li><a href="#">支払い管理</a></li>
             <li><a href="#">パスワード変更</a></li>
           </ul>
-        </div>
-        <div class="welcome-message">
-          ようこそ、<%= staffName %> さん！（管理者）
         </div>
       </div>
 

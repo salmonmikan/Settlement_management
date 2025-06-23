@@ -122,8 +122,6 @@ public class EmployeeDAO {
                 e.setJoinDate(rs.getDate("join_date"));
                 e.setLoginId(rs.getString("login_id"));
                 e.setPassword(rs.getString("password"));
-
-                // kết hợp mã + tên hiển thị cho dễ nhìn
                 e.setDepartmentId(rs.getString("department_id") + " : " + rs.getString("department_name"));
                 e.setPositionId(rs.getString("position_id") + " : " + rs.getString("position_name"));
 
@@ -136,5 +134,50 @@ public class EmployeeDAO {
 
         return list;
     }
+    
+    //LOGIN CHECK
+    public Employee login(String loginId, String rawPassword) {
+        String sql = """
+            SELECT 
+                p.employee_id,
+                p.full_name,
+                a.login_id,
+                a.password,
+                d.department_name,
+                pos.position_name
+            FROM personal_info p
+            JOIN account_info a ON p.employee_id = a.employee_id
+            JOIN specification_info s ON p.employee_id = s.employee_id
+            JOIN department_master d ON s.department_id = d.department_id
+            JOIN position_master pos ON s.position_id = pos.position_id
+            WHERE a.login_id = ? AND a.password = ?
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            String hashed = hashPassword(rawPassword);
+            ps.setString(1, loginId);
+            ps.setString(2, hashed);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Employee e = new Employee();
+                    e.setEmployeeId(rs.getString("employee_id"));
+                    e.setFullName(rs.getString("full_name"));
+                    e.setLoginId(rs.getString("login_id"));
+                    e.setPassword(rs.getString("password"));
+                    e.setDepartmentId(rs.getString("department_name"));
+                    e.setPositionId(rs.getString("position_name"));
+                    return e;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

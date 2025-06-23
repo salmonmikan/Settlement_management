@@ -1,18 +1,24 @@
 package servlet;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
 import dao.ApplicationDAO;
 import dao.BusinessTripDAO;
 import dao.ReceiptDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-
-import java.io.IOException;
-import java.util.*;
 
 @WebServlet("/submitBusinessTrip")
 @MultipartConfig

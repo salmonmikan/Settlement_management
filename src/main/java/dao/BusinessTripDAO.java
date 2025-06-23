@@ -1,12 +1,16 @@
 // ✅ BusinessTripDAO.java: xử lý DB cho bảng business_trip liên quan
 package dao;
 
+import static util.DBConnection.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
-
-import java.sql.*;
-import static util.DBConnection.getConnection;
 
 public class BusinessTripDAO {
 
