@@ -8,6 +8,8 @@ if (staffName == null) {
 %>
 <% Boolean editMode = (Boolean) request.getAttribute("editMode"); %>
 <% Integer applicationId = (Integer) request.getAttribute("applicationId"); %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Receipt" %>
 
 <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
 <input type="hidden" name="applicationId" value="<%= applicationId != null ? applicationId : "" %>">
@@ -161,7 +163,25 @@ window.onload = function() {
             <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
             <ul class="fileList"></ul>
           </div>
-
+		  <%
+			  List<model.Receipt> receipts = (List<model.Receipt>) request.getAttribute("receipts");
+			  Boolean isDetailMode = (Boolean) request.getAttribute("isDetailMode");
+			  isDetailMode = (isDetailMode != null) ? isDetailMode : false;
+			  if (isDetailMode && receipts != null && !receipts.isEmpty()) {
+			%>
+			  <div class="form-group">
+			    <label>添付ファイル（確認用）</label>
+			    <ul>
+			      <% for (model.Receipt r : receipts) { %>
+			        <li>
+			          <a href="<%= request.getContextPath() + "/uploads/" + r.getStoredFilePath() %>" target="_blank">
+			            <%= r.getOriginalFileName() %>
+			          </a>
+			        </li>
+			      <% } %>
+			    </ul>
+			  </div>
+			<% } %>
           <div style="text-align: center;">
             <button type="button" class="plus-btn" onclick="addTransBlock()">＋</button>
           </div>

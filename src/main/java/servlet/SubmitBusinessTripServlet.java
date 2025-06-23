@@ -61,7 +61,7 @@ public class SubmitBusinessTripServlet extends HttpServlet {
                 if (i < step2Files.size()) {
                     String filePath = step2Files.get(i++);
                     String originalName = filePath.substring(filePath.indexOf("_") + 1);
-                    receiptDAO.insertReceipt("step2", detailId, originalName, filePath);
+                    receiptDAO.insertReceipt("step2", detailId, originalName, filePath, applicationId, "step2");
                     System.out.println("📥 INSERT FILE: " + originalName + " to receipt_file, refId=" + detailId);
                 }
             }
@@ -74,7 +74,7 @@ public class SubmitBusinessTripServlet extends HttpServlet {
                 if (j < step3Files.size()) {
                     String filePath = step3Files.get(j++);
                     String originalName = filePath.substring(filePath.indexOf("_") + 1);
-                    receiptDAO.insertReceipt("step3", detailId, originalName, filePath);
+                    receiptDAO.insertReceipt("step3", detailId, originalName, filePath, applicationId, "step3");
                     System.out.println("📥 INSERT FILE: " + originalName + " to receipt_file, refId=" + detailId);
                 }
             }

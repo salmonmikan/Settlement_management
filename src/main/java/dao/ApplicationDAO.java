@@ -1,4 +1,3 @@
-// ApplicationDAO.java
 package dao;
 
 import model.Application;
@@ -43,7 +42,7 @@ public class ApplicationDAO {
                 Application a = new Application();
                 a.setApplicationId(rs.getInt("application_id"));
                 a.setApplicationType(rs.getString("application_type"));
-                a.setApplicationDate(rs.getTimestamp("application_date"));
+                a.setApplicationDate(rs.getTimestamp("application_date")); // ✅ Đúng
                 a.setAmount(rs.getInt("amount"));
                 a.setStatus(rs.getString("status"));
                 list.add(a);
@@ -66,7 +65,7 @@ public class ApplicationDAO {
                     Application a = new Application();
                     a.setApplicationId(rs.getInt("application_id"));
                     a.setApplicationType(rs.getString("application_type"));
-                    a.setApplicationDate(rs.getTimestamp("application_date"));
+                    a.setApplicationDate(rs.getTimestamp("application_date")); // ✅ Đúng
                     a.setAmount(rs.getInt("amount"));
                     a.setStatus(rs.getString("status"));
                     list.add(a);
@@ -133,6 +132,7 @@ public class ApplicationDAO {
         }
         return null;
     }
+
     public String getApplicationTypeById(int applicationId) throws Exception {
         String sql = "SELECT application_type FROM application_header WHERE application_id = ?";
         try (Connection conn = getConnection();
@@ -144,13 +144,72 @@ public class ApplicationDAO {
         }
         return null;
     }
- // Cập nhật tổng tiền khi edit
+
+    // 🔧 Sửa lỗi column name
     public void updateApplicationAmount(int applicationId, int newAmount) throws Exception {
-        String sql = "UPDATE application_header SET amount = ? WHERE id = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "UPDATE application_header SET amount = ? WHERE application_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, newAmount);
             ps.setInt(2, applicationId);
             ps.executeUpdate();
         }
+    }
+
+    public List<Application> getSubmittedApplicationsByDepartment(String department) throws Exception {
+        List<Application> list = new ArrayList<>();
+        String sql = """
+            SELECT ah.application_id, ah.application_type, ah.application_date,
+                   ah.amount, ah.status, s.staff_id, s.name
+            FROM application_header ah
+            JOIN staff s ON ah.staff_id = s.staff_id
+            WHERE s.department = ? AND ah.status = '提出済み'
+            ORDER BY ah.application_date DESC
+        """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, department);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Application a = new Application();
+                    a.setApplicationId(rs.getInt("application_id"));
+                    a.setApplicationType(rs.getString("application_type"));
+                    a.setApplicationDate(rs.getTimestamp("application_date")); // ✅ Đúng
+                    a.setAmount(rs.getInt("amount"));
+                    a.setStatus(rs.getString("status"));
+                    a.setStaffId(rs.getString("staff_id"));
+                    a.setStaffName(rs.getString("name"));
+                    list.add(a);
+                }
+            }
+        }
+        return list;
+    }
+
+    // ✅ Thêm hàm còn thiếu để lấy chi tiết application theo ID
+    public Application findApplicationById(int applicationId) throws Exception {
+        String sql = "SELECT * FROM application_header WHERE application_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, applicationId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Application app = new Application();
+                    app.setApplicationId(rs.getInt("application_id"));
+                    app.setStaffId(rs.getString("staff_id"));
+                    app.setApplicationType(rs.getString("application_type"));
+                    app.setApplicationDate(rs.getTimestamp("application_date")); // ✅ Đúng
+                    app.setAmount(rs.getInt("amount"));
+                    app.setStatus(rs.getString("status"));
+                    return app;
+                }
+            }
+        }
+        return null;
     }
 }

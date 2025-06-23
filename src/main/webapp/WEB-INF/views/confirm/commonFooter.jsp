@@ -17,23 +17,35 @@
   isDetailMode = (isDetailMode != null) ? isDetailMode : false;
 
   Object appIdObj = request.getAttribute("application_id");
+  Boolean isApprovalScreen = (Boolean) request.getAttribute("isApprovalScreen");
+  isApprovalScreen = (isApprovalScreen != null) ? isApprovalScreen : false;
 %>
 
 <div class="btn-section">
-  	<form action="<%= request.getContextPath() %>/businessTripConfirmBack" method="post" style="display:inline;">
-  	   <button type="submit">戻る</button>
-	</form>
+  <form action="<%= request.getContextPath() %>/businessTripConfirmBack" method="post" style="display:inline;">
+    <button type="submit">戻る</button>
+  </form>
 
-	  <% if (isDetailMode && appIdObj != null) { %>
-	  <form action="<%= request.getContextPath() %>/editBusinessTrip" method="get" style="display:inline;">
-	    <input type="hidden" name="id" value="<%= appIdObj %>">
-	    <button type="submit">編集</button>
-	  </form>
-	<% } else { %>
-	  <form action="<%= actionUrl %>" method="post" style="display:inline;">
-	    <button type="submit">送信</button>
-	  </form>
-	<% } %>
+  <% if (isApprovalScreen && appIdObj != null) { %>
+    <!-- 差し戻し -->
+    <form action="<%= request.getContextPath() %>/rejectApplication" method="post" style="display:inline;">
+      <input type="hidden" name="id" value="<%= appIdObj %>">
+      <button type="submit">差し戻し</button>
+    </form>
+
+  <% } else if (isDetailMode && appIdObj != null) { %>
+    <!-- 編集 -->
+    <form action="<%= request.getContextPath() %>/editBusinessTrip" method="get" style="display:inline;">
+      <input type="hidden" name="id" value="<%= appIdObj %>">
+      <button type="submit">編集</button>
+    </form>
+
+  <% } else { %>
+    <!-- 送信 -->
+    <form action="<%= actionUrl %>" method="post" style="display:inline;">
+      <button type="submit">送信</button>
+    </form>
+  <% } %>
 </div>
 
 

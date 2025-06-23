@@ -232,7 +232,7 @@ public class BusinessTripDAO {
                 bean.setStep2List(s2List);
                 bean.setStep3List(s3List);
         }
-        
+ 
 
         // Tổng tiền
         bean.setTotalStep2Amount(bean.getStep2List().stream().mapToInt(s -> Integer.parseInt(s.getExpenseTotal())).sum());
@@ -240,5 +240,9 @@ public class BusinessTripDAO {
 
         return bean;
     }
-}
+    }
+        public BusinessTripBean findBusinessTripBean(int applicationId) throws Exception {
+            return loadBusinessTripByApplicationId(applicationId);
+        
+    }
 }

@@ -145,14 +145,17 @@ CREATE TABLE business_trip_detail (
 -- business_trip_detailの各ブロックと1対多で紐づく
 -- ref_tableとref_idで関連付け先を動的に識別（拡張性あり）
 -- ファイル名、保存パス、アップロード日時などを管理
-CREATE TABLE receipt_file (
-  receipt_id INT AUTO_INCREMENT PRIMARY KEY,
-  ref_table VARCHAR(50) NOT NULL,        -- Tên bảng liên kết (ở đây: luôn là 'business_trip_detail')
-  ref_id INT NOT NULL,                   -- ID bản ghi (ở đây: business_trip_detail.detail_id)
+DROP TABLE IF EXISTS receipt_file;
 
-  original_file_name VARCHAR(255) NOT NULL,    -- Tên file user upload
-  stored_file_path VARCHAR(255) NOT NULL,      -- Đường dẫn thật (VD: /uploads/...)
-  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE receipt_file (
+  receipt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ref_table VARCHAR(50) NOT NULL,
+  ref_id INT NOT NULL,
+  original_file_name VARCHAR(255) NOT NULL,
+  stored_file_path VARCHAR(255) NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  application_id INT,
+  application_type VARCHAR(10)
 );
 
 
