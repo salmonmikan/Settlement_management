@@ -43,7 +43,7 @@
               <th>申請ID</th>
               <th>申請種別</th>
               <th>申請時間</th>
-              <th>金額（含税）</th>
+              <th>金額（税込）</th>
               <th>
                 <select id="statusFilter" class="status-filter-button">
                   <option value="">すべて</option>

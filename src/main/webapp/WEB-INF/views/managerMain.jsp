@@ -43,24 +43,7 @@
     <div class="staff-dashboard-wrapper">
 
       <!-- Sidebar -->
-      <div class="sidebar">
-        <div class="menu-block">
-          <h3>メニュー</h3>
-          <ul>
-            <li><a href="<%= request.getContextPath() %>/app">申請一覧</a></li>
-            <hr>
-            <li><a href="#">承認申請一覧</a></li>
-            <hr>
-            <li><a href="<%= request.getContextPath() %>/employeeList">社員管理</a></li>
-            <li><a href="department.jsp">部署管理</a></li>
-            <li><a href="#">役職管理</a></li>
-            <li><a href="<%= request.getContextPath() %>/project_management">プロジェクト管理</a></li>
-            <hr>
-            <li><a href="#">支払い管理</a></li>
-            <li><a href="#">パスワード変更</a></li>
-          </ul>
-        </div>
-      </div>
+      <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
       <!-- Main content -->
       <div class="staff-main-content">

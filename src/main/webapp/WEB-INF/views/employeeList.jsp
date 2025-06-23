@@ -32,7 +32,7 @@
       background-color: #e6f0fa;
     }
     h2 {
-      color: #2c7be5;
+      color: var;
       margin-bottom: 20px;
       text-align: center;
     }

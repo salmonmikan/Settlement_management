@@ -15,7 +15,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>社員一覧 - 管理画面</title>
+<title>プロジェクト一覧 - 管理画面</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
 <style>
@@ -46,7 +46,7 @@ th {
 }
 
 h2 {
-	color: #2c7be5;
+	color: var;
 	margin-bottom: 20px;
 	text-align: center;
 }
