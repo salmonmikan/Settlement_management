@@ -13,7 +13,7 @@
 
     <div class="btn-section">
       <a href="<%= request.getContextPath() %>/home" class="btn">スタッフメニューへ戻る</a>
-      <a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧を見る</a>
+      <a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧を見る</a>
     </div>
   </div>
 </body>

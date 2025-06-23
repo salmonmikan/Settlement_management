@@ -34,16 +34,26 @@ public class SubmitBusinessTripServlet extends HttpServlet {
 
             int totalAmount = bt.getTotalStep2Amount() + bt.getTotalStep3Amount();
 
+            boolean editMode = Boolean.parseBoolean(request.getParameter("editMode"));
+            int applicationId;
             ApplicationDAO appDAO = new ApplicationDAO();
-            int applicationId = appDAO.insertApplication("出張費", staffId, totalAmount);
-
             BusinessTripDAO tripDAO = new BusinessTripDAO();
+            ReceiptDAO receiptDAO = new ReceiptDAO();
+
+            if (editMode) {
+                applicationId = Integer.parseInt(request.getParameter("applicationId"));
+                appDAO.updateApplicationAmount(applicationId, totalAmount); // cần đảm bảo đã có hàm này
+                tripDAO.deleteExistingTripDetails(applicationId); // bạn cần viết hàm này để xóa detail cũ
+
+            } else {
+                applicationId = appDAO.insertApplication("出張費", staffId, totalAmount);
+            }
+
             int tripAppId = tripDAO.insertBusinessTripApplication(applicationId, bt.getStep1Data());
 
-            ReceiptDAO receiptDAO = new ReceiptDAO();
             Map<String, List<String>> receiptMap = (Map<String, List<String>>) session.getAttribute("receiptMap");
 
-            // ✅ step2
+            // step2
             List<String> step2Files = receiptMap != null ? receiptMap.getOrDefault("step2", new ArrayList<>()) : new ArrayList<>();
             int i = 0;
             for (Step2Detail s2 : bt.getStep2List()) {
@@ -56,7 +66,7 @@ public class SubmitBusinessTripServlet extends HttpServlet {
                 }
             }
 
-            // ✅ step3
+            // step3
             List<String> step3Files = receiptMap != null ? receiptMap.getOrDefault("step3", new ArrayList<>()) : new ArrayList<>();
             int j = 0;
             for (Step3Detail s3 : bt.getStep3List()) {
@@ -71,6 +81,7 @@ public class SubmitBusinessTripServlet extends HttpServlet {
 
             session.removeAttribute("businessTripBean");
             session.removeAttribute("receiptMap");
+
             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
         } catch (Exception e) {

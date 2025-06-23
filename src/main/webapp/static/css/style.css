@@ -436,9 +436,10 @@ th {
   gap: 0.5rem;
   position: sticky;
   top: 0;
+  padding: 5px;
   z-index: 100;
   margin-bottom: -10px;
-  background: var(--bg-color);
+  background: var(--primary-color);
 }
 .action-toolbar button {
   background: var(--primary-color);
