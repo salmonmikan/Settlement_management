@@ -46,6 +46,8 @@ public class LoginServlet extends HttpServlet {
             
             String position = (String) session.getAttribute("position");
             String department = (String) session.getAttribute("department");
+            System.out.println("position = " + position);
+            System.out.println("department = " + department);
             
             if(("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
             	request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
