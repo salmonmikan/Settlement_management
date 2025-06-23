@@ -71,11 +71,12 @@
   <div class="page-container">
     <h2>申請一覧</h2>
 
-    <div class="action-toolbar">
+    <!-- <div class="action-toolbar">
       <div class="spacer"></div>
       <button id="editBtn" disabled>編集</button>
       <button id="deleteBtn" disabled>削除</button>
-    </div>
+    </div> -->
+    <!-- あとで作成する -->
 
     <form action="submitApplication" method="post">
       <div class="table-area">
