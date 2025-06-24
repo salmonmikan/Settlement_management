@@ -54,16 +54,18 @@ public class SubmitBusinessTripServlet extends HttpServlet {
             Map<String, List<String>> receiptMap = (Map<String, List<String>>) session.getAttribute("receiptMap");
 
             // step2
-            List<String> step2Files = receiptMap != null ? receiptMap.getOrDefault("step2", new ArrayList<>()) : new ArrayList<>();
-            int i = 0;
+            Map<Integer, List<String>> step2Map = (Map<Integer, List<String>>) session.getAttribute("step2Receipts");
+            int blockIdx = 0;
             for (Step2Detail s2 : bt.getStep2List()) {
                 int detailId = tripDAO.insertStep2Detail(tripAppId, s2);
-                if (i < step2Files.size()) {
-                    String filePath = step2Files.get(i++);
+                List<String> files = step2Map != null ? step2Map.getOrDefault(blockIdx, new ArrayList<>()) : new ArrayList<>();
+
+                for (String filePath : files) {
                     String originalName = filePath.substring(filePath.indexOf("_") + 1);
                     receiptDAO.insertReceipt("step2", detailId, originalName, filePath, applicationId, "step2");
-                    System.out.println("📥 INSERT FILE: " + originalName + " to receipt_file, refId=" + detailId);
+                    System.out.println("📥 INSERT FILE: block=" + blockIdx + ", file=" + originalName);
                 }
+                blockIdx++;
             }
 
             // step3

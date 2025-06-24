@@ -8,7 +8,7 @@ import static util.DBConnection.getConnection;
 public class ReceiptDAO {
 
     /**
-     * Lưu thông tin file đính kèm vào bảng receipt_file (bao gồm application_id và application_type).
+     * Lưu thông tin file đính kèm vào bảng receipt_file (application_id, ref_table, ref_id, application_type).
      */
     public void insertReceipt(String refTable, int refId, String originalName, String storedPath, int applicationId, String applicationType) throws Exception {
         String sql = "INSERT INTO receipt_file (ref_table, ref_id, original_file_name, stored_file_path, application_id, application_type) VALUES (?, ?, ?, ?, ?, ?)";

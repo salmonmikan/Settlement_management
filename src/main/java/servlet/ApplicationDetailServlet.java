@@ -64,7 +64,8 @@ public class ApplicationDetailServlet extends HttpServlet {
                 BusinessTripDAO btDao = new BusinessTripDAO();
                 BusinessTripBean bean = btDao.findBusinessTripBean(applicationId);
                 request.setAttribute("businessTripBean", bean);
-                request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/detail/applicationDetail.jsp").forward(request, response);
+                
                 
                 return;
             } else if ("交通費".equals(application.getApplicationType())) {

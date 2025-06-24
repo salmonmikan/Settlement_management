@@ -1,23 +1,21 @@
 package servlet;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.*;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
-import dao.ProjectDAO;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 import model.Project;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.*;
+
+import dao.ProjectDAO;
 
 @MultipartConfig
 @WebServlet(urlPatterns = {"/businessTrip", "/businessTripStep2Back", "/businessTripStep3Back", "/businessTripConfirmBack"})
@@ -62,6 +60,7 @@ public class BusinessTripServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
                 break;
             default:
+                session.removeAttribute("businessTripBean");
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
         }
     }
@@ -81,34 +80,6 @@ public class BusinessTripServlet extends HttpServlet {
         if (bean == null) {
             bean = new BusinessTripBean();
         }
-
-        String uploadPath = getServletContext().getRealPath("/uploads");
-        new File(uploadPath).mkdirs();
-        Collection<Part> parts = request.getParts();
-        List<String> step2Files = new ArrayList<>();
-        List<String> step3Files = new ArrayList<>();
-
-        for (Part part : parts) {
-            String submittedFileName = part.getSubmittedFileName();
-            if (submittedFileName != null && part.getSize() > 0) {
-                String original = Paths.get(submittedFileName).getFileName().toString();
-                String stored = UUID.randomUUID() + "_" + original;
-                part.write(uploadPath + File.separator + stored);
-
-                String partName = part.getName();
-                if (partName != null && partName.startsWith("receiptStep2_")) {
-                    step2Files.add("uploads/" + stored);
-                } else if (partName != null && partName.startsWith("receiptStep3_")) {
-                    step3Files.add("uploads/" + stored);
-                }
-            }
-        }
-
-        Map<String, List<String>> receiptMap = (Map<String, List<String>>) session.getAttribute("receiptMap");
-        if (receiptMap == null) receiptMap = new HashMap<>();
-        if (!step2Files.isEmpty()) receiptMap.put("step2", step2Files);
-        if (!step3Files.isEmpty()) receiptMap.put("step3", step3Files);
-        session.setAttribute("receiptMap", receiptMap);
 
         switch (step) {
             case "1":
@@ -154,6 +125,35 @@ public class BusinessTripServlet extends HttpServlet {
                             hotelFees[i], dailyAllowances[i], days[i], totals[i], memos[i]
                     ));
                 }
+
+                String uploadPath = getServletContext().getRealPath("/uploads");
+                new File(uploadPath).mkdirs();
+
+                Map<String, List<String>> receiptMap = new HashMap<>();
+                Map<Integer, List<String>> step2BlockMap = new HashMap<>();
+
+                for (Part part : request.getParts()) {
+                    String fieldName = part.getName();
+                    if (fieldName.startsWith("receiptStep2_")) {
+                        String idxStr = fieldName.replaceAll("[^0-9]", "");
+                        if (!idxStr.isEmpty()) {
+                            int blockIndex = Integer.parseInt(idxStr);
+                            String submittedFileName = part.getSubmittedFileName();
+                            if (submittedFileName != null && part.getSize() > 0) {
+                                String original = Paths.get(submittedFileName).getFileName().toString();
+                                String stored = UUID.randomUUID() + "_" + original;
+                                part.write(uploadPath + File.separator + stored);
+                                step2BlockMap.computeIfAbsent(blockIndex, k -> new ArrayList<>()).add("uploads/" + stored);
+                            }
+                        }
+                    }
+                }
+
+                // Flatten for submit stage
+                receiptMap.put("step2", step2BlockMap.values().stream().flatMap(List::stream).toList());
+                session.setAttribute("receiptMap", receiptMap);
+                session.setAttribute("step2Receipts", step2BlockMap);
+
                 bean.setStep2List(step2List);
                 session.setAttribute("businessTripBean", bean);
                 request.setAttribute("step1Data", bean.getStep1Data());
@@ -181,7 +181,6 @@ public class BusinessTripServlet extends HttpServlet {
                 }
 
                 bean.setStep3List(step3List);
-
                 int total2 = bean.getStep2List().stream().mapToInt(s -> Integer.parseInt(s.getExpenseTotal())).sum();
                 int total3 = bean.getStep3List().stream().mapToInt(s -> Integer.parseInt(s.getTransExpenseTotal())).sum();
 
