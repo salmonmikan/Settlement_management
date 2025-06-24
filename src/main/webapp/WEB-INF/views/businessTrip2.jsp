@@ -38,110 +38,125 @@
     }
   </style>
 </head>
-<body>
+	<body>
   <%
-	  bean.BusinessTripBean.BusinessTripBean tripBean = (bean.BusinessTripBean.BusinessTripBean) session.getAttribute("businessTripBean");
-	  out.println("<!-- DEBUG: tripBean = " + tripBean + " -->");
-	  if (tripBean != null && tripBean.getStep1Data() != null) {
-	    out.println("<!-- DEBUG: startDate = " + tripBean.getStep1Data().getStartDate() + " -->");
-	    out.println("<!-- DEBUG: endDate = " + tripBean.getStep1Data().getEndDate() + " -->");
-	  }
-	%>
+    bean.BusinessTripBean.BusinessTripBean tripBean = (bean.BusinessTripBean.BusinessTripBean) session.getAttribute("businessTripBean");
+    List<bean.BusinessTripBean.Step2Detail> s2List = (tripBean != null) ? tripBean.getStep2List() : null;
+   
+    if ((startDate == null || startDate.isEmpty()) || (endDate == null || endDate.isEmpty())) {
+      if (tripBean != null && tripBean.getStep1Data() != null) {
+        startDate = tripBean.getStep1Data().getStartDate();
+        endDate = tripBean.getStep1Data().getEndDate();
+      }
+    }
+    if (startDate == null) startDate = "";
+    if (endDate == null) endDate = "";
+  %>
+
   <div class="page-container">
     <h2>日当・宿泊費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
       <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
-	  <% if (editMode != null && editMode) { %>
-	    <input type="hidden" name="applicationId" value="<%= applicationId %>">
-	  <% } %>
-	  
-      <!-- ✅ step input đặt đúng vị trí -->
+      <% if (editMode != null && editMode) { %>
+        <input type="hidden" name="applicationId" value="<%= applicationId %>">
+      <% } %>
       <input type="hidden" name="step" value="2">
-      <input type="hidden" name="endDateHidden" value="<%= endDate %>">
       <input type="hidden" name="startDateHidden" value="<%= startDate %>">
+      <input type="hidden" name="endDateHidden" value="<%= endDate %>">
 
-      <div style="display: flex; flex-direction: column; gap: 10px" id="allowance-container">
-        <div class="form-section allowance-block" style="position: relative;" data-hotel-fee="">
+      <div id="allowance-container">
+        <% 
+          if (s2List != null && !s2List.isEmpty()) {
+            for (int i = 0; i < s2List.size(); i++) {
+              bean.BusinessTripBean.Step2Detail s2 = s2List.get(i);
+        %>
+        <div class="form-section allowance-block" style="position: relative;" data-hotel-fee="<%= s2.getHotelFee() %>">
           <button type="button" class="remove-btn" onclick="removeBlock(this)">×</button>
 
           <div class="form-group">
-			  <label>地域区分</label>
-			  <select name="regionType[]" onchange="updateAllowanceAndHotel(this)">
-			    <option value="">選択してください</option>
-			    <option value="物価高水準地域" ${s2.regionType == '物価高水準地域' ? 'selected' : ''}>東京</option>
-			    <option value="上記以外" ${s2.regionType == '上記以外' ? 'selected' : ''}>東京以外</option>
-			    <option value="会社施設・縁故先宿泊" ${s2.regionType == '会社施設・縁故先宿泊' ? 'selected' : ''}>会社施設・縁故先宿泊</option>
-			  </select>
-			</div>
-			
-			<div class="form-group">
-			  <label>出張区分</label>
-			  <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
-			    <option value="">選択してください</option>
-			    <option value="短期出張" ${s2.tripType == '短期出張' ? 'selected' : ''}>短期出張</option>
-			    <option value="長期出張" ${s2.tripType == '長期出張' ? 'selected' : ''}>長期出張</option>
-			    <option value="研修出張" ${s2.tripType == '研修出張' ? 'selected' : ''}>研修出張</option>
-			  </select>
-			</div>
+            <label>地域区分</label>
+            <select name="regionType[]" onchange="updateAllowanceAndHotel(this)">
+              <option value="">選択してください</option>
+              <option value="物価高水準地域" <%= "物価高水準地域".equals(s2.getRegionType()) ? "selected" : "" %>>東京</option>
+              <option value="上記以外" <%= "上記以外".equals(s2.getRegionType()) ? "selected" : "" %>>東京以外</option>
+              <option value="会社施設・縁故先宿泊" <%= "会社施設・縁故先宿泊".equals(s2.getRegionType()) ? "selected" : "" %>>会社施設・縁故先宿泊</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>出張区分</label>
+            <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
+              <option value="">選択してください</option>
+              <option value="短期出張" <%= "短期出張".equals(s2.getTripType()) ? "selected" : "" %>>短期出張</option>
+              <option value="長期出張" <%= "長期出張".equals(s2.getTripType()) ? "selected" : "" %>>長期出張</option>
+              <option value="研修出張" <%= "研修出張".equals(s2.getTripType()) ? "selected" : "" %>>研修出張</option>
+            </select>
+          </div>
 
           <div class="form-group">
             <label>宿泊先</label>
-            <input type="text" name="hotel[]" placeholder="例:APAホテル">
+            <input type="text" name="hotel[]" value="<%= s2.getHotel() %>" placeholder="例:APAホテル">
           </div>
 
           <div class="form-group">
             <label>負担者</label>
-            <select name="burden[]" onchange="handleBurdenChange(this)" >
+            <select name="burden[]" onchange="handleBurdenChange(this)">
               <option value="">選択してください</option>
-              <option value="会社">会社</option>
-              <option value="自己">自己</option>
+              <option value="会社" <%= "会社".equals(s2.getBurden()) ? "selected" : "" %>>会社</option>
+              <option value="自己" <%= "自己".equals(s2.getBurden()) ? "selected" : "" %>>自己</option>
             </select>
           </div>
 
           <div class="form-group">
             <label>宿泊費</label>
-            <input type="number" name="hotelFee[]" readonly>
+            <input type="number" name="hotelFee[]" value="<%= s2.getHotelFee() %>" readonly>
           </div>
 
           <div class="form-group">
             <label>日当</label>
-            <input type="number" name="dailyAllowance[]" readonly>
+            <input type="number" name="dailyAllowance[]" value="<%= s2.getDailyAllowance() %>" readonly>
           </div>
 
           <div class="form-group">
             <label>日数</label>
-            <input type="number" name="days[]" min="1" onchange="calcTotal(this)">
+            <input type="number" name="days[]" value="<%= s2.getDays() %>" min="1" onchange="calcTotal(this)">
           </div>
 
           <div class="form-group">
             <label>合計</label>
-            <input type="number" name="expenseTotal[]" readonly>
+            <input type="number" name="expenseTotal[]" value="<%= s2.getExpenseTotal() %>" readonly>
           </div>
 
           <div class="form-group">
             <label>摘要</label>
-            <textarea name="memo[]" placeholder="メモなど"></textarea>
+            <textarea name="memo[]" placeholder="メモなど"><%= s2.getMemo() %></textarea>
           </div>
 
           <div class="form-group">
 			  <label>領収書添付（日当・宿泊費）</label>
-			  <input type="file" name="receiptStep2_0[]" multiple class="fileInput">
-			  <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
+			  <input type="file" name="receiptStep2_<%= i %>[]"
+			         class="fileInput" multiple>
 			  <ul class="fileList"></ul>
-		  </div>
-		  <%
+			</div>
+			
+			<%
 			  List<model.Receipt> receipts = (List<model.Receipt>) request.getAttribute("receipts");
+			  if (receipts == null) {
+			    receipts = (List<model.Receipt>) session.getAttribute("step2Receipts"); // ✅ lấy từ session nếu không có trong request
+			  }
+			
 			  Boolean isDetailMode = (Boolean) request.getAttribute("isDetailMode");
 			  isDetailMode = (isDetailMode != null) ? isDetailMode : false;
-			  if (isDetailMode && receipts != null && !receipts.isEmpty()) {
+			
+			  if (isDetailMode || (receipts != null && !receipts.isEmpty())) {
 			%>
 			  <div class="form-group">
 			    <label>添付ファイル（確認用）</label>
 			    <ul>
 			      <% for (model.Receipt r : receipts) { %>
 			        <li>
-			          <a href="<%= request.getContextPath() + "/uploads/" + r.getStoredFilePath() %>" target="_blank">
+			          <a href="<%= request.getContextPath() + "/" + r.getStoredFilePath() %>" target="_blank">
 			            <%= r.getOriginalFileName() %>
 			          </a>
 			        </li>
@@ -149,10 +164,21 @@
 			    </ul>
 			  </div>
 			<% } %>
-          <div style="text-align: center;">
-            <button type="button" class="plus-btn" onclick="addAllowanceBlock()">＋</button>
-          </div>
         </div>
+        <% 
+            }
+          } else {
+        %>
+        <!-- Nếu không có dữ liệu thì hiển thị block trống ban đầu -->
+        <div class="form-section allowance-block" style="position: relative;" data-hotel-fee="">
+          <button type="button" class="remove-btn" onclick="removeBlock(this)">×</button>
+          <!-- ... (các trường input trống như phần đầu của file bạn gửi trước đó) -->
+        </div>
+        <% } %>
+      </div>
+
+      <div style="text-align: center;">
+        <button type="button" class="plus-btn" onclick="addAllowanceBlock()">＋</button>
       </div>
 
       <div class="btn-section">
@@ -161,9 +187,6 @@
       </div>
     </form>
   </div>
-
-  <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
-
   <script>
   const startDate = new Date("<%= startDate != null ? startDate : "" %>");
   const endDate = new Date("<%= endDate != null ? endDate : "" %>");

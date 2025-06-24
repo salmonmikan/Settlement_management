@@ -65,4 +65,21 @@ public class BusinessTripBean {
     public void setStep3List(List<Step3Detail> step3List) {
         this.step3List = step3List;
     }
+ // 🟢 THÊM VÀO class BusinessTripBean
+    private boolean editMode;
+    private Integer applicationId;
+
+    public boolean isEditMode() {
+        return editMode;
+    }
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+    }
+
+    public Integer getApplicationId() {
+        return applicationId;
+    }
+    public void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
+    }
 }

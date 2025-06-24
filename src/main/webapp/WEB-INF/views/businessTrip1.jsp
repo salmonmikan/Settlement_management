@@ -31,10 +31,12 @@
   <div class="page-container">
     <h2>出張情報</h2>
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data" onsubmit="return setHiddenFields()">
-      <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
-	  <% if (editMode != null && editMode) { %>
-	    <input type="hidden" name="applicationId" value="<%= applicationId %>">
-	  <% } %>
+		<% 
+	      bean.BusinessTripBean.BusinessTripBean tripBean =
+	      (bean.BusinessTripBean.BusinessTripBean) session.getAttribute("businessTripBean");
+	    %>
+	  <input type="hidden" name="editMode" value="<%= tripBean != null && tripBean.isEditMode() ? "true" : "false" %>">
+	  <input type="hidden" name="applicationId" value="<%= tripBean != null ? tripBean.getApplicationId() : "" %>">
       <input type="hidden" name="step" value="1">
       <input type="hidden" name="totalDays" id="totalDays">
       <input type="hidden" name="startDateHidden" id="startDateHidden">
@@ -44,10 +46,9 @@
         <div class="form-group">
           <label>出張期間</label>
           <div style="display: flex; gap: 1rem;">
-            <!-- <input type="date" name="startDate" id="startDate" required> -->
-            <input type="date" name="startDate" id="startDate" value="${step1Data.startDate}">
+            <input type="date" name="startDate" id="startDate" value="${step1Data.startDate}" required>
             <span>～</span>
-            <input type="date" name="endDate" id="endDate" required>
+            <input type="date" name="endDate" id="endDate" value="${step1Data.endDate}" required>
           </div>
         </div>
 
@@ -56,14 +57,16 @@
           <select name="projectCode" required>
             <option value="">選択してください</option>
             <c:forEach var="p" items="${projectList}">
-              <option value="${p.id}">${p.id}：${p.name}</option>
+              <option value="${p.id}" <c:if test="${p.id == step1Data.projectCode}">selected</c:if>>
+                ${p.id}：${p.name}
+              </option>
             </c:forEach>
           </select>
         </div>
 
         <div class="form-group">
           <label>出張報告</label>
-          <textarea name="tripReport" class="hokoku-text" placeholder="業務内容や目的を入力してください"></textarea>
+          <textarea name="tripReport" class="hokoku-text" placeholder="業務内容や目的を入力してください">${step1Data.report}</textarea>
         </div>
       </div>
 

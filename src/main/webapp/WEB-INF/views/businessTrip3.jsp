@@ -1,18 +1,25 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%
-String staffName = (String) session.getAttribute("staffName");
-if (staffName == null) {
-  response.sendRedirect(request.getContextPath() + "/login.jsp");
-  return;
-}
-%>
-<% Boolean editMode = (Boolean) request.getAttribute("editMode"); %>
-<% Integer applicationId = (Integer) request.getAttribute("applicationId"); %>
-<%@ page import="java.util.List" %>
+<%@ page import="bean.BusinessTripBean.*, java.util.List, java.util.Map" %>
 <%@ page import="model.Receipt" %>
+
+<%
+  String staffName = (String) session.getAttribute("staffName");
+  if (staffName == null) {
+    response.sendRedirect(request.getContextPath() + "/login.jsp");
+    return;
+  }
+
+  BusinessTripBean trip = (BusinessTripBean) session.getAttribute("businessTripBean");
+  List<Step3Detail> s3List = (trip != null) ? trip.getStep3List() : null;
+
+  Map<Integer, List<Receipt>> step3ReceiptMap = (Map<Integer, List<Receipt>>) session.getAttribute("step3ReceiptMap");
+  Boolean editMode = (Boolean) request.getAttribute("editMode");
+  Integer applicationId = (Integer) request.getAttribute("applicationId");
+%>
 
 <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
 <input type="hidden" name="applicationId" value="<%= applicationId != null ? applicationId : "" %>">
+
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -23,169 +30,110 @@ if (staffName == null) {
     .remove-btn { position: absolute; top: 1px; right: 1px; background: none; border: none; font-size: 1.2rem; color: #888; cursor: pointer; }
     .d-none { display: none; }
   </style>
-  <script>
-function addTransBlock() {
-  const container = document.getElementById("trans-container");
-  const blocks = document.querySelectorAll(".trans-block");
-  const index = blocks.length;
-
-  const template = document.querySelector(".trans-block");
-  const clone = template.cloneNode(true);
-
-  clone.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
-  clone.querySelector(".remove-btn").classList.remove("d-none");
-
-  const fileInput = clone.querySelector("input[type='file']");
-  fileInput.name = `receiptStep3_${index}[]`;
-  fileInput.setAttribute("multiple", true);
-
-  const fileList = clone.querySelector(".fileList");
-  fileList.innerHTML = "";
-  fileInput.addEventListener("change", function(e) {
-    fileList.innerHTML = "";
-    Array.from(e.target.files).forEach(file => {
-      const li = document.createElement("li");
-      li.textContent = file.name;
-      fileList.appendChild(li);
-    });
-  });
-
-  container.appendChild(clone);
-}
-
-function removeBlock(btn) {
-  const block = btn.closest(".trans-block");
-  const allBlocks = document.querySelectorAll(".trans-block");
-  if (allBlocks.length > 1) {
-    block.remove();
-  } else {
-    alert("最低1つの明細が必要です");
-  }
-}
-
-function calcFareTotal(elem) {
-	  const block = elem.closest('.trans-block');
-	  const amountInput = block.querySelector("input[name='fareAmount[]']");
-	  const tripType = block.querySelector("select[name='transTripType[]']").value;
-	  const burden = block.querySelector("select[name='burden[]']").value;
-	  const totalInput = block.querySelector("input[name='expenseTotal[]']");
-
-	  const amount = parseInt(amountInput.value || 0);
-
-	  if (burden === "自己") {
-	    const multiplier = (tripType === "往復") ? 2 : 1;
-	    totalInput.value = amount * multiplier;
-	  } else {
-	    totalInput.value = 0;
-	  }
-	}
-
-window.onload = function() {
-  const firstBlock = document.querySelector(".trans-block");
-  if (firstBlock) {
-    const fileInput = firstBlock.querySelector("input[type='file']");
-    const fileList = firstBlock.querySelector(".fileList");
-
-    fileInput.addEventListener("change", function(e) {
-      fileList.innerHTML = "";
-      Array.from(e.target.files).forEach(file => {
-        const li = document.createElement("li");
-        li.textContent = file.name;
-        fileList.appendChild(li);
-      });
-    });
-
-    // ✅ Gọi để set 合計 ban đầu nếu có dữ liệu
-    const fareInput = firstBlock.querySelector("input[name='fareAmount[]']");
-    if (fareInput && fareInput.value) {
-      calcFareTotal(fareInput);
-    }
-  }
-};
-</script>
 </head>
 <body>
   <div class="page-container">
     <h2>交通費申請</h2>
 
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
-	  <% if (editMode != null && editMode) { %>
-	    <input type="hidden" name="applicationId" value="<%= applicationId %>">
-	  <% } %>
+      <input type="hidden" name="editMode" value="<%= (editMode != null && editMode) ? "true" : "false" %>">
+      <input type="hidden" name="applicationId" value="<%= (applicationId != null) ? applicationId : "" %>">
       <input type="hidden" name="step" value="3">
       <input type="hidden" name="startDateHidden" value="<%= request.getParameter("startDateHidden") %>">
       <input type="hidden" name="endDateHidden" value="<%= request.getParameter("endDateHidden") %>">
       <input type="hidden" name="totalDays" value="<%= request.getParameter("totalDays") %>">
 
       <div style="display: flex; flex-direction: column; gap: 10px" id="trans-container">
-        <div class="form-section trans-block">
-          <button type="button" class="remove-btn d-none" onclick="removeBlock(this)">×</button>
+        <%
+          List<Step3Detail> step3List = s3List;
+          boolean edit = (editMode != null && editMode);
+          int index = 0;
 
-          <div class="form-group"><label>訪問先</label><input type="text" name="transProject[]" placeholder="例:株式会社AAA"></div>
-          <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京"></div>
-          <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪"></div>
+          if (step3List != null && !step3List.isEmpty()) {
+            for (Step3Detail s3 : step3List) {
+              List<Receipt> blockReceipts = (step3ReceiptMap != null) ? step3ReceiptMap.get(index) : null;
+        %>
+        <div class="form-section trans-block">
+          <button type="button" class="remove-btn <%= (index == 0) ? "d-none" : "" %>" onclick="removeBlock(this)">×</button>
+
+          <div class="form-group"><label>訪問先</label><input type="text" name="transProject[]" value="<%= s3.getTransProject() %>"></div>
+          <div class="form-group"><label>出発</label><input type="text" name="departure[]" value="<%= s3.getDeparture() %>"></div>
+          <div class="form-group"><label>到着</label><input type="text" name="arrival[]" value="<%= s3.getArrival() %>"></div>
+
           <div class="form-group">
             <label>交通機関</label>
             <select name="transport[]">
               <option value="">選択してください</option>
-              <option value="新幹線">新幹線</option>
-              <option value="電車">電車</option>
-              <option value="タクシー">タクシー</option>
-              <option value="飛行機">飛行機</option>
-              <option value="自家用車">自家用車</option>
-              <option value="レンタカー">レンタカー</option>
-              <option value="他の">他の</option>
+              <option value="新幹線" <%= "新幹線".equals(s3.getTransport()) ? "selected" : "" %>>新幹線</option>
+              <option value="電車" <%= "電車".equals(s3.getTransport()) ? "selected" : "" %>>電車</option>
+              <option value="タクシー" <%= "タクシー".equals(s3.getTransport()) ? "selected" : "" %>>タクシー</option>
+              <option value="飛行機" <%= "飛行機".equals(s3.getTransport()) ? "selected" : "" %>>飛行機</option>
+              <option value="自家用車" <%= "自家用車".equals(s3.getTransport()) ? "selected" : "" %>>自家用車</option>
+              <option value="レンタカー" <%= "レンタカー".equals(s3.getTransport()) ? "selected" : "" %>>レンタカー</option>
+              <option value="他の" <%= "他の".equals(s3.getTransport()) ? "selected" : "" %>>他の</option>
             </select>
           </div>
 
-          <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" step="100" onchange="calcFareTotal(this)"></div>
-          <div class="form-group"><label>区分</label>
+          <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" value="<%= s3.getFareAmount() %>" onchange="calcFareTotal(this)"></div>
+
+          <div class="form-group">
+            <label>区分</label>
             <select name="transTripType[]" onchange="calcFareTotal(this)">
               <option value="">選択してください</option>
-              <option value="片道">片道</option>
-              <option value="往復">往復</option>
+              <option value="片道" <%= "片道".equals(s3.getTransTripType()) ? "selected" : "" %>>片道</option>
+              <option value="往復" <%= "往復".equals(s3.getTransTripType()) ? "selected" : "" %>>往復</option>
             </select>
           </div>
-          <div class="form-group"><label>負担者</label>
+
+          <div class="form-group">
+            <label>負担者</label>
             <select name="burden[]" onchange="calcFareTotal(this)">
               <option value="">選択してください</option>
-              <option value="会社">会社</option>
-              <option value="自己">自己</option>
+              <option value="会社" <%= "会社".equals(s3.getTransBurden()) ? "selected" : "" %>>会社</option>
+              <option value="自己" <%= "自己".equals(s3.getTransBurden()) ? "selected" : "" %>>自己</option>
             </select>
           </div>
-          <div class="form-group"><label>合計</label><input type="number" name="expenseTotal[]" readonly></div>
-          <div class="form-group"><label>摘要</label><textarea name="transMemo[]" placeholder="メモなど"></textarea></div>
+
+          <div class="form-group"><label>合計</label><input type="number" name="expenseTotal[]" value="<%= s3.getTransExpenseTotal() %>" readonly></div>
+          <div class="form-group"><label>摘要</label><textarea name="transMemo[]"><%= s3.getTransMemo()%></textarea></div>
 
           <div class="form-group">
             <label>領収書添付（交通費）</label>
-            <input type="file" name="receiptStep3_0[]" multiple class="fileInput">
-            <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
+            <input type="file" name="receiptStep3_<%= index %>[]"
+                   class="fileInput" multiple>
             <ul class="fileList"></ul>
           </div>
-		  <%
-			  List<model.Receipt> receipts = (List<model.Receipt>) request.getAttribute("receipts");
-			  Boolean isDetailMode = (Boolean) request.getAttribute("isDetailMode");
-			  isDetailMode = (isDetailMode != null) ? isDetailMode : false;
-			  if (isDetailMode && receipts != null && !receipts.isEmpty()) {
-			%>
-			  <div class="form-group">
-			    <label>添付ファイル（確認用）</label>
-			    <ul>
-			      <% for (model.Receipt r : receipts) { %>
-			        <li>
-			          <a href="<%= request.getContextPath() + "/uploads/" + r.getStoredFilePath() %>" target="_blank">
-			            <%= r.getOriginalFileName() %>
-			          </a>
-			        </li>
-			      <% } %>
-			    </ul>
-			  </div>
-			<% } %>
+
+          <% if (edit && blockReceipts != null && !blockReceipts.isEmpty()) { %>
+          <div class="form-group">
+            <label>添付ファイル（確認用）</label>
+            <ul>
+              <% for (Receipt r : blockReceipts) { %>
+              <li>
+                <a href="<%= request.getContextPath() + "/uploads/" + r.getStoredFilePath() %>" target="_blank">
+                  <%= r.getOriginalFileName() %>
+                </a>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+          <% } %>
+
           <div style="text-align: center;">
             <button type="button" class="plus-btn" onclick="addTransBlock()">＋</button>
           </div>
         </div>
+        <%
+              index++;
+            }
+          } else {
+        %>
+        <!-- Nếu không có dữ liệu -->
+        <div class="form-section trans-block">
+          <button type="button" class="remove-btn d-none" onclick="removeBlock(this)">×</button>
+          <!-- (Phần input rỗng như cũ, giữ nguyên ở đây) -->
+        </div>
+        <% } %>
       </div>
 
       <div class="btn-section">
@@ -195,5 +143,85 @@ window.onload = function() {
     </form>
   </div>
   <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
+  
+  <script>
+	function addTransBlock() {
+	  const container = document.getElementById("trans-container");
+	  const blocks = document.querySelectorAll(".trans-block");
+	  const index = blocks.length;
+	
+	  const template = document.querySelector(".trans-block");
+	  const clone = template.cloneNode(true);
+	
+	  clone.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
+	  clone.querySelector(".remove-btn").classList.remove("d-none");
+	
+	  const fileInput = clone.querySelector("input[type='file']");
+	  fileInput.name = `receiptStep3_${index}[]`;
+	  fileInput.setAttribute("multiple", true);
+	
+	  const fileList = clone.querySelector(".fileList");
+	  fileList.innerHTML = "";
+	  fileInput.addEventListener("change", function(e) {
+	    fileList.innerHTML = "";
+	    Array.from(e.target.files).forEach(file => {
+	      const li = document.createElement("li");
+	      li.textContent = file.name;
+	      fileList.appendChild(li);
+	    });
+	  });
+	
+	  container.appendChild(clone);
+	}
+	
+	function removeBlock(btn) {
+	  const block = btn.closest(".trans-block");
+	  const allBlocks = document.querySelectorAll(".trans-block");
+	  if (allBlocks.length > 1) {
+	    block.remove();
+	  } else {
+	    alert("最低1つの明細が必要です");
+	  }
+	}
+	
+	function calcFareTotal(elem) {
+	  const block = elem.closest('.trans-block');
+	  const amountInput = block.querySelector("input[name='fareAmount[]']");
+	  const tripType = block.querySelector("select[name='transTripType[]']").value;
+	  const burden = block.querySelector("select[name='burden[]']").value;
+	  const totalInput = block.querySelector("input[name='expenseTotal[]']");
+	
+	  const amount = parseInt(amountInput.value || 0);
+	
+	  if (burden === "自己") {
+	    const multiplier = (tripType === "往復") ? 2 : 1;
+	    totalInput.value = amount * multiplier;
+	  } else {
+	    totalInput.value = 0;
+	  }
+	}
+	
+	window.onload = function() {
+	  const firstBlock = document.querySelector(".trans-block");
+	  if (firstBlock) {
+	    const fileInput = firstBlock.querySelector("input[type='file']");
+	    const fileList = firstBlock.querySelector(".fileList");
+	
+	    fileInput.addEventListener("change", function(e) {
+	      fileList.innerHTML = "";
+	      Array.from(e.target.files).forEach(file => {
+	        const li = document.createElement("li");
+	        li.textContent = file.name;
+	        fileList.appendChild(li);
+	      });
+	    });
+	
+	    const fareInput = firstBlock.querySelector("input[name='fareAmount[]']");
+	    if (fareInput && fareInput.value) {
+	      calcFareTotal(fareInput);
+	    }
+	  }
+	};
+  </script>
 </body>
 </html>

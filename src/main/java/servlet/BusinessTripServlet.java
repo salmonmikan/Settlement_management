@@ -62,7 +62,27 @@ public class BusinessTripServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
                 break;
             default:
+                // Nếu đã có dữ liệu từ session thì gán vào request để JSP hiển thị
+                if (bean != null) {
+                    request.setAttribute("step1Data", bean.getStep1Data());
+                }
+
+                // Nếu đang ở chế độ chỉnh sửa (editMode=true) thì truyền thêm vào
+                if ("true".equals(request.getParameter("editMode"))) {
+                    request.setAttribute("editMode", true);
+                    String applicationIdStr = request.getParameter("applicationId");
+                    if (applicationIdStr != null) {
+                        try {
+                            int applicationId = Integer.parseInt(applicationIdStr);
+                            request.setAttribute("applicationId", applicationId);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
+                
         }
     }
 
@@ -133,6 +153,13 @@ public class BusinessTripServlet extends HttpServlet {
                 bean.setStep1Data(s1);
                 session.setAttribute("businessTripBean", bean);
                 request.setAttribute("step1Data", bean.getStep1Data());
+                try {
+                    List<Project> projectList = new ProjectDAO().getAllProjects();
+                    request.setAttribute("projectList", projectList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("projectList", new ArrayList<>());
+                }
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip2.jsp").forward(request, response);
                 break;
 
@@ -196,6 +223,13 @@ public class BusinessTripServlet extends HttpServlet {
 
             default:
                 response.sendRedirect(request.getContextPath() + "/home");
+        }
+        try {
+            List<Project> projectList = new ProjectDAO().getAllProjects();
+            request.setAttribute("projectList", projectList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("projectList", new ArrayList<>());
         }
     }
 }

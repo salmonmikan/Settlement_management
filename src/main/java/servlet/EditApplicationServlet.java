@@ -5,10 +5,13 @@ import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
 import dao.BusinessTripDAO;
+import dao.ProjectDAO;
+import model.Project;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class EditApplicationServlet extends HttpServlet {
                 int total2 = step2List.stream().mapToInt(d -> Integer.parseInt(d.getExpenseTotal())).sum();
                 int total3 = step3List.stream().mapToInt(d -> Integer.parseInt(d.getTransExpenseTotal())).sum();
 
-                // Đặt vào session
+                // Sau khi set session:
                 BusinessTripBean bt = new BusinessTripBean();
                 bt.setStep1Data(s1);
                 bt.setStep2List(step2List);
@@ -44,8 +47,15 @@ public class EditApplicationServlet extends HttpServlet {
                 bt.setTotalStep3Amount(total3);
                 session.setAttribute("businessTripBean", bt);
 
-                // chuyển hướng về step1 input
-                response.sendRedirect("businessTripInputStep1");
+                // ✅ Set thêm projectList vào request
+                ProjectDAO projectDao = new ProjectDAO();
+                List<Project> projectList = projectDao.getAllProjects();
+                request.setAttribute("projectList", projectList);
+
+                // ✅ forward thay vì redirect
+             // ✅ redirect đến servlet xử lý step1 (giữ logic tập trung)
+                response.sendRedirect(request.getContextPath() + "/businessTrip?editMode=true&applicationId=" + appId);
+                return;
 
             } else if ("交通費".equals(type)) {
                 // TODO: xử lý tương ứng

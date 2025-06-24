@@ -3,6 +3,8 @@ package dao;
 import java.sql.*;
 import java.util.*;
 
+import model.Receipt;
+
 import static util.DBConnection.getConnection;
 
 public class ReceiptDAO {
@@ -55,5 +57,40 @@ public class ReceiptDAO {
         }
 
         return resultMap;
+    }
+
+    /**
+     * Lấy danh sách file đính kèm chi tiết theo applicationId và stepType ("step2"/"step3").
+     */
+    public List<Receipt> getReceiptsByApplicationIdAndStep(int applicationId, String stepType) {
+        List<Receipt> receipts = new ArrayList<>();
+        String sql = "SELECT * FROM receipt_file WHERE application_id = ? AND application_type = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, applicationId);
+            ps.setString(2, stepType);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Receipt r = new Receipt();
+                    r.setReceiptId(rs.getInt("receipt_id"));
+                    r.setOriginalFileName(rs.getString("original_file_name"));
+                    r.setStoredFilePath(rs.getString("stored_file_path"));
+                    r.setApplicationId(rs.getInt("application_id"));
+                    r.setRefTable(rs.getString("ref_table"));
+                    r.setRefId(rs.getInt("ref_id"));
+                    r.setStepType(rs.getString("application_type"));
+                    receipts.add(r);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("【ReceiptDAO】Lỗi khi lấy file theo step: " + stepType + ", appId=" + applicationId);
+            e.printStackTrace();
+        }
+
+        return receipts;
     }
 }
