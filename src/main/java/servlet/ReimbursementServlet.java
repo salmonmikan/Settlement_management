@@ -12,97 +12,64 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import bean.BusinessTripBean.ReimbursementBean;
-import bean.BusinessTripBean.Step1Data;
-import bean.BusinessTripBean.Step2Detail;
 import dao.ProjectDAO;
 import model.Project;
 
+@WebServlet("/reimbursement")
 @MultipartConfig
-@WebServlet(urlPatterns = {"/reimbursement", "/reimbursementStep2Back", "/reimbursementConfirmBack","/reimbursementStep2" })
-
-
 public class ReimbursementServlet extends HttpServlet {
-
-	private void showStep1Form(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
-		try {
-            ProjectDAO dao = new ProjectDAO();
-            List<Project> projectList = dao.getAllProjects();
-            request.setAttribute("projectList", projectList);
-            request.getRequestDispatcher("/WEB-INF/views/reimbursement1.jsp").forward(request, response);
-        } catch (Exception e) {
-            throw new RuntimeException("プロジェクト一覧の取得に失敗しました", e);
-        }   
-	}
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String path = request.getServletPath();
-
-        if ("/reimbursementStep2Back".equals(path)) {
-            showStep1Form(request, response);
-        } else if ("/reimbursementConfirmBack".equals(path)) {
-            request.getRequestDispatcher("/WEB-INF/views/reimbursement2.jsp").forward(request, response);
-        } else {
-            showStep1Form(request, response);
+        try {
+            List<Project> projectList = new ProjectDAO().getAllProjects();
+            request.setAttribute("projectList", projectList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("projectList", new ArrayList<>());
         }
+
+        request.getRequestDispatcher("/WEB-INF/views/reimbursement.jsp").forward(request, response);
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    	String step = request.getParameter("step");
+        request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession();
 
-        if (step == null) {
-            response.sendRedirect(request.getContextPath() + "/home");
+        String[] dateList = request.getParameterValues("date[]");
+        String[] destinationsList = request.getParameterValues("destinations[]");
+        String[] projectCodeList = request.getParameterValues("projectCode[]");
+        String[] reportList = request.getParameterValues("report[]");
+        String[] accountingItemList = request.getParameterValues("accountingItem[]");
+        String[] memoList = request.getParameterValues("memo[]");
+        String[] amountList = request.getParameterValues("amount[]");
+
+        String staffId = (String) session.getAttribute("staffId");
+
+        if (staffId == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
-        HttpSession session = request.getSession();
-        ReimbursementBean bean = (ReimbursementBean) session.getAttribute("reimbursementBean");
-        if (bean == null) {
-            bean = new ReimbursementBean();
+        if (dateList == null || destinationsList == null) {
+            response.sendRedirect(request.getContextPath() + "/reimbursement");
+            return;
         }
 
-        switch (step) {
-            case "1":
-                Step1Data s1 = new Step1Data(
-                        request.getParameter("date"),
-                        request.getParameter("projectCode"),
-                        request.getParameter("report")
-                );
-                System.out.println("POST received");
-                System.out.println("step = " + request.getParameter("step"));
-                bean.setStep1(s1);
-                session.setAttribute("reimbursementBean", bean);
-//                response.sendRedirect(request.getContextPath() + "/reimbursementStep2");
-                request.getRequestDispatcher("/WEB-INF/views/reimbursement2.jsp").forward(request, response);
-                break;
+        // Gửi dữ liệu sang màn hình confirm
+        request.setAttribute("dateList", dateList);
+        request.setAttribute("destinationsList", destinationsList);
+        request.setAttribute("projectCodeList", projectCodeList);
+        request.setAttribute("reportList", reportList);
+        request.setAttribute("accountingItemList", accountingItemList);
+        request.setAttribute("memoList", memoList);
+        request.setAttribute("amountList", amountList);
 
-            case "2":
-                String[] accountingItems = request.getParameterValues("accountingItem[]");
-                String[] amounts = request.getParameterValues("amount[]");
-                String[] notes = request.getParameterValues("memo[]");
-
-                List<Step2Detail> step2List = new ArrayList<>();
-                for (int i = 0; i < accountingItems.length; i++) {
-                    Step2Detail detail = new Step2Detail(
-                            accountingItems[i],
-                            notes[i],
-                            Integer.parseInt(amounts[i])
-                    );
-                    step2List.add(detail);
-                }
-
-                bean.setStep2List(step2List);
-                session.setAttribute("reimbursementBean", bean);
-                request.getRequestDispatcher("/WEB-INF/views/reimbursementConfirm.jsp").forward(request, response);
-                break;
-
-            default:
-                response.sendRedirect(request.getContextPath() + "/home");
-        }
+        request.getRequestDispatcher("/WEB-INF/views/confirm/reimbursementConfirm.jsp").forward(request, response);
     }
 }

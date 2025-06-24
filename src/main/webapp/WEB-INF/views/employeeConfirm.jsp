@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="model.Employee" %>
+<%@ page import="bean.BusinessTripBean.Employee" %>
 <%
     Employee emp = (Employee) session.getAttribute("employeeTemp");
     if (emp == null) {

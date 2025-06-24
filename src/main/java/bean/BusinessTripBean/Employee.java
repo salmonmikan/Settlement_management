@@ -1,4 +1,4 @@
-package model;
+package bean.BusinessTripBean;
 
 import java.sql.Date;
 

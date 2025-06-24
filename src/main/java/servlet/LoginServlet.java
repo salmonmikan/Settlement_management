@@ -30,6 +30,7 @@ public class LoginServlet extends HttpServlet {
 
         String staffId = request.getParameter("staffId");
         String password = request.getParameter("password");
+//        String hashpass = hashPassword(password);
         
 
         StaffDAO dao = new StaffDAO();

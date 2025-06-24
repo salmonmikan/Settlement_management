@@ -293,7 +293,7 @@ textarea {
   resize: vertical;
 }
 .hokoku-text {
-  min-height: 250px;
+  min-height: 100px;
 }
 
 /* ==== business_trip.css ==== */
