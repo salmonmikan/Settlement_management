@@ -153,14 +153,20 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 		});
 	</script>
 	<%
-	String successMsg = (String) request.getAttribute("successMsg");
-	%>
-	<%
+	String successMsg = (String) session.getAttribute("successMsg");
+	String errorMsg = (String) session.getAttribute("errorMsg");
 	if (successMsg != null) {
 	%>
-	<script>
-    alert("<%=successMsg%>");
-</script>
-	<% } %>
+	<script>alert("<%=successMsg%>");</script>
+	<%
+	session.removeAttribute("successMsg");
+	}
+	if (errorMsg != null) {
+	%>
+	<script>alert("<%=errorMsg%>");</script>
+	<%
+	session.removeAttribute("errorMsg");
+	}
+	%>
 </body>
 </html>

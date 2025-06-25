@@ -105,6 +105,9 @@ public class ProjectControl extends HttpServlet {
 		    p.setProject_owner(request.getParameter("Project_owner"));
 		    p.setStart_date(request.getParameter("Start_date"));
 		    p.setEnd_date(request.getParameter("End_date"));
+		    
+		    String startDate = request.getParameter("Start_date");
+		    String endDate = request.getParameter("End_date");
 
 		    String budgetStr = request.getParameter("Project_budget");
 		    p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
@@ -120,6 +123,16 @@ public class ProjectControl extends HttpServlet {
 		        ProjectDAO dao = new ProjectDAO();
 		        Map<String, String> memberMap = dao.getStaffNamesByIds(memberIds);
 		        request.setAttribute("memberMap", memberMap);
+		    }
+		    
+
+		    if (startDate != null && endDate != null && !startDate.isBlank() && !endDate.isBlank()) {
+		        if (startDate.compareTo(endDate) > 0) {
+		            request.setAttribute("errMsg", "開始日は終了日より前の日付を入力してください。");
+		            request.setAttribute("project_edit", p);  // Trả lại dữ liệu người dùng đã nhập
+		            request.getRequestDispatcher("/WEB-INF/views/projectRegister.jsp").forward(request, response);
+		            return;
+		        }
 		    }
 
 		    request.getRequestDispatcher("/WEB-INF/views/confirm/projectConfirm.jsp").forward(request, response);
