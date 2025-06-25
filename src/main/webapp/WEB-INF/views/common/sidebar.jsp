@@ -23,7 +23,7 @@ String department = (String) session.getAttribute("department");
 			<%
 			if ("一般社員".equals(position) && "管理部".equals(department)) {
 			%>
-			<li><a href="<%=request.getContextPath()%>/applicationList">申請一覧</a></li>
+			<li><a href="<%=request.getContextPath()%>/applicationMain" class="btn">申請一覧</a></li>
 			<hr>
 			<li><a href="#">精算承認</a></li>
 			<hr>
@@ -53,7 +53,7 @@ String department = (String) session.getAttribute("department");
 			%>
 		</ul>
 	</div>
-	<div class="welcome-message">
-		
+	<div class="back_top" style="text-align: center;margin-top: 30px;">
+		<a href="<%=request.getContextPath()%>/menu">トップに戻る</a>
 	</div>
 </div>

@@ -11,8 +11,8 @@
 /* application_list layout fix */
 .page-container {
 	display: flex;
-	flex-direction: column;
-	flex: 1;
+    gap: 50px;
+    align-items: flex-start;
 }
 
 form {
@@ -40,6 +40,9 @@ td:nth-child(5) {
 </head>
 <body>
 	<div class="page-container">
+		<!-- Sidebar -->
+    	<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+    	<div>
 		<h2>申請一覧</h2>
 
 		<div class="action-toolbar">
@@ -105,6 +108,7 @@ td:nth-child(5) {
 				<button type="button" onclick="history.back()">戻る</button>
 			</div>
 		</form>
+	</div>
 	</div>
 
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
