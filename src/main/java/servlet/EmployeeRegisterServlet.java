@@ -10,11 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import bean.BusinessTripBean.Employee;
 import dao.EmployeeDAO;
-import model.Employee;
 
 @WebServlet("/employeeRegisterPage")
-public class EmployeeRegisterRedirectServlet extends HttpServlet {
+public class EmployeeRegisterServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override

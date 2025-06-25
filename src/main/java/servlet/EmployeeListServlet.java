@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import bean.BusinessTripBean.Employee;
 import dao.EmployeeDAO;
-import model.Employee;
 
 @WebServlet("/employeeList")
 public class EmployeeListServlet extends HttpServlet {

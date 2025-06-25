@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Employee;
+import bean.BusinessTripBean.Employee;
 import util.DBConnection;
 
 public class EmployeeDAO {
@@ -28,85 +28,39 @@ public class EmployeeDAO {
         }
     }
 
-    // Insert employee into 3 tables
+    // Insert employee into staff table
     public boolean insertEmployee(Employee emp) {
-        Connection conn = null;
-        PreparedStatement ps1 = null;
-        PreparedStatement ps2 = null;
-        PreparedStatement ps3 = null;
+        String sql = """
+            INSERT INTO staff (staff_id, password, name, furigana, birth_date, address, hire_date, department, position)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
 
-        try {
-            conn = DBConnection.getConnection();
-            conn.setAutoCommit(false);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            // personal_info
-            String sql1 = "INSERT INTO personal_info (employee_id, full_name, furigana, birth_date, address, join_date) VALUES (?, ?, ?, ?, ?, ?)";
-            ps1 = conn.prepareStatement(sql1);
-            ps1.setString(1, emp.getEmployeeId());
-            ps1.setString(2, emp.getFullName());
-            ps1.setString(3, emp.getFurigana());
-            ps1.setDate(4, emp.getBirthDate());
-            ps1.setString(5, emp.getAddress());
-            ps1.setDate(6, emp.getJoinDate());
-            ps1.executeUpdate();
+            ps.setString(1, emp.getEmployeeId());
+            ps.setString(2, hashPassword(emp.getPassword()));
+            ps.setString(3, emp.getFullName());
+            ps.setString(4, emp.getFurigana());
+            ps.setDate(5, emp.getBirthDate());
+            ps.setString(6, emp.getAddress());
+            ps.setDate(7, emp.getJoinDate());
+            ps.setString(8, emp.getDepartmentId());
+            ps.setString(9, emp.getPositionId());
 
-            // account_info
-            String sql2 = "INSERT INTO account_info (employee_id, login_id, password) VALUES (?, ?, ?)";
-            ps2 = conn.prepareStatement(sql2);
-            ps2.setString(1, emp.getEmployeeId());
-            ps2.setString(2, emp.getLoginId());
-            ps2.setString(3, hashPassword(emp.getPassword()));
-            ps2.executeUpdate();
-
-            // specification_info
-            String sql3 = "INSERT INTO specification_info (employee_id, department_id, position_id) VALUES (?, ?, ?)";
-            ps3 = conn.prepareStatement(sql3);
-            ps3.setString(1, emp.getEmployeeId());
-            ps3.setString(2, emp.getDepartmentId());
-            ps3.setString(3, emp.getPositionId());
-            ps3.executeUpdate();
-
-            conn.commit();
+            ps.executeUpdate();
             return true;
 
         } catch (Exception e) {
             e.printStackTrace();
-            try {
-                if (conn != null) conn.rollback();
-            } catch (Exception rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
             return false;
-        } finally {
-            try { if (ps3 != null) ps3.close(); } catch (Exception e) {}
-            try { if (ps2 != null) ps2.close(); } catch (Exception e) {}
-            try { if (ps1 != null) ps1.close(); } catch (Exception e) {}
-            try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
     }
-    
+
+    // Lấy toàn bộ danh sách nhân viên
     public List<Employee> getAllEmployees() {
         List<Employee> list = new ArrayList<>();
-        String sql = """
-            SELECT 
-                p.employee_id,
-                p.full_name,
-                p.furigana,
-                p.birth_date,
-                p.address,
-                p.join_date,
-                a.login_id,
-                a.password,
-                d.department_id,
-                d.department_name,
-                pos.position_id,
-                pos.position_name
-            FROM personal_info p
-            JOIN account_info a ON p.employee_id = a.employee_id
-            JOIN specification_info s ON p.employee_id = s.employee_id
-            JOIN department d ON s.department_id = d.department_id
-            JOIN position pos ON s.position_id = pos.position_id
-        """;
+        String sql = "SELECT * FROM staff";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -114,18 +68,15 @@ public class EmployeeDAO {
 
             while (rs.next()) {
                 Employee e = new Employee();
-                e.setEmployeeId(rs.getString("employee_id"));
-                e.setFullName(rs.getString("full_name"));
+                e.setEmployeeId(rs.getString("staff_id"));
+                e.setPassword(rs.getString("password"));
+                e.setFullName(rs.getString("name"));
                 e.setFurigana(rs.getString("furigana"));
                 e.setBirthDate(rs.getDate("birth_date"));
                 e.setAddress(rs.getString("address"));
-                e.setJoinDate(rs.getDate("join_date"));
-                e.setLoginId(rs.getString("login_id"));
-                e.setPassword(rs.getString("password"));
-
-                // kết hợp mã + tên hiển thị cho dễ nhìn
-                e.setDepartmentId(rs.getString("department_id") + " : " + rs.getString("department_name"));
-                e.setPositionId(rs.getString("position_id") + " : " + rs.getString("position_name"));
+                e.setJoinDate(rs.getDate("hire_date"));
+                e.setDepartmentId(rs.getString("department"));
+                e.setPositionId(rs.getString("position"));
 
                 list.add(e);
             }
@@ -136,5 +87,4 @@ public class EmployeeDAO {
 
         return list;
     }
-
 }
