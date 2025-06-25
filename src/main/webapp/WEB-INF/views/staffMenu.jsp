@@ -31,14 +31,7 @@
     <div class="staff-dashboard-wrapper">
 
       <!-- Sidebar -->
-      <div class="sidebar">
-		  <div class="menu-block">
-		    <h3>メニュー</h3>
-		    <ul>
-		      <li><a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧</a></li>
-		    </ul>
-		  </div>
-	  </div>
+      <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
       <!-- Main content -->
       <div class="staff-main-content">

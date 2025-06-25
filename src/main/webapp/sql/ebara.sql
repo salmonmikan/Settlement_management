@@ -42,7 +42,7 @@ CREATE TABLE project_management (
     role VARCHAR(10) COMMENT 'プロジェクト内での担当。',
     remarks VARCHAR(50) COMMENT '補足説明や自由記述欄。役割や関与内容の補足など。',
     report VARCHAR(200) COMMENT 'プロジェクト業務に関する報告内容。定型ではない自由記述。',
-    PRIMARY KEY (employee_id)
+    PRIMARY KEY (employee_id, project_code)
 );
 
 
