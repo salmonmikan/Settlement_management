@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -64,36 +65,126 @@ public class ProjectControl extends HttpServlet {
 			response.sendRedirect("project_management_view"); // 登録後のリダイレクト先
             return;
 		}
-		case "confirm": {
-			try {
-                ProjectList p = new ProjectList();
-                p.setProject_code(request.getParameter("Project_code"));
-                p.setProject_name(request.getParameter("Project_name"));
-                p.setProject_owner(request.getParameter("Project_owner"));
-                p.setStart_date(request.getParameter("Start_date"));
-                p.setEnd_date(request.getParameter("End_date"));
+//		case "confirm": {
+//			try {
+//                ProjectList p = new ProjectList();
+//                p.setProject_code(request.getParameter("Project_code"));
+//                p.setProject_name(request.getParameter("Project_name"));
+//                p.setProject_owner(request.getParameter("Project_owner"));
+//                p.setStart_date(request.getParameter("Start_date"));
+//                p.setEnd_date(request.getParameter("End_date"));
+//
+//                String budgetStr = request.getParameter("Project_budget");
+//                p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
+//
+//                String memberStr = request.getParameter("memberIds");
+//                if (memberStr != null && !memberStr.isEmpty()) {
+//                    p.setProject_members(memberStr);
+//                } else {
+//                    p.setProject_members("");
+//                }
+//
+//                new ProjectDAO().insertProject(p);
+//
+//                response.sendRedirect("project_management_view"); // 登録後のリダイレクト先
+//                return;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                request.setAttribute("error", "登録処理に失敗しました。");
+//                request.getRequestDispatcher("project_management_view").forward(request, response);
+//                return;
+//            }
+//		}
+		
+		
+		case "confirmInsert":
+		case "confirmUpdate": {
+		    ProjectList p = new ProjectList();
+		    p.setProject_code(request.getParameter("Project_code"));
+		    p.setProject_name(request.getParameter("Project_name"));
+		    p.setProject_owner(request.getParameter("Project_owner"));
+		    p.setStart_date(request.getParameter("Start_date"));
+		    p.setEnd_date(request.getParameter("End_date"));
 
-                String budgetStr = request.getParameter("Project_budget");
-                p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
+		    String budgetStr = request.getParameter("Project_budget");
+		    p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
 
-                String memberStr = request.getParameter("memberIds");
-                if (memberStr != null && !memberStr.isEmpty()) {
-                    p.setProject_members(memberStr);
-                } else {
-                    p.setProject_members("");
-                }
+		    String memberStr = request.getParameter("memberIds");
+		    p.setProject_members(memberStr != null ? memberStr : "");
 
-                new ProjectDAO().insertProject(p);
+		    request.setAttribute("projectConfirm", p);
+		    request.setAttribute("confirmMode", action.equals("confirmInsert") ? "register" : "updateFinal");
 
-                response.sendRedirect("project_management_view"); // 登録後のリダイレクト先
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("error", "登録処理に失敗しました。");
-                request.getRequestDispatcher("project_management_view").forward(request, response);
-                return;
-            }
+		    if (memberStr != null && !memberStr.isEmpty()) {
+		        String[] memberIds = memberStr.split("\\s*,\\s*");
+		        ProjectDAO dao = new ProjectDAO();
+		        Map<String, String> memberMap = dao.getStaffNamesByIds(memberIds);
+		        request.setAttribute("memberMap", memberMap);
+		    }
+
+		    request.getRequestDispatcher("/WEB-INF/views/confirm/projectConfirm.jsp").forward(request, response);
+		    return;
 		}
+
+
+		case "register": {
+		    try {
+		        ProjectList p = new ProjectList();
+		        p.setProject_code(request.getParameter("Project_code"));
+		        p.setProject_name(request.getParameter("Project_name"));
+		        p.setProject_owner(request.getParameter("Project_owner"));
+		        p.setStart_date(request.getParameter("Start_date"));
+		        p.setEnd_date(request.getParameter("End_date"));
+
+		        String budgetStr = request.getParameter("Project_budget");
+		        p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
+
+		        String memberStr = request.getParameter("memberIds");
+		        p.setProject_members(memberStr != null ? memberStr : "");
+
+		        new ProjectDAO().insertProject(p);
+
+		        session.setAttribute("successMsg", "登録が完了しました！");
+
+		        response.sendRedirect("project_management_view");
+		        return;
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        session.setAttribute("errorMsg", "登録処理に失敗しました。");
+		        response.sendRedirect("project_management_view");
+		        return;
+		    }
+		}
+		case "updateFinal": {
+		    try {
+		        ProjectList p = new ProjectList();
+		        p.setProject_code(request.getParameter("Project_code"));
+		        p.setProject_name(request.getParameter("Project_name"));
+		        p.setProject_owner(request.getParameter("Project_owner"));
+		        p.setStart_date(request.getParameter("Start_date"));
+		        p.setEnd_date(request.getParameter("End_date"));
+
+		        String budgetStr = request.getParameter("Project_budget");
+		        p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
+
+		        String memberStr = request.getParameter("memberIds");
+		        p.setProject_members(memberStr != null ? memberStr : "");
+
+		        new ProjectDAO().updateProject(p);
+		        session.setAttribute("successMsg", "更新が完了しました！");
+		        response.sendRedirect("project_management_view");
+		        return;
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        session.setAttribute("errorMsg", "更新処理に失敗しました。");
+		        response.sendRedirect("project_management_view");
+		        return;
+		    }
+		}
+
+
 		default:
 			throw new IllegalArgumentException("ProjectControlでcaseの遷移に失敗しました");
 		}

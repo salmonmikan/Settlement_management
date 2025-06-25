@@ -43,7 +43,7 @@
     <h2><%= isEdit ? "プロジェクト編集" : "プロジェクト登録" %></h2>
 
     <form action="<%= request.getContextPath() %>/projectControl" method="post">
-      <input type="hidden" name="action" value="<%= isEdit ? "update" : "confirm" %>">
+      <input type="hidden" name="action" value="<%= isEdit ? "confirmUpdate" : "confirmInsert" %>">
 
       <div class="form-section">
         <div class="form-group">
