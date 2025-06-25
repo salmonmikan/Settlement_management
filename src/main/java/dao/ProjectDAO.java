@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import model.Project;
 import model.ProjectList;
@@ -29,6 +32,7 @@ public class ProjectDAO {
 
 	// プロジェクト管理画面-表示
 	// 使用TABLE：project_info, project_budget, project_management, personal_info
+	// 使用TABLE：project_info, project_budget, project_management, staff //update by son
 	public List<ProjectList> getAllProject_management() throws Exception {
 		List<ProjectList> list = new ArrayList<>();
 		Connection conn = util.DBConnection.getConnection();
@@ -37,7 +41,7 @@ public class ProjectDAO {
 				        pi.project_code,
 				        pi.project_name,
 				        pi.project_owner,
-				        GROUP_CONCAT(p.full_name ORDER BY p.full_name SEPARATOR ', ') AS member_names,
+				        GROUP_CONCAT(p.name ORDER BY p.name SEPARATOR ', ') AS member_names,
 				        pi.start_date,
 				        pi.end_date,
 				        pb.project_budget,
@@ -47,7 +51,7 @@ public class ProjectDAO {
 				    LEFT JOIN
 				        project_management pm ON pi.project_code = pm.project_code
 				    LEFT JOIN
-						personal_info p ON pm.employee_id = p.employee_id
+						staff p ON pm.employee_id = p.staff_id
 				    LEFT JOIN
 				        project_budget pb ON pi.project_code = pb.project_code
 				    GROUP BY
@@ -180,7 +184,7 @@ public class ProjectDAO {
 	            pi.project_code,
 	            pi.project_name,
 	            pi.project_owner,
-	            GROUP_CONCAT(p.full_name ORDER BY p.full_name SEPARATOR ', ') AS member_names,
+	            GROUP_CONCAT(p.name ORDER BY p.name SEPARATOR ', ') AS member_names,
 	            pi.start_date,
 	            pi.end_date,
 	            pb.project_budget,
@@ -190,7 +194,7 @@ public class ProjectDAO {
 	        LEFT JOIN
 	            project_management pm ON pi.project_code = pm.project_code
 	        LEFT JOIN
-	            personal_info p ON pm.employee_id = p.employee_id
+	            staff p ON pm.employee_id = p.staff_id
 	        LEFT JOIN
 	            project_budget pb ON pi.project_code = pb.project_code
 	        WHERE
@@ -285,16 +289,13 @@ public class ProjectDAO {
 
 	            String sql_p_m = """
 	                INSERT INTO project_management (
-	                    employee_id, project_code, role, remarks, report
-	                ) VALUES (?, ?, ?, ?, ?)
+	                    employee_id, project_code
+	                ) VALUES (?, ?)
 	            """;
 	            try (PreparedStatement stmt = conn.prepareStatement(sql_p_m)) {
 	                for (String empId : empIds) {
 	                    stmt.setString(1, empId);
 	                    stmt.setString(2, p.getProject_code());
-	                    stmt.setString(3, "");
-	                    stmt.setString(4, "");
-	                    stmt.setString(5, "");
 	                    stmt.addBatch();
 	                }
 	                stmt.executeBatch();
@@ -363,4 +364,34 @@ public class ProjectDAO {
 			conn.close();
 		}
 	}
+	
+	//by Songoku 
+	public Map<String, String> getStaffNamesByIds(String[] ids) {
+	    Map<String, String> result = new LinkedHashMap<>();
+	    if (ids == null || ids.length == 0) return result;
+
+	    String placeholders = String.join(",", Collections.nCopies(ids.length, "?"));
+	    String sql = "SELECT staff_id, name FROM staff WHERE staff_id IN (" + placeholders + ")";
+
+	    try (Connection conn = util.DBConnection.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        for (int i = 0; i < ids.length; i++) {
+	            ps.setString(i + 1, ids[i].trim());
+	        }
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                result.put(rs.getString("staff_id"), rs.getString("name"));
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return result;
+	}
+
+
 }

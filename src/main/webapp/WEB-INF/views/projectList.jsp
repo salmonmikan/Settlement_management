@@ -11,6 +11,7 @@
     DecimalFormat df = new DecimalFormat("#,###");
 %>
 
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -18,6 +19,8 @@
 <title>プロジェクト一覧 - 管理画面</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 <style>
 .page-container {
 	max-width: 80%;
@@ -68,6 +71,15 @@ h2 {
 ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("projectList_management");
 %>
 <body>
+	<nav>
+		精算管理システム
+		<form class="logoutForm"
+			action="<%= request.getContextPath() %>/logOutServlet" method="post">
+			<button type="submit" title="Log out">
+				<i class="fa-solid fa-right-from-bracket"></i>
+			</button>
+		</form>
+	</nav>
 	<div class="page-container">
 	<!-- Sidebar -->
     <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
@@ -78,8 +90,10 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 				<div class="spacer"></div>
 				<button type="button"
 					onclick="location.href='projectControl?action=add'">＋ 新規追加</button>
-				<button type="submit" name="action" value="edit" id="editBtn" disabled>編集</button>
-  				<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+				<button type="submit" name="action" value="edit" id="editBtn"
+					disabled>編集</button>
+				<button type="submit" name="action" value="delete" id="deleteBtn"
+					disabled onclick="return confirm('本当に削除しますか？')">削除</button>
 			</div>
 			<table>
 				<thead>
@@ -103,7 +117,8 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 			        String actualStr = bean.getProject_actual() != null ? df.format(bean.getProject_actual()) : "";
 				%>
 					<tr>
-						<td><input type="checkbox" name="Project_code" value="<%=bean.getProject_code()%>" class="row-check"></td>
+						<td><input type="checkbox" name="Project_code"
+							value="<%=bean.getProject_code()%>" class="row-check"></td>
 						<td><%=bean.getProject_code()%></td>
 						<td><%=bean.getProject_name()%></td>
 						<td><%=bean.getProject_owner()%></td>
@@ -111,7 +126,7 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 						<td><%=bean.getStart_date()%></td>
 						<td><%=bean.getEnd_date()%></td>
 						<td style="text-align: right;"><%= budgetStr %>円</td>
-						<td style="text-align: right;"><%= actualStr %>円</td>
+						<td style="text-align: right;"><%= !("0".equals(actualStr)) ? actualStr + "円" : "未清算" %></td>
 					</tr>
 					<%
 				}
@@ -140,5 +155,15 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 		  });
 		});
 	</script>
+	<%
+	String successMsg = (String) request.getAttribute("successMsg");
+	%>
+	<%
+	if (successMsg != null) {
+	%>
+	<script>
+    alert("<%=successMsg%>");
+</script>
+	<% } %>
 </body>
 </html>
