@@ -1,4 +1,3 @@
-// SubmitApplicationServlet.java
 package servlet;
 
 import dao.ApplicationDAO;
@@ -29,56 +28,50 @@ public class SubmitApplicationServlet extends HttpServlet {
         try {
             ApplicationDAO dao = new ApplicationDAO();
 
-            // Check if all applications are still "未提出"
+            // Kiểm tra xem tất cả đơn có phải 未提出 không
             for (String idStr : appIds) {
                 int appId = Integer.parseInt(idStr);
                 String status = dao.getApplicationStatus(appId);
 
                 if (!"未提出".equals(status)) {
                     request.setAttribute("message", "未提出の申請のみ提出可能です。");
+                    List<Application> apps = dao.getApplicationsByStaffId(staffId);
+                    request.setAttribute("applications", apps);
                     request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
                     return;
                 }
             }
 
-            // Get the position of current user
+            // Lấy chức vụ của người dùng hiện tại
             String position = dao.getStaffPosition(staffId);
 
-            // Get approver (部長 if not self)
+            // Lấy approver là 部長 nếu người gửi không phải là 部長
             String managerId = null;
             if (!"部長".equals(position)) {
                 managerId = dao.findManagerId(staffId);
                 if (managerId == null) {
-                    request.setAttribute("error", "部長が見つかりませんでした。");
+                    request.setAttribute("message", "部長が見つかりませんでした。");
+                    List<Application> apps = dao.getApplicationsByStaffId(staffId);
+                    request.setAttribute("applications", apps);
                     request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
                     return;
                 }
             }
 
-            // Update applications
+            // Cập nhật status + approver cho từng đơn
             for (String idStr : appIds) {
                 int appId = Integer.parseInt(idStr);
-                dao.submitApplicationIfNotYet(appId, staffId);
-                // Optional: dao.setApprover(appId, managerId);
+                dao.submitApplicationIfNotYet(appId, staffId, managerId); // sửa hàm này để set approver_id trong cùng câu lệnh
             }
 
             session.setAttribute("submitSuccess", true);
             response.sendRedirect("applicationMain");
+            return;
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "提出中にエラーが発生しました。");
-
-            try {
-                ApplicationDAO dao = new ApplicationDAO();
-                List<Application> apps = dao.getApplicationsByStaffId(staffId);
-                request.setAttribute("applications", apps);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                request.setAttribute("applications", new ArrayList<Application>());
-            }
-
-            request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp").forward(request, response);
+            session.setAttribute("message", "提出中にエラーが発生しました。");
+            response.sendRedirect("applicationMain");
         }
     }
 }

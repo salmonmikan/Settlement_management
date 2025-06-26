@@ -74,9 +74,9 @@
 			</div>
 			
 			<div class="form-group">
-			  <label>出張区分</label>
-			  <select name="tripType[]" onchange="updateAllowanceAndHotel(this)">
-			    <option value="">選択してください</option>
+			  <label >出張区分</label>
+			  <select name="tripType[]" required onchange="updateAllowanceAndHotel(this)">
+			    <option value="" >選択してください</option>
 			    <option value="短期出張" ${s2.tripType == '短期出張' ? 'selected' : ''}>短期出張</option>
 			    <option value="長期出張" ${s2.tripType == '長期出張' ? 'selected' : ''}>長期出張</option>
 			    <option value="研修出張" ${s2.tripType == '研修出張' ? 'selected' : ''}>研修出張</option>
@@ -85,12 +85,12 @@
 
           <div class="form-group">
             <label>宿泊先</label>
-            <input type="text" name="hotel[]" placeholder="例:APAホテル">
+            <input required type="text" name="hotel[]" placeholder="例:APAホテル">
           </div>
 
           <div class="form-group">
             <label>負担者</label>
-            <select name="burden[]" onchange="handleBurdenChange(this)" >
+            <select required name="burden[]" onchange="handleBurdenChange(this)" >
               <option value="">選択してください</option>
               <option value="会社">会社</option>
               <option value="自己">自己</option>
@@ -99,22 +99,22 @@
 
           <div class="form-group">
             <label>宿泊費</label>
-            <input type="number" name="hotelFee[]" readonly>
+            <input required type="number" name="hotelFee[]" readonly>
           </div>
 
           <div class="form-group">
             <label>日当</label>
-            <input type="number" name="dailyAllowance[]" readonly>
+            <input required type="number" name="dailyAllowance[]" readonly>
           </div>
 
           <div class="form-group">
             <label>日数</label>
-            <input type="number" name="days[]" min="1" onchange="calcTotal(this)">
+            <input required type="number" name="days[]" min="1" onchange="calcTotal(this)">
           </div>
 
           <div class="form-group">
             <label>合計</label>
-            <input type="number" name="expenseTotal[]" readonly>
+            <input required type="number" name="expenseTotal[]" readonly>
           </div>
 
           <div class="form-group">

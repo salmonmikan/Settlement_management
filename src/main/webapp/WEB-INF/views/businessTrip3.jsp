@@ -120,12 +120,12 @@ window.onload = function() {
         <div class="form-section trans-block">
           <button type="button" class="remove-btn d-none" onclick="removeBlock(this)">×</button>
 
-          <div class="form-group"><label>訪問先</label><input type="text" name="transProject[]" placeholder="例:株式会社AAA"></div>
-          <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京"></div>
-          <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪"></div>
+          <div class="form-group"><label>訪問先</label><input required type="text" name="transProject[]" placeholder="例:株式会社AAA"></div>
+          <div class="form-group"><label>出発</label><input required type="text" name="departure[]" placeholder="例:東京"></div>
+          <div class="form-group"><label>到着</label><input required type="text" name="arrival[]" placeholder="例:大阪"></div>
           <div class="form-group">
             <label>交通機関</label>
-            <select name="transport[]">
+            <select required name="transport[]">
               <option value="">選択してください</option>
               <option value="新幹線">新幹線</option>
               <option value="電車">電車</option>
@@ -137,16 +137,16 @@ window.onload = function() {
             </select>
           </div>
 
-          <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" step="100" onchange="calcFareTotal(this)"></div>
-          <div class="form-group"><label>区分</label>
-            <select name="transTripType[]" onchange="calcFareTotal(this)">
+          <div class="form-group"><label>金額（税込）</label><input required type="number" name="fareAmount[]" step="100" onchange="calcFareTotal(this)"></div>
+          <div class="form-group"><label >区分</label>
+            <select required name="transTripType[]" onchange="calcFareTotal(this)">
               <option value="">選択してください</option>
               <option value="片道">片道</option>
               <option value="往復">往復</option>
             </select>
           </div>
           <div class="form-group"><label>負担者</label>
-            <select name="burden[]" onchange="calcFareTotal(this)">
+            <select required name="burden[]" onchange="calcFareTotal(this)">
               <option value="">選択してください</option>
               <option value="会社">会社</option>
               <option value="自己">自己</option>

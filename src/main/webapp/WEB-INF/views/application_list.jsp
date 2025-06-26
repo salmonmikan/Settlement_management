@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%-- <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="model.Application" %>
 <%@ page import="java.util.List" %>
 <%
@@ -116,4 +116,4 @@
     });
   </script>
 </body>
-</html>
+</html> --%>

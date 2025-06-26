@@ -8,7 +8,10 @@ public class Application {
     private Timestamp applicationDate; // 申請時間
     private int amount;                // 金額
     private String status;            // ステータス
+    private String staffId;
+    private String staffName;
 
+    // getter & setter
     // --- Getter & Setter ---
     public int getApplicationId() {
         return applicationId;
@@ -49,4 +52,20 @@ public class Application {
     public void setStatus(String status) {
         this.status = status;
     }
+
+	public String getStaffId() {
+		return staffId;
+	}
+
+	public void setStaffId(String staffId) {
+		this.staffId = staffId;
+	}
+
+	public String getStaffName() {
+		return staffName;
+	}
+
+	public void setStaffName(String staffName) {
+		this.staffName = staffName;
+	}
 }
