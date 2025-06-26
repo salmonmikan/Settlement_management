@@ -50,13 +50,7 @@ public class LoginServlet extends HttpServlet {
             System.out.println("position = " + position);
             System.out.println("department = " + department);
             
-            if(("P0004".equals(position) || "P0003".equals(position)) && "D0001".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
-            }else if("P0004".equals(position) && "D0002".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
-            }else if("P0002".equals(position) && "D0001".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/buchouMain.jsp").forward(request, response);
-            }
+            request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
             
         } else {
         	System.out.println("Login failed - user not found");
