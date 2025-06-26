@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import bean.ProjectList;
 import dao.ProjectDAO;
-import model.ProjectList;
 
 @WebServlet("/project_management_view")
 public class ProjectManagementServlet extends HttpServlet {

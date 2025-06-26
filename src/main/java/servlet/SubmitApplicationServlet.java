@@ -1,15 +1,19 @@
 // SubmitApplicationServlet.java
 package servlet;
 
-import dao.ApplicationDAO;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import model.Application;
-import jakarta.servlet.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import bean.Application;
+import dao.ApplicationDAO;
 
 @WebServlet("/submitApplication")
 public class SubmitApplicationServlet extends HttpServlet {

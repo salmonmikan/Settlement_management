@@ -19,12 +19,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
+import bean.Project;
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
 import dao.ProjectDAO;
-import model.Project;
 
 @MultipartConfig
 @WebServlet(urlPatterns = {"/businessTrip", "/businessTripStep2Back", "/businessTripStep3Back", "/businessTripConfirmBack"})
