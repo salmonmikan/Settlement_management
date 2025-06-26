@@ -41,10 +41,9 @@ public class ProjectControl extends HttpServlet {
 		    ProjectDAO dao = new ProjectDAO();
 		    ProjectList p = dao.findByProjectCode(Project_code);
 
-		    // Lấy danh sách ID thành viên dự án
 		    String[] memberIds = dao.getStaffIdsByProject(p.getProject_code());
 		    String joinedIds = String.join(",", memberIds);
-		    p.setProject_members(joinedIds); // Lưu ID để hiện trên form
+		    p.setProject_members(joinedIds); 
 
 		    // Lấy toàn bộ danh sách nhân viên
 		    Map<String, String> allStaff = dao.getStaffNamesByIds(memberIds);
