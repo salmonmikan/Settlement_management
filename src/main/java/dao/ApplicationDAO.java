@@ -1,4 +1,4 @@
-// ApplicationDAO.java
+// ✅ Updated ApplicationDAO.java with JOIN for manager & position
 package dao;
 
 import static util.DBConnection.*;
@@ -53,6 +53,17 @@ public class ApplicationDAO {
         }
         return list;
     }
+    
+    public void setApprover(int applicationId, String approverId) throws Exception {
+        String sql = "UPDATE application_header SET approver_id = ? WHERE application_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, approverId);
+            ps.setInt(2, applicationId);
+            ps.executeUpdate();
+        }
+    }
+    
+    
 
     public List<Application> getApplicationsByStaffId(String staffId) throws Exception {
         List<Application> list = new ArrayList<>();
@@ -78,14 +89,15 @@ public class ApplicationDAO {
         return list;
     }
 
-    public void submitApplicationIfNotYet(int applicationId, String staffId) throws Exception {
-        String sql = "UPDATE application_header SET status = '提出済み' " +
+    public void submitApplicationIfNotYet(int applicationId, String staffId, String approverId) throws Exception {
+        String sql = "UPDATE application_header SET status = '提出済み', approver_id = ? " +
                      "WHERE application_id = ? AND staff_id = ? AND status = '未提出'";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, applicationId);
-            ps.setString(2, staffId);
+            ps.setString(1, approverId);
+            ps.setInt(2, applicationId);
+            ps.setString(3, staffId);
             ps.executeUpdate();
         }
     }
@@ -94,9 +106,13 @@ public class ApplicationDAO {
         String sql = """
             SELECT s2.staff_id
             FROM staff s1
-            JOIN staff s2 ON s1.department = s2.department
-            WHERE s1.staff_id = ? AND s2.position = '部長'
-            """;
+            JOIN staff s2 ON s1.department_id = s2.department_id
+            JOIN position_master p2 ON s2.position_id = p2.position_id
+            WHERE s1.staff_id = ?
+              AND p2.position_name = '部長'
+              AND s2.delete_flag = 0 AND p2.delete_flag = 0
+            LIMIT 1
+        """;
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -125,16 +141,22 @@ public class ApplicationDAO {
     }
 
     public String getStaffPosition(String staffId) throws Exception {
-        String sql = "SELECT position FROM staff WHERE staff_id = ?";
+        String sql = """
+            SELECT p.position_name
+            FROM staff s
+            JOIN position_master p ON s.position_id = p.position_id
+            WHERE s.staff_id = ? AND s.delete_flag = 0 AND p.delete_flag = 0
+        """;
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, staffId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getString("position");
+                if (rs.next()) return rs.getString("position_name");
             }
         }
         return null;
     }
+
     public String getApplicationTypeById(int applicationId) throws Exception {
         String sql = "SELECT application_type FROM application_header WHERE application_id = ?";
         try (Connection conn = getConnection();
@@ -146,13 +168,79 @@ public class ApplicationDAO {
         }
         return null;
     }
- // Cập nhật tổng tiền khi edit
+
     public void updateApplicationAmount(int applicationId, int newAmount) throws Exception {
-        String sql = "UPDATE application_header SET amount = ? WHERE id = ?";
+        String sql = "UPDATE application_header SET amount = ? WHERE application_id = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, newAmount);
             ps.setInt(2, applicationId);
             ps.executeUpdate();
         }
+    }
+    
+    
+    public List<Application> getApplicationsByApprover(String approverId) throws Exception {
+        List<Application> list = new ArrayList<>();
+        String sql = """
+            SELECT 
+                ah.application_id,
+                ah.application_type,
+                ah.application_date,
+                ah.amount,
+                ah.status,
+                s.staff_id,
+                s.name
+            FROM application_header ah
+            JOIN staff s ON ah.staff_id = s.staff_id
+            WHERE ah.approver_id = ? AND ah.delete_flag = 0
+            ORDER BY ah.application_date DESC
+            """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, approverId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Application a = new Application();
+                    a.setApplicationId(rs.getInt("application_id"));
+                    a.setApplicationType(rs.getString("application_type"));
+                    a.setApplicationDate(rs.getTimestamp("application_date"));
+                    a.setAmount(rs.getInt("amount"));
+                    a.setStatus(rs.getString("status"));
+                    a.setStaffId(rs.getString("staff_id")); // thêm
+                    a.setStaffName(rs.getString("name"));    // thêm
+                    list.add(a);
+                }
+            }
+        }
+        return list;
+    }
+    public List<Application> getApplicationsByApprover(String approverId) throws Exception {
+        List<Application> list = new ArrayList<>();
+        String sql = """
+            SELECT application_id, application_type, application_date, amount, status
+            FROM application_header
+            WHERE approver_id = ? AND delete_flag = 0
+            ORDER BY application_date DESC
+            """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, approverId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Application a = new Application();
+                    a.setApplicationId(rs.getInt("application_id"));
+                    a.setApplicationType(rs.getString("application_type"));
+                    a.setApplicationDate(rs.getTimestamp("application_date"));
+                    a.setAmount(rs.getInt("amount"));
+                    a.setStatus(rs.getString("status"));
+                    list.add(a);
+                }
+            }
+        }
+        return list;
     }
 }
