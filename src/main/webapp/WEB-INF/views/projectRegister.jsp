@@ -86,9 +86,22 @@
 
       <div class="btn-section">
         <button type="button" onclick="location.href='<%= request.getContextPath() %>/project_management_view'">戻る</button>
-        <button type="submit"><%= isEdit ? "更新" : "登録" %></button>
+        <button type="submit" onclick="return validateForm()"><%= isEdit ? "更新" : "登録" %></button>
       </div>
     </form>
   </div>
+  
+  <script>
+function validateForm() {
+    const start = document.querySelector('[name="Start_date"]').value;
+    const end = document.querySelector('[name="End_date"]').value;
+
+    if (start && end && start > end) {
+        alert("開始日は終了日より前の日付を入力してください。");
+        return false;
+    }
+    return true;
+}
+</script>
 </body>
 </html>

@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import dao.StaffDAO;
-import model.Staff;
+import bean.BusinessTripBean.Employee;
+import dao.EmployeeDAO;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -33,28 +33,28 @@ public class LoginServlet extends HttpServlet {
 //        String hashpass = hashPassword(password);
         
 
-        StaffDAO dao = new StaffDAO();
-        Staff staff = dao.findByIdAndPassword(staffId, password);
+        EmployeeDAO dao = new EmployeeDAO();
+        Employee staff = dao.findByIdAndPassword(staffId, password);
 
         if (staff != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("staffId", staff.getStaffId());
-            session.setAttribute("staffName", staff.getName()); 
+            session.setAttribute("staffId", staff.getEmployeeId());
+            session.setAttribute("staffName", staff.getFullName()); 
             
             //画面遷移by son
-            session.setAttribute("position", staff.getPosition());
-            session.setAttribute("department", staff.getDepartment());
+            session.setAttribute("position_id", staff.getPositionId());
+            session.setAttribute("department_id", staff.getDepartmentId());
             
-            String position = (String) session.getAttribute("position");
-            String department = (String) session.getAttribute("department");
+            String position = (String) session.getAttribute("position_id");
+            String department = (String) session.getAttribute("department_id");
             System.out.println("position = " + position);
             System.out.println("department = " + department);
             
-            if(("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
+            if(("P0004".equals(position) || "P0003".equals(position)) && "D0001".equals(department)) {
             	request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
-            }else if("一般社員".equals(position) && "管理部".equals(department)) {
+            }else if("P0004".equals(position) && "D0002".equals(department)) {
             	request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
-            }else if("部長".equals(position) && "営業部".equals(department)) {
+            }else if("P0002".equals(position) && "D0001".equals(department)) {
             	request.getRequestDispatcher("/WEB-INF/views/buchouMain.jsp").forward(request, response);
             }
             

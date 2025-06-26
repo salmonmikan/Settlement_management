@@ -31,7 +31,7 @@ public class EmployeeDAO {
     // Insert employee into staff table
     public boolean insertEmployee(Employee emp) {
         String sql = """
-            INSERT INTO staff (staff_id, password, name, furigana, birth_date, address, hire_date, department, position)
+            INSERT INTO staff (staff_id, password, name, furigana, birth_date, address, hire_date, department_id, position_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
@@ -60,7 +60,10 @@ public class EmployeeDAO {
     // Lấy toàn bộ danh sách nhân viên
     public List<Employee> getAllEmployees() {
         List<Employee> list = new ArrayList<>();
-        String sql = "SELECT * FROM staff";
+        String sql = "SELECT s.*,d.*,p.* "
+        		+ "FROM staff as s "
+        		+ "JOIN department as d ON s.department_id = d.department_id "
+        		+ "JOIN position as p ON s.position_id = p.position_id;";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -68,15 +71,15 @@ public class EmployeeDAO {
 
             while (rs.next()) {
                 Employee e = new Employee();
-                e.setEmployeeId(rs.getString("staff_id"));
-                e.setPassword(rs.getString("password"));
-                e.setFullName(rs.getString("name"));
-                e.setFurigana(rs.getString("furigana"));
-                e.setBirthDate(rs.getDate("birth_date"));
-                e.setAddress(rs.getString("address"));
-                e.setJoinDate(rs.getDate("hire_date"));
-                e.setDepartmentId(rs.getString("department"));
-                e.setPositionId(rs.getString("position"));
+                e.setEmployeeId(rs.getString("s.staff_id"));
+                e.setPassword(rs.getString("s.password"));
+                e.setFullName(rs.getString("s.name"));
+                e.setFurigana(rs.getString("s.furigana"));
+                e.setBirthDate(rs.getDate("s.birth_date"));
+                e.setAddress(rs.getString("s.address"));
+                e.setJoinDate(rs.getDate("s.hire_date"));
+                e.setDepartmentName(rs.getString("d.department_name"));
+                e.setPositionName(rs.getString("p.position_name"));
 
                 list.add(e);
             }
@@ -86,5 +89,34 @@ public class EmployeeDAO {
         }
 
         return list;
+    }
+    
+    public Employee findByIdAndPassword(String staffId, String rawPassword) {
+    	Employee staff = null;
+        String sql = "SELECT * FROM staff WHERE staff_id = ? AND TRIM(password) = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, staffId);
+//            stmt.setString(2, hashPassword(rawPassword));
+            stmt.setString(2, rawPassword);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                staff = new Employee();
+                staff.setEmployeeId(rs.getString("staff_id"));
+                staff.setFullName(rs.getString("name"));;
+                staff.setPositionId(rs.getString("position_id"));; 
+                //by Son
+                staff.setDepartmentId(rs.getString("department_id"));;
+                staff.setPassword(rs.getString("password"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return staff;
     }
 }

@@ -172,31 +172,6 @@ INSERT INTO department_master (department_id, department_name) VALUES
 
 
 
-
-CREATE TABLE personal_info (
-    employee_id   VARCHAR(5) PRIMARY KEY,
-    full_name     VARCHAR(20),
-    furigana      VARCHAR(20),
-    birth_date    DATE,
-    address       VARCHAR(50),
-    join_date     DATE
-);
-
-
-CREATE TABLE account_info (
-    employee_id   VARCHAR(5) PRIMARY KEY,
-    login_id      VARCHAR(5) UNIQUE,
-    password      VARCHAR(255), -- nên dùng HASH sau này
-    FOREIGN KEY (employee_id) REFERENCES personal_info(employee_id)
-);
-
-CREATE TABLE specification_info (
-    employee_id     VARCHAR(5) PRIMARY KEY,
-    department_id   VARCHAR(5),
-    position_id     VARCHAR(5),
-    FOREIGN KEY (employee_id) REFERENCES personal_info(employee_id)
-);
-
 -- 役職管理: Quản lý chức vụ
 CREATE TABLE position_master (
     position_id VARCHAR(5) PRIMARY KEY,
