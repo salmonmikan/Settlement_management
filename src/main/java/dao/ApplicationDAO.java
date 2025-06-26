@@ -1,14 +1,16 @@
 // ApplicationDAO.java
 package dao;
 
-import model.Application;
-import util.DBConnection;
+import static util.DBConnection.*;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static util.DBConnection.getConnection;
+import model.Application;
 
 public class ApplicationDAO {
 
