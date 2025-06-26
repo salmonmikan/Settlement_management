@@ -34,6 +34,18 @@
 	    <button type="submit">送信</button>
 	  </form>
 	<% } %>
+	
+	<%-- <% if ("confirm".equals(mode)) { %>
+  <!-- Nhân viên xác nhận đăng ký mới -->
+  <form action="<%= actionUrl %>" method="post"><button>送信</button></form>
+<% } else if ("edit".equals(mode)) { %>
+  <!-- Đang chỉnh sửa -->
+  <form action="/editBusinessTrip" method="post"><button>更新</button></form>
+<% } else if ("detail".equals(mode) && isApprover) { %>
+  <!-- Trưởng phòng đang duyệt -->
+  <form action="/approve" method="post"><button>承認</button></form>
+  <form action="/reject" method="post"><button>差戻し</button></form>
+<% } %> --%>
 </div>
 
 
