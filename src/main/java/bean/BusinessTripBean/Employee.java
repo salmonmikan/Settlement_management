@@ -13,10 +13,8 @@ public class Employee {
     private String password;
     private String departmentId;
     private String positionId;
-
-    // ✅ Thêm cho hiển thị JSP
-    private String department;
-    private String position;
+    private String departmentName;
+    private String positionName;
 
     // --- Getter & Setter ---
     public String getEmployeeId() {
@@ -90,17 +88,17 @@ public class Employee {
     }
 
     // ✅ Getter/Setter cho tên 部署/役職 hiển thị
-    public String getDepartment() {
-        return department;
+    public String getDepartmentName() {
+        return departmentName;
     }
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
-    public String getPosition() {
-        return position;
+    public String getPositionName() {
+        return positionName;
     }
-    public void setPosition(String position) {
-        this.position = position;
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
     }
 }

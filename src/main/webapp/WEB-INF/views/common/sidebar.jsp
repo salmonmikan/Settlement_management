@@ -4,8 +4,8 @@
 <%
 String staffName = "石井 和也"; // demo用
 String role = "admin"; // manager/admin で切り替え可能
-String position = (String) session.getAttribute("position");
-String department = (String) session.getAttribute("department");
+String position = (String) session.getAttribute("position_id");
+String department = (String) session.getAttribute("department_id");
 %>
 <div class="sidebar">
 	<div class="menu-block">
@@ -14,14 +14,14 @@ String department = (String) session.getAttribute("department");
 			<!-- 「test」はcf用の評価式、任意の変数ではない -->
 			<!-- 一般社員または主任（営業部） -->
 			<%
-			if (("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
+			if (("P0004".equals(position) || "P0003".equals(position)) && "D0001".equals(department)) {
 			%>
 			<li><a href="staffMenu.jsp">社員メニュー</a></li>
 			<%}%>
 
 			<!-- 一般社員（管理部） -->
 			<%
-			if ("一般社員".equals(position) && "管理部".equals(department)) {
+			if ("P0004".equals(position) && "D0002".equals(department)) {
 			%>
 			<li><a href="<%=request.getContextPath()%>/applicationList">申請一覧</a></li>
 			<hr>
@@ -40,7 +40,7 @@ String department = (String) session.getAttribute("department");
 			%>
 
 			<!-- 部長（営業部） -->
-			<% if ("部長".equals(position) && "営業部".equals(department)) {
+			<% if ("P0002".equals(position) && "D0001".equals(department)) {
 			%>
 			<li><a href="buchougamen.jsp">部長メニュー</a></li>
 			<%

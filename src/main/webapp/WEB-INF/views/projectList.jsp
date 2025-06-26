@@ -138,6 +138,7 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 	<script type="text/javascript">
 		const checkboxes = document.querySelectorAll('.row-check');
 	  	const editBtn = document.getElementById('editBtn');
+	  	const deleteBtn = document.getElementById('deleteBtn');
 
 		document.querySelectorAll('.row-check').forEach(cb => {
 		  	cb.addEventListener('change', () => {
@@ -153,20 +154,19 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 		});
 	</script>
 	<%
-	String successMsg = (String) session.getAttribute("successMsg");
-	String errorMsg = (String) session.getAttribute("errorMsg");
+	String successMsg = (String) request.getAttribute("successMsg");
+	String errorMsg = (String) request.getAttribute("errorMsg");
 	if (successMsg != null) {
 	%>
 	<script>alert("<%=successMsg%>");</script>
 	<%
-	session.removeAttribute("successMsg");
 	}
 	if (errorMsg != null) {
 	%>
 	<script>alert("<%=errorMsg%>");</script>
 	<%
-	session.removeAttribute("errorMsg");
 	}
 	%>
+
 </body>
 </html>

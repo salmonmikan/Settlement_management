@@ -439,7 +439,6 @@ th {
   padding: 5px;
   z-index: 100;
   margin-bottom: -10px;
-  background: var(--primary-color);
 }
 .action-toolbar button {
   background: var(--primary-color);

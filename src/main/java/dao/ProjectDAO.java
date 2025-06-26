@@ -18,11 +18,11 @@ public class ProjectDAO {
 	public List<Project> getAllProjects() throws Exception {
 		List<Project> list = new ArrayList<>();
 		Connection conn = util.DBConnection.getConnection();
-		String sql = "SELECT project_id, project_name FROM project_manage ORDER BY project_id";
+		String sql = "SELECT project_code, project_name FROM project_manage ORDER BY project_code";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		ResultSet rs = stmt.executeQuery();
 		while (rs.next()) {
-			list.add(new Project(rs.getString("project_id"), rs.getString("project_name")));
+			list.add(new Project(rs.getString("project_code"), rs.getString("project_name")));
 		}
 		rs.close();
 		stmt.close();
@@ -47,11 +47,11 @@ public class ProjectDAO {
 				        pb.project_budget,
 				        pb.project_actual
 				    FROM
-				        project_info pi
+				        project_manage pi
 				    LEFT JOIN
 				        project_management pm ON pi.project_code = pm.project_code
 				    LEFT JOIN
-						staff p ON pm.employee_id = p.staff_id
+						staff p ON pm.staff_id = p.staff_id
 				    LEFT JOIN
 				        project_budget pb ON pi.project_code = pb.project_code
 				    GROUP BY
@@ -101,7 +101,7 @@ public class ProjectDAO {
 
 			// project_info 登録
 			String sql_p_i = """
-					    INSERT INTO project_info (project_code, project_name, project_owner, start_date, end_date)
+					    INSERT INTO project_manage (project_code, project_name, project_owner, start_date, end_date)
 					    VALUES (?, ?, ?, ?, ?)
 					""";
 			try (PreparedStatement stmt = conn.prepareStatement(sql_p_i)) {
@@ -144,17 +144,14 @@ public class ProjectDAO {
 
 				String sql_p_m = """
 						    INSERT INTO project_management (
-						        employee_id, project_code, role, remarks, report
-						    ) VALUES (?, ?, ?, ?, ?)
+						        staff_id, project_code
+						    ) VALUES (?, ?)
 						""";
 
 				try (PreparedStatement stmt = conn.prepareStatement(sql_p_m)) {
 					for (String empId : empIds) {
 						stmt.setString(1, empId);
 						stmt.setString(2, p.getProject_code());
-						stmt.setString(3, "");
-						stmt.setString(4, "");
-						stmt.setString(5, "");
 						stmt.addBatch(); // SQLindexに登録
 					}
 					stmt.executeBatch(); //SQLinsertを一括実行
@@ -173,56 +170,56 @@ public class ProjectDAO {
 	}
 	
 	// プロジェクト管理-1件検索(削除メソッドの関係でString[]を使用しているが、一件検索が前提)
-	public ProjectList findByProjectCode(String[] project_code) throws Exception {
+	public ProjectList findByProjectCode(String[] project_code) {
 	    ProjectList psl = null;
-	    Connection conn = util.DBConnection.getConnection();
-	    
 	    String project_code_str = project_code[0];
-	    
+
 	    String sql = """
 	        SELECT
 	            pi.project_code,
 	            pi.project_name,
 	            pi.project_owner,
-	            GROUP_CONCAT(p.name ORDER BY p.name SEPARATOR ', ') AS member_names,
 	            pi.start_date,
 	            pi.end_date,
 	            pb.project_budget,
 	            pb.project_actual
 	        FROM
-	            project_info pi
-	        LEFT JOIN
-	            project_management pm ON pi.project_code = pm.project_code
-	        LEFT JOIN
-	            staff p ON pm.employee_id = p.staff_id
+	            project_manage pi
 	        LEFT JOIN
 	            project_budget pb ON pi.project_code = pb.project_code
 	        WHERE
 	            pi.project_code = ?
-	        GROUP BY
-	            pi.project_code, pi.project_name, pi.project_owner, pi.start_date, pi.end_date, pb.project_budget, pb.project_actual
-	        """;
+	    """;
 
-	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	    try (Connection conn = util.DBConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
 	        stmt.setString(1, project_code_str);
-	        ResultSet rs = stmt.executeQuery();
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                psl = new ProjectList();
+	                psl.setProject_code(rs.getString("project_code"));
+	                psl.setProject_name(rs.getString("project_name"));
+	                psl.setProject_owner(rs.getString("project_owner"));
+	                psl.setStart_date(rs.getString("start_date"));
+	                psl.setEnd_date(rs.getString("end_date"));
+	                psl.setProject_budget(rs.getObject("project_budget") != null ? rs.getInt("project_budget") : 0);
+	                psl.setProject_actual(rs.getObject("project_actual") != null ? rs.getInt("project_actual") : 0);
 
-	        if (rs.next()) {
-	            psl = new ProjectList();
-	            psl.setProject_code(rs.getString("project_code"));
-	            psl.setProject_name(rs.getString("project_name"));
-	            psl.setProject_owner(rs.getString("project_owner"));
-	            psl.setProject_members(rs.getString("member_names"));
-	            psl.setStart_date(rs.getString("start_date"));
-	            psl.setEnd_date(rs.getString("end_date"));
-	            psl.setProject_budget(rs.getObject("project_budget") != null ? rs.getInt("project_budget") : 0);
-	            psl.setProject_actual(rs.getObject("project_actual") != null ? rs.getInt("project_actual") : 0);
+	                // Lấy danh sách ID nhân viên từ bảng project_management
+	                String[] memberIds = getStaffIdsByProject(project_code_str);
+	                String joinedIds = String.join(",", memberIds);
+	                psl.setProject_members(joinedIds);
+	            }
 	        }
-	    } finally {
-	        conn.close();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
 	    }
+
 	    return psl;
 	}
+
 
 	
 	
@@ -235,7 +232,7 @@ public class ProjectDAO {
 
 	        // project_info 更新
 	        String sql_p_i = """
-	            UPDATE project_info
+	            UPDATE project_manage
 	            SET project_name = ?, project_owner = ?, start_date = ?, end_date = ?
 	            WHERE project_code = ?
 	        """;
@@ -289,7 +286,7 @@ public class ProjectDAO {
 
 	            String sql_p_m = """
 	                INSERT INTO project_management (
-	                    employee_id, project_code
+	                    staff_id, project_code
 	                ) VALUES (?, ?)
 	            """;
 	            try (PreparedStatement stmt = conn.prepareStatement(sql_p_m)) {
@@ -345,7 +342,7 @@ public class ProjectDAO {
 			}
 
 			// 3. project_info削除
-			String sql_pi = "DELETE FROM project_info WHERE project_code IN (" + placeholders + ")";
+			String sql_pi = "DELETE FROM project_manage WHERE project_code IN (" + placeholders + ")";
 			try (PreparedStatement stmt = conn.prepareStatement(sql_pi)) {
 				for (int i = 0; i < Project_code.length; i++) {
 					stmt.setString(i + 1, Project_code[i]);
@@ -391,6 +388,26 @@ public class ProjectDAO {
 	    }
 
 	    return result;
+	}
+	
+	public String[] getStaffIdsByProject(String projectCode) {
+	    List<String> ids = new ArrayList<>();
+	    String sql = "SELECT staff_id FROM project_management WHERE project_code = ?";
+	    
+	    try (Connection conn = util.DBConnection.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	         
+	        ps.setString(1, projectCode);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                ids.add(rs.getString("staff_id"));
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return ids.toArray(new String[0]);
 	}
 
 
