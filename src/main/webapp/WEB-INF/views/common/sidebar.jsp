@@ -20,7 +20,7 @@ String department = (String) session.getAttribute("department_id");
 			<li><a href="<%=request.getContextPath()%>/project_management_view">プロジェクト管理</a></li>
 			<li><a href="<%=request.getContextPath()%>/employeeList">社員管理</a></li>
 			<li><a href="<%=request.getContextPath()%>/department">部署管理</a></li>
-			<li><a href="#">役職管理</a></li>
+			<li><a href="<%=request.getContextPath()%>/positionControl">役職管理</a></li>
 			<hr>
 			<li><a href="<%=request.getContextPath()%>/payment management.jsp">支払い管理</a></li>
 			<hr>
@@ -37,7 +37,7 @@ String department = (String) session.getAttribute("department_id");
 			<li><a href="<%=request.getContextPath()%>/project_management_view">プロジェクト管理</a></li>
 			<li><a href="<%=request.getContextPath()%>/employeeList">社員管理</a></li>
 			<li><a href="<%=request.getContextPath()%>/department">部署管理</a></li>
-			<li><a href="#">役職管理</a></li>
+			<li><a href="<%=request.getContextPath()%>/positionControl">役職管理</a></li>
 			<hr>
 			<li><a href="<%=request.getContextPath()%>/payment management.jsp">支払い管理</a></li>
 			<hr>
