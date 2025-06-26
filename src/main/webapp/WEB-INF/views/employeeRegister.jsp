@@ -90,7 +90,6 @@ h2 {
 			<div class="btn-section">
 				<button type="button" onclick="goBack()">戻る</button>
 				<button type="submit">確認</button>
-				<button type="reset">リセット</button>
 
 			</div>
 		</form>
