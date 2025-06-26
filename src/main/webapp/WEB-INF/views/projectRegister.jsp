@@ -1,8 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="model.ProjectList" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-  ProjectList bean = (ProjectList) request.getAttribute("project_edit"); // 編集時のbean
-  boolean isEdit = (bean != null); // beanがあれば編集モード
+  ProjectList bean = (ProjectList) request.getAttribute("project_edit");
+  String mode = (String) request.getAttribute("screenMode");
+  boolean isEdit = "edit".equals(mode); // Phân biệt chỉnh sửa hay đăng ký mới rõ ràng
 %>
 <!DOCTYPE html>
 <html lang="ja">
@@ -49,38 +51,39 @@
         <div class="form-group">
           <label>プロジェクトコード</label>
           <input type="text" name="Project_code" required maxlength="8"
-            value="<%= isEdit ? bean.getProject_code() : "" %>" <%= isEdit ? "readonly" : "" %> >
+            value="<%= bean != null ? bean.getProject_code() : "" %>"
+            <%= isEdit ? "readonly" : "" %> >
         </div>
         <div class="form-group">
           <label>プロジェクト名</label>
           <input type="text" name="Project_name" required maxlength="20"
-            value="<%= isEdit ? bean.getProject_name() : "" %>">
+            value="<%= bean != null ? bean.getProject_name() : "" %>">
         </div>
         <div class="form-group">
           <label>プロジェクト責任者</label>
           <input type="text" name="Project_owner" required maxlength="20"
-            value="<%= isEdit ? bean.getProject_owner() : "" %>">
+            value="<%= bean != null ? bean.getProject_owner() : "" %>">
         </div>
         <div class="form-group">
           <label>開始日</label>
           <input type="date" name="Start_date"
-            value="<%= isEdit && bean.getStart_date() != null && !bean.getStart_date().equals("登録なし") ? bean.getStart_date() : "" %>">
+            value="<%= (bean != null && bean.getStart_date() != null && !bean.getStart_date().equals("登録なし")) ? bean.getStart_date() : "" %>">
         </div>
         <div class="form-group">
           <label>終了日</label>
           <input type="date" name="End_date"
-            value="<%= isEdit && bean.getEnd_date() != null && !bean.getEnd_date().equals("登録なし") ? bean.getEnd_date() : "" %>">
+            value="<%= (bean != null && bean.getEnd_date() != null && !bean.getEnd_date().equals("登録なし")) ? bean.getEnd_date() : "" %>">
         </div>
         <div class="form-group">
           <label>予算（円）</label>
           <input type="number" name="Project_budget" min="0"
-            value="<%= isEdit && bean.getProject_budget() != null ? bean.getProject_budget() : "" %>">
+            value="<%= (bean != null && bean.getProject_budget() != null) ? bean.getProject_budget() : "" %>">
         </div>
         <div class="form-group">
           <label>社員ID（カンマ区切りで複数可）</label>
           <input type="text" name="memberIds"
-            value="<%= isEdit && bean.getProject_members() != null && !bean.getProject_members().equals("登録なし") ? bean.getProject_members() : "" %>"
-            placeholder="例: E001,E002,E003">
+            value="<%= (bean != null && bean.getProject_members() != null && !bean.getProject_members().equals("登録なし")) ? bean.getProject_members() : "" %>"
+            placeholder="例: S0001,S0002,S0003">
         </div>
       </div>
 
@@ -103,5 +106,8 @@ function validateForm() {
     return true;
 }
 </script>
+<c:if test="${not empty errorMsg}">
+    <script>alert("${errorMsg}");</script>
+</c:if>
 </body>
 </html>
