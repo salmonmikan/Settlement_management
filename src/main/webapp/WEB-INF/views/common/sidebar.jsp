@@ -24,7 +24,7 @@ String department = (String) session.getAttribute("department_id");
 			<hr>
 			<li><a href="<%=request.getContextPath()%>/payment management.jsp">支払い管理</a></li>
 			<hr>
-			<li><a href="#">パスワード変更</a></li>
+			<li><a href="<%=request.getContextPath()%>/changePass.jsp" class="btn">パスワード変更</a></li>
 			<%
 			}
 			%>
@@ -41,7 +41,7 @@ String department = (String) session.getAttribute("department_id");
 			<hr>
 			<li><a href="<%=request.getContextPath()%>/payment management.jsp">支払い管理</a></li>
 			<hr>
-			<li><a href="#">パスワード変更</a></li>
+			<li><a href="<%=request.getContextPath()%>/changePass.jsp" class="btn">パスワード変更</a></li>
 			<%
 			}
 			%>
@@ -52,7 +52,7 @@ String department = (String) session.getAttribute("department_id");
 			<hr>
 			<li><a href="<%= request.getContextPath() %>/approverApplications">精算承認</a></li>
 			<hr>
-			<li><a href="#">パスワード変更</a></li>
+			<li><a href="<%=request.getContextPath()%>/changePass.jsp" class="btn">パスワード変更</a></li>
 			<%
 			}
 			%>
@@ -64,7 +64,7 @@ String department = (String) session.getAttribute("department_id");
 			<hr>
 			<li><a href="<%=request.getContextPath()%>/project_management_view">プロジェクト管理</a></li>
 			<hr>
-			<li><a href="#">パスワード変更</a></li>
+			<li><a href="<%=request.getContextPath()%>/changePass.jsp" class="btn">パスワード変更</a></li>
 			<%
 			}
 			%>
@@ -74,7 +74,7 @@ String department = (String) session.getAttribute("department_id");
 			%>
 			<li><a href="<%=request.getContextPath()%>/applicationMain" class="btn">申請一覧</a></li>
 			<hr>
-			<li><a href="#">パスワード変更</a></li>
+			<li><a href="<%=request.getContextPath()%>/changePass.jsp" class="btn">パスワード変更</a></li>
 			<%
 			}
 			%>

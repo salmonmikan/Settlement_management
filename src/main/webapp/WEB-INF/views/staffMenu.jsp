@@ -6,6 +6,14 @@
 			return;
 		};
 %>
+<%
+  String staffId = (String) session.getAttribute("staffId");
+  if (staffId == null) {
+    response.sendRedirect(request.getContextPath() + "/login.jsp");
+    return;
+  }
+%>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
