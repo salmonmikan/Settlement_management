@@ -11,24 +11,14 @@
 <script src="<%=request.getContextPath()%>/static/js/department.js" defer></script>
 </head>
 <%
-ArrayList<DepartmentBean> department = (ArrayList<DepartmentBean>) session.getAttribute("department");
+ArrayList<DepartmentBean> department = (ArrayList<DepartmentBean>) session.getAttribute("department_list");
 %>
 <body style="display: flex; justify-content: center;">
 	<div class="page-container"
 		style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
 		<!-- Sidebar -->
-		<div class="staff-dashboard-wrapper" style="height: 50vh;">
-			<div class="sidebar">
-				<div class="menu-block">
-					<h3>メニュー</h3>
-					<ul>
-						<li><a href="#">申請一覧</a></li>
-						<li><a href="#">パスワード変更</a></li>
-					</ul>
-				</div>
-
-				<div class="welcome-message">ようこそ、田中 さん！</div>
-			</div>
+		<div class="staff-dashboard-wrapper">
+			<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 			<!-- Main content -->
 			<div class="staff-main-content" style="width: 500px;">
 				<div class="panel">
@@ -63,15 +53,15 @@ ArrayList<DepartmentBean> department = (ArrayList<DepartmentBean>) session.getAt
 										<td data-editable class="dept-name"><%=bean.getDepartment_name()%></td>
 										<td>
 											<form method="POST" action="departmentControl" style="display: inline;">
-		<!--										js側での処理-->
-												<button id="edit-btn-<%=bean.getDepartment_id()%>" type="button" class="btn btn-sm" style="padding: 3px 8px;"
+												 <!-- js側での処理-->
+												 <button id="edit-btn-<%=bean.getDepartment_id()%>" type="button" class="btn btn-sm" style="padding: 3px 8px;"
 													onclick="editRow('<%=bean.getDepartment_id()%>')">編集</button>
 													
-		<!--										servlet側での処理-->
+												 <!-- servlet側での処理-->
 												
 												 <input type="hidden" name="department_id" value="<%=bean.getDepartment_id()%>">
 												 <input type="hidden" name="department_name" value="<%=bean.getDepartment_name()%>">
-		<!--										  更新(編集押下時)と削除(デフォルト)-->
+												 <!-- 更新(編集押下時)と削除(デフォルト)-->
 												 <button id="save-btn-<%=bean.getDepartment_id()%>" type="button" name="action" value="update" class="btn btn-sm"
 												  	onclick="submitRow(this)" style="padding: 3px 8px; display: none;">更新</button>
 												 <button id="delete-btn-<%=bean.getDepartment_id()%>" type="submit" name="action" value="delete" class="btn btn-sm"

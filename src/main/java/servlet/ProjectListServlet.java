@@ -1,13 +1,16 @@
 package servlet;
 
-import dao.ProjectDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import model.Project;
-
 import java.io.IOException;
 import java.util.List;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import bean.Project;
+import dao.ProjectDAO;
 
 @WebServlet("/projectList")
 public class ProjectListServlet extends HttpServlet {

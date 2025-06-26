@@ -9,51 +9,47 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import dao.StaffDAO;
-import model.Staff;
+import bean.Employee;
+import dao.EmployeeDAO;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    // Xử lý GET (ví dụ: người dùng mở trực tiếp Servlet bằng URL)
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
-    }
+	// Xử lý GET (ví dụ: người dùng mở trực tiếp Servlet bằng URL)
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+	}
 
-    // Xử lý POST (submit form đăng nhập)
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	// Xử lý POST (submit form đăng nhập)
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        String staffId = request.getParameter("staffId");
-        String password = request.getParameter("password");
-        
+		String staffId = request.getParameter("staffId");
+		String password = request.getParameter("password");
+		//        String hashpass = hashPassword(password);
 
-        StaffDAO dao = new StaffDAO();
-        Staff staff = dao.findByIdAndPassword(staffId, password);
+		EmployeeDAO dao = new EmployeeDAO();
+		Employee staff = dao.findByIdAndPassword(staffId, password);
 
         if (staff != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("staffId", staff.getStaffId());
-            session.setAttribute("staffName", staff.getName()); 
+            session.setAttribute("staffId", staff.getEmployeeId());
+            session.setAttribute("staffName", staff.getFullName()); 
             
             //画面遷移by son
-            session.setAttribute("position", staff.getPosition());
-            session.setAttribute("department", staff.getDepartment());
+            session.setAttribute("position_id", staff.getPositionId());
+            session.setAttribute("department_id", staff.getDepartmentId());
             
-            String position = (String) session.getAttribute("position");
-            String department = (String) session.getAttribute("department");
+            String position = (String) session.getAttribute("position_id");
+            String department = (String) session.getAttribute("department_id");
+            System.out.println("position = " + position);
+            System.out.println("department = " + department);
             
-            if(("一般社員".equals(position) || "主任".equals(position)) && "営業部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
-            }else if("一般社員".equals(position) && "管理部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(request, response);
-            }else if("部長".equals(position) && "営業部".equals(department)) {
-            	request.getRequestDispatcher("/WEB-INF/views/buchougamen.jsp").forward(request, response);
-            }
+            request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
             
         } else {
         	System.out.println("Login failed - user not found");

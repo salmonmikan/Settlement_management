@@ -19,38 +19,26 @@
 <body>
 
 	<nav>
-		ようこそ、<%= staffName %> 様！
+		精算管理システム
 		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
     	<button type="submit"  title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
 		</form>
 	</nav>
 
   <div class="page-container">
-    <h1>スタッフメニュー</h1>
+    <p style="text-align: right;">ようこそ、<%= staffName %> さん！</p>
 
     <div class="staff-dashboard-wrapper">
 
       <!-- Sidebar -->
-      <div class="sidebar">
-		  <div class="menu-block">
-		    <h3>メニュー</h3>
-		    <ul>
-		      <li><a href="#">パスワード変更</a></li>
-		      <li><a href="<%= request.getContextPath() %>/applicationList" class="btn">申請一覧を見る</a></li>
-		    </ul>
-		  </div>
-		  
-		  <div class="welcome-message">
-		    ようこそ、<%= staffName %> さん！
-		  </div>
-	  </div>
+      <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
       <!-- Main content -->
       <div class="staff-main-content">
         <div class="panel">
           <h4>申請する</h4>
           <div class="btn-section">
-            <a href="#">交通費申請</a>
+            <a href="<%= request.getContextPath() %>/transportationRequest">交通費申請</a>
             <a href="<%= request.getContextPath() %>/createApplication?type=出張費">出張費申請</a>
             <a href="<%= request.getContextPath() %>/reimbursement">立替金申請</a>
 
@@ -58,11 +46,11 @@
         </div>
 
         <div class="panel">
-          <h4>申請一覧</h4>
+          <h4>申請状況</h4>
           <ul>
-            <li><a href="approvalList.jsp?status=pending">未提出: 1件</a></li>
-            <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
-            <li><a href="approvalList.jsp?status=approved">差し戻し: 1件</a></li>
+            <li><a href="<%= request.getContextPath() %>/applicationMain?status=pending">未提出</a></li>
+            <li><a href="<%= request.getContextPath() %>/applicationMain?status=">提出済</a></li>
+            <li><a href="<%= request.getContextPath() %>/applicationMain?status=approved">差戻</a></li>
           </ul>
         </div>
       </div>

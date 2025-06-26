@@ -1,31 +1,30 @@
 package servlet;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-
-import jakarta.servlet.http.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.*;
-
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
+import bean.Project;
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
 import dao.ProjectDAO;
-import model.Project;
 
 @MultipartConfig
 @WebServlet(urlPatterns = {"/businessTrip", "/businessTripStep2Back", "/businessTripStep3Back", "/businessTripConfirmBack"})
@@ -44,14 +43,29 @@ public class BusinessTripServlet extends HttpServlet {
             request.setAttribute("projectList", new ArrayList<>());
         }
 
+        HttpSession session = request.getSession();
+        BusinessTripBean bean = (BusinessTripBean) session.getAttribute("businessTripBean");
+
         switch (path) {
             case "/businessTripStep2Back":
+                if (bean != null) {
+                    request.setAttribute("step1Data", bean.getStep1Data());
+                }
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(request, response);
                 break;
             case "/businessTripStep3Back":
+                if (bean != null) {
+                    request.setAttribute("step1Data", bean.getStep1Data());
+                    request.setAttribute("step2List", bean.getStep2List());
+                }
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip2.jsp").forward(request, response);
                 break;
             case "/businessTripConfirmBack":
+                if (bean != null) {
+                    request.setAttribute("step1Data", bean.getStep1Data());
+                    request.setAttribute("step2List", bean.getStep2List());
+                    request.setAttribute("step3List", bean.getStep3List());
+                }
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
                 break;
             default:
@@ -65,7 +79,7 @@ public class BusinessTripServlet extends HttpServlet {
 
         String step = request.getParameter("step");
         if (step == null) {
-            request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
+            request.getRequestDispatcher("/menu").forward(request, response);
             return;
         }
 
@@ -81,7 +95,6 @@ public class BusinessTripServlet extends HttpServlet {
         List<String> step2Files = new ArrayList<>();
         List<String> step3Files = new ArrayList<>();
 
-        
         for (Part part : parts) {
             String submittedFileName = part.getSubmittedFileName();
             if (submittedFileName != null && part.getSize() > 0) {
@@ -107,7 +120,6 @@ public class BusinessTripServlet extends HttpServlet {
         switch (step) {
             case "1":
                 String tripReport = request.getParameter("tripReport");
-
                 if (tripReport != null && (
                         tripReport.contains("HttpServletRequest") ||
                         tripReport.contains("System.out") ||
@@ -127,6 +139,7 @@ public class BusinessTripServlet extends HttpServlet {
                 );
                 bean.setStep1Data(s1);
                 session.setAttribute("businessTripBean", bean);
+                request.setAttribute("step1Data", bean.getStep1Data());
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip2.jsp").forward(request, response);
                 break;
 
@@ -150,6 +163,8 @@ public class BusinessTripServlet extends HttpServlet {
                 }
                 bean.setStep2List(step2List);
                 session.setAttribute("businessTripBean", bean);
+                request.setAttribute("step1Data", bean.getStep1Data());
+                request.setAttribute("step2List", bean.getStep2List());
                 request.getRequestDispatcher("/WEB-INF/views/businessTrip3.jsp").forward(request, response);
                 break;
 
@@ -181,11 +196,13 @@ public class BusinessTripServlet extends HttpServlet {
                 bean.setTotalStep3Amount(total3);
 
                 session.setAttribute("businessTripBean", bean);
-                request.getRequestDispatcher("/WEB-INF/views/businessTripConfirm.jsp").forward(request, response);
+                request.setAttribute("businessTripBean", bean);
+                request.setAttribute("application_type", "出張費");
+                request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp").forward(request, response);
                 break;
 
             default:
-            	response.sendRedirect(request.getContextPath() + "/home");
+                response.sendRedirect(request.getContextPath() + "/home");
         }
     }
 }

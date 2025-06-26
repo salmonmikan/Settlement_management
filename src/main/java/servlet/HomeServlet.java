@@ -30,7 +30,7 @@ public class HomeServlet extends HttpServlet {
         }else if("一般社員".equals(position) && "管理部".equals(department)) {
         	req.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(req, res);
         }else if("部長".equals(position) && "営業部".equals(department)) {
-        	req.getRequestDispatcher("/WEB-INF/views/buchougamen.jsp").forward(req, res);
+        	req.getRequestDispatcher("/WEB-INF/views/buchouMain.jsp").forward(req, res);
         }
         
     }

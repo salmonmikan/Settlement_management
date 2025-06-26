@@ -1,5 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<% Boolean editMode = (Boolean) request.getAttribute("editMode"); %>
+<% Integer applicationId = (Integer) request.getAttribute("applicationId"); %>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -28,6 +31,10 @@
   <div class="page-container">
     <h2>出張情報</h2>
     <form action="<%= request.getContextPath() %>/businessTrip" method="post" enctype="multipart/form-data" onsubmit="return setHiddenFields()">
+      <input type="hidden" name="editMode" value="<%= editMode != null && editMode ? "true" : "false" %>">
+	  <% if (editMode != null && editMode) { %>
+	    <input type="hidden" name="applicationId" value="<%= applicationId %>">
+	  <% } %>
       <input type="hidden" name="step" value="1">
       <input type="hidden" name="totalDays" id="totalDays">
       <input type="hidden" name="startDateHidden" id="startDateHidden">
@@ -37,7 +44,8 @@
         <div class="form-group">
           <label>出張期間</label>
           <div style="display: flex; gap: 1rem;">
-            <input type="date" name="startDate" id="startDate" required>
+            <!-- <input type="date" name="startDate" id="startDate" required> -->
+            <input type="date" name="startDate" id="startDate" value="${step1Data.startDate}">
             <span>～</span>
             <input type="date" name="endDate" id="endDate" required>
           </div>
