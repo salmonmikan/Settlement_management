@@ -12,7 +12,11 @@
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
   <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
   <style>
-    .page-container { display: flex; flex-direction: column; flex: 1; }
+    .page-container {
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    }
     form { display: flex; flex-direction: column; }
     .table-area { flex: 1; padding-bottom: 1rem; }
     .btn-section {
@@ -69,6 +73,9 @@
 </head>
 <body>
   <div class="page-container">
+  	<!-- Sidebar -->
+    <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+    <div>
     <h2>申請一覧</h2>
 
     <!-- <div class="action-toolbar">
@@ -156,7 +163,7 @@
       </div>
     </div>
   </div>
-
+  </div>
   <div class="footer">
     &copy; 2025 ABC株式会社 - All rights reserved.
   </div>
