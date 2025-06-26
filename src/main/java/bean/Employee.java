@@ -1,4 +1,4 @@
-package bean.BusinessTripBean;
+package bean;
 
 import java.sql.Date;
 
@@ -9,7 +9,6 @@ public class Employee {
     private Date birthDate;
     private String address;
     private Date joinDate;
-    private String loginId;
     private String password;
     private String departmentId;
     private String positionId;
@@ -57,13 +56,6 @@ public class Employee {
     }
     public void setJoinDate(Date joinDate) {
         this.joinDate = joinDate;
-    }
-
-    public String getLoginId() {
-        return loginId;
-    }
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
     }
 
     public String getPassword() {

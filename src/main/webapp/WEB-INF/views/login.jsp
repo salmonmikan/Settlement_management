@@ -22,7 +22,7 @@
       <div class="login-title">ログイン</div>
       <form action="<%= request.getContextPath() %>/LoginServlet" method="post">
         <div class="login-form-group">
-          <input type="text" name="staffId" placeholder="ユーザーID" required>
+          <input type="text" name="staffId" placeholder="社員ID" required>
         </div>
         <div class="login-form-group password-group">
           <input type="password" id="password" name="password" placeholder="パスワード" required>

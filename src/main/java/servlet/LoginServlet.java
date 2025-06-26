@@ -9,32 +9,31 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import bean.BusinessTripBean.Employee;
+import bean.Employee;
 import dao.EmployeeDAO;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    // Xử lý GET (ví dụ: người dùng mở trực tiếp Servlet bằng URL)
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
-    }
+	// Xử lý GET (ví dụ: người dùng mở trực tiếp Servlet bằng URL)
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+	}
 
-    // Xử lý POST (submit form đăng nhập)
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	// Xử lý POST (submit form đăng nhập)
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        String staffId = request.getParameter("staffId");
-        String password = request.getParameter("password");
-//        String hashpass = hashPassword(password);
-        
+		String staffId = request.getParameter("staffId");
+		String password = request.getParameter("password");
+		//        String hashpass = hashPassword(password);
 
-        EmployeeDAO dao = new EmployeeDAO();
-        Employee staff = dao.findByIdAndPassword(staffId, password);
+		EmployeeDAO dao = new EmployeeDAO();
+		Employee staff = dao.findByIdAndPassword(staffId, password);
 
         if (staff != null) {
             HttpSession session = request.getSession();
