@@ -56,9 +56,9 @@
         <div class="panel">
           <h4>申請状況</h4>
           <ul>
-            <li><a href="approvalList.jsp?status=pending">未提出</a></li>
-            <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
-            <li><a href="approvalList.jsp?status=approved">差戻: 1件</a></li>
+            <li><a href="<%= request.getContextPath() %>/applicationMain?status=pending">未提出</a></li>
+            <li><a href="<%= request.getContextPath() %>/applicationMain?status=">提出済</a></li>
+            <li><a href="<%= request.getContextPath() %>/applicationMain?status=approved">差戻</a></li>
           </ul>
         </div>
       </div>

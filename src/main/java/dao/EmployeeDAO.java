@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.BusinessTripBean.Employee;
+import bean.Employee;
 import util.DBConnection;
 
 public class EmployeeDAO {
@@ -39,7 +39,8 @@ public class EmployeeDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, emp.getEmployeeId());
-            ps.setString(2, hashPassword(emp.getPassword()));
+//            ps.setString(2, hashPassword(emp.getPassword()));
+            ps.setString(2, emp.getPassword());
             ps.setString(3, emp.getFullName());
             ps.setString(4, emp.getFurigana());
             ps.setDate(5, emp.getBirthDate());
@@ -62,8 +63,8 @@ public class EmployeeDAO {
         List<Employee> list = new ArrayList<>();
         String sql = "SELECT s.*,d.*,p.* "
         		+ "FROM staff as s "
-        		+ "JOIN department as d ON s.department_id = d.department_id "
-        		+ "JOIN position as p ON s.position_id = p.position_id;";
+        		+ "JOIN department_master as d ON s.department_id = d.department_id "
+        		+ "JOIN position_master as p ON s.position_id = p.position_id;";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -71,16 +72,15 @@ public class EmployeeDAO {
 
             while (rs.next()) {
                 Employee e = new Employee();
-                e.setEmployeeId(rs.getString("s.staff_id"));
-                e.setPassword(rs.getString("s.password"));
-                e.setFullName(rs.getString("s.name"));
-                e.setFurigana(rs.getString("s.furigana"));
-                e.setBirthDate(rs.getDate("s.birth_date"));
-                e.setAddress(rs.getString("s.address"));
-                e.setJoinDate(rs.getDate("s.hire_date"));
-                e.setDepartmentName(rs.getString("d.department_name"));
-                e.setPositionName(rs.getString("p.position_name"));
-
+                e.setEmployeeId(rs.getString("staff_id"));
+                e.setPassword(rs.getString("password"));
+                e.setFullName(rs.getString("name"));
+                e.setFurigana(rs.getString("furigana"));
+                e.setBirthDate(rs.getDate("birth_date"));
+                e.setAddress(rs.getString("address"));
+                e.setJoinDate(rs.getDate("hire_date"));
+                e.setDepartmentName(rs.getString("department_name"));
+                e.setPositionName(rs.getString("position_name"));
                 list.add(e);
             }
 
@@ -119,4 +119,83 @@ public class EmployeeDAO {
         }
         return staff;
     }
+    
+    //IDから情報を取得
+    public Employee findById(String staffId) {
+        Employee emp = null;
+        String sql = "SELECT * FROM staff WHERE staff_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, staffId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                emp = new Employee();
+                emp.setEmployeeId(rs.getString("staff_id"));
+                emp.setFullName(rs.getString("name"));
+                emp.setFurigana(rs.getString("furigana"));
+                emp.setBirthDate(rs.getDate("birth_date"));
+                emp.setAddress(rs.getString("address"));
+                emp.setJoinDate(rs.getDate("hire_date"));
+                emp.setPassword(rs.getString("password"));
+                emp.setDepartmentId(rs.getString("department_id"));
+                emp.setPositionId(rs.getString("position_id"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return emp;
+    }
+ // UPDATE
+    public boolean updateEmployee(Employee emp) {
+        String sql = """
+            UPDATE staff 
+            SET password = ?, name = ?, furigana = ?, birth_date = ?, address = ?, hire_date = ?, department_id = ?, position_id = ?
+            WHERE staff_id = ?
+            """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // ps.setString(1, hashPassword(emp.getPassword()));
+            ps.setString(1, emp.getPassword());
+            ps.setString(2, emp.getFullName());
+            ps.setString(3, emp.getFurigana());
+            ps.setDate(4, emp.getBirthDate());
+            ps.setString(5, emp.getAddress());
+            ps.setDate(6, emp.getJoinDate());
+            ps.setString(7, emp.getDepartmentId());
+            ps.setString(8, emp.getPositionId());
+            ps.setString(9, emp.getEmployeeId());
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // DELETE
+   
+    public boolean deleteEmployee(String staffId) {
+        String sql = "DELETE FROM staff WHERE staff_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, staffId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

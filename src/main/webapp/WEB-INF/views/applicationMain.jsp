@@ -1,9 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="model.Application" %>
+<%@ page import="bean.Application" %>
 <%@ page import="java.util.List" %>
 <%
   List<Application> applications = (List<Application>) request.getAttribute("applications");
 %>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -90,14 +91,14 @@
         <table id="applicationTable">
           <thead>
             <tr>
-              <th><div>All</div><input type="checkbox" id="selectAll"></th>
+              <th ><div></div><input type="checkbox" id="selectAll"></th>
               <th>申請ID</th>
               <th>申請種別</th>
               <th>申請時間</th>
               <th>金額（含税）</th>
               <th>
                 <select id="statusFilter" class="status-filter-button">
-                	<option value="">すべて</option>
+                	<option value="">状況</option>
 					<option value="未提出">未提出</option>
 					<option value="提出済み">提出済み</option>
 					<option value="差戻し">差戻し</option>

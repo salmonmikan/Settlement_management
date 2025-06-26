@@ -1,5 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="bean.Application" %>
+<%-- <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="model.Application" %>
+>>>>>>> refs/remotes/origin/develop_dame
 <%@ page import="java.util.List" %>
 <%
   List<Application> applications = (List<Application>) request.getAttribute("applications");
@@ -116,4 +119,4 @@
     });
   </script>
 </body>
-</html>
+</html> --%>

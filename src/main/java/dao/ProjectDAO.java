@@ -10,8 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import model.Project;
-import model.ProjectList;
+import bean.Project;
+import bean.ProjectList;
+import util.DBConnection;
 
 public class ProjectDAO {
 	// bussinessTrip用 yuiさん作成？by ebara
@@ -409,6 +410,31 @@ public class ProjectDAO {
 	    
 	    return ids.toArray(new String[0]);
 	}
+	
+	//Check staff ID
+	
+	// Kiểm tra xem tất cả staffIds có tồn tại không
+	public boolean areStaffIdsValid(String[] staffIds) {
+	    if (staffIds == null || staffIds.length == 0) return true;
 
+	    String placeholders = String.join(",", java.util.Collections.nCopies(staffIds.length, "?"));
+	    String sql = "SELECT COUNT(*) FROM staff WHERE staff_id IN (" + placeholders + ")";
 
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        for (int i = 0; i < staffIds.length; i++) {
+	            ps.setString(i + 1, staffIds[i]);
+	        }
+
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            int count = rs.getInt(1);
+	            return count == staffIds.length;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
 }

@@ -1,87 +1,123 @@
-<%@page import="bean.DepartmentBean"%>
-<%@page import="java.util.ArrayList"%>
-<%@ page contentType="text/html; charset=UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="bean.PositionBean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%
+    ArrayList<PositionBean> positionList = (ArrayList<PositionBean>) session.getAttribute("position_list");
+    if (positionList == null) positionList = new ArrayList<>();
+%>
+
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<title>役職管理</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/static/css/style.css">
-<script src="<%=request.getContextPath()%>/static/js/position.js" defer></script>
-</head>
-<%
-ArrayList<DepartmentBean> positionList = (ArrayList<DepartmentBean>) session.getAttribute("position_list");
-if (positionList == null) {
-    positionList = new ArrayList<>(); // null対策（空リストにしておく）
+<meta charset="UTF-8">
+<title>役職一覧 - 管理画面</title>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+.page-container {
+	max-width: 80%;
+	margin: 30px auto;
+	display: flex;
+	gap: 50px;
+	align-items: flex-start;
 }
-%>
-<body style="display: flex; justify-content: center;">
-	<div class="page-container"
-		style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-		<!-- Sidebar -->
-		<div class="staff-dashboard-wrapper">
-			<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-			<!-- Main content -->
-			<div class="staff-main-content" style="width: 500px;">
-				<div class="panel">
-					<!-- 管理画面 -->
-					<div class="col-10 p-4">
-						<h3>役職管理</h3>
-						<div class="action-toolbar">
-							<div class="spacer"></div>
-							<button class="" onclick="addRow()">＋ 新規追加</button>
-						</div>
-						<table class="table table-bordered">
-							<colgroup>
-								<!-- 列幅を固定 -->
-								<col style="width: 150px;">
-								<col style="width: 150px;">
-								<col style="width: 150px;">
-							</colgroup>
-							<thead>
-								<tr>
-									<th>役職ID</th>
-									<th>役職名</th>
-									<th>操作</th>
-								</tr>
-							</thead>
-							<tbody id="position-table-body">
-								<%
-								for (PositionBean bean : positionList) {
-								%>
-								<tr id="row-<%=bean.getPosition_id()%>">
-									<td><%=bean.getPosition_id()%></td>
-									<td data-editable class="position-name"><%=bean.getPosition_name()%></td>
-									<td>
-										<form method="POST" action="positionControl" style="display: inline;">
-											<!-- js側での処理 -->
-											<button id="edit-btn-<%=bean.getPosition_id()%>" type="button" class="btn btn-sm" style="padding: 3px 8px;"
-												onclick="editRow('<%=bean.getPosition_id()%>')">編集</button>
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+	font-size: 0.95rem;
+}
+th, td {
+	padding: 10px;
+	border: 1px solid #ccc;
+	text-align: center;
+}
+th {
+	background-color: #e6f0fa;
+}
+h2 {
+	text-align: center;
+	margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+	<nav>
+		精算管理システム
+		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
+			<button type="submit" title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
+		</form>
+	</nav>
 
-											<!-- servlet側での処理 -->
-											<input type="hidden" name="position_id" value="<%=bean.getPosition_id()%>">
-											<input type="hidden" name="position_name" value="<%=bean.getPosition_name()%>">
-
-											<!-- 更新(編集押下時)と削除(デフォルト) -->
-											<button id="save-btn-<%=bean.getPosition_id()%>" type="button" name="action" value="update" class="btn btn-sm"
-												onclick="submitRow(this)" style="padding: 3px 8px; display: none;">更新</button>
-											<button id="delete-btn-<%=bean.getPosition_id()%>" type="submit" name="action" value="delete" class="btn btn-sm"
-												onclick="return confirm('この役職を削除しますか？')" style="padding: 3px 8px;">削除</button>
-
-											<button id="cancel-btn-<%=bean.getPosition_id()%>" type="button" class="btn btn-sm" style="display: none; padding: 3px 8px"
-												onclick="cancelRow('<%=bean.getPosition_id()%>')">取消</button>
-										</form>
-									</td>
-								</tr>
-								<%
-								}
-								%>
-							</tbody>
-						</table>
-					</div>
+	<div class="page-container">
+		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+		<div>
+			<h2>役職一覧</h2>
+			<form action="positionControl" method="post">
+				<div class="action-toolbar">
+					<div class="spacer"></div>
+					<button type="button" onclick="location.href='positionControl?action=add'">＋ 新規追加</button>
+					<button type="submit" name="action" value="edit" id="editBtn" disabled>編集</button>
+					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
 				</div>
-			</div>
+				<table>
+					<thead>
+						<tr>
+							<th>選択</th>
+							<th>役職ID</th>
+							<th>役職名</th>
+						</tr>
+					</thead>
+					<tbody>
+						<%
+						for (PositionBean bean : positionList) {
+						%>
+						<tr>
+							<td><input type="checkbox" name="position_id" value="<%=bean.getPosition_id()%>" class="row-check"></td>
+							<td><%=bean.getPosition_id()%></td>
+							<td><%=bean.getPosition_name()%></td>
+						</tr>
+						<%
+						}
+						%>
+					</tbody>
+				</table>
+			</form>
 		</div>
 	</div>
+
+	<script>
+	const checkboxes = document.querySelectorAll('.row-check');
+	const editBtn = document.getElementById('editBtn');
+	const deleteBtn = document.getElementById('deleteBtn');
+
+	checkboxes.forEach(cb => {
+		cb.addEventListener('change', () => {
+			const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+			editBtn.disabled = checkedCount !== 1;
+			deleteBtn.disabled = checkedCount === 0;
+		});
+	});
+	</script>
+
+	<%
+	String method = request.getMethod();
+	String successMsg = (String) request.getAttribute("successMsg");
+	String errorMsg = (String) request.getAttribute("errorMsg");
+
+	if ("POST".equalsIgnoreCase(method)) {
+		if (successMsg != null) {
+	%>
+	<script>alert("<%=successMsg%>");</script>
+	<%
+		} else if (errorMsg != null) {
+	%>
+	<script>alert("<%=errorMsg%>");</script>
+	<%
+		}
+	}
+	%>
 </body>
 </html>
