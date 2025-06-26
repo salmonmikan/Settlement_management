@@ -25,10 +25,9 @@
 .page-container {
 	max-width: 80%;
 	margin: 30px auto;
-	background-color: white;
-	border-radius: 10px;
-	padding: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
 }
 
 table {
@@ -82,6 +81,9 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 		</form>
 	</nav>
 	<div class="page-container">
+	<!-- Sidebar -->
+    <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+    <div>
 		<h2>プロジェクト一覧</h2>
 		<form id="" action="projectControl" method="post">
 			<div class="action-toolbar">
@@ -134,6 +136,7 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 		</form>
 		<!--		<a href="<%=request.getContextPath()%>/employeeRegisterPage"-->
 		<!--			class="center-link">プロジェクト登録はこちら</a>-->
+	</div>
 	</div>
 	<script type="text/javascript">
 		const checkboxes = document.querySelectorAll('.row-check');

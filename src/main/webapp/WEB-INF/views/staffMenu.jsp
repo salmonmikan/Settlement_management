@@ -31,21 +31,14 @@
     <div class="staff-dashboard-wrapper">
 
       <!-- Sidebar -->
-      <div class="sidebar">
-		  <div class="menu-block">
-		    <h3>メニュー</h3>
-		    <ul>
-		      <li><a href="<%= request.getContextPath() %>/applicationMain" class="btn">申請一覧</a></li>
-		    </ul>
-		  </div>
-	  </div>
+      <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
       <!-- Main content -->
       <div class="staff-main-content">
         <div class="panel">
           <h4>申請する</h4>
           <div class="btn-section">
-            <a href="#">交通費申請</a>
+            <a href="<%= request.getContextPath() %>/transportationRequest">交通費申請</a>
             <a href="<%= request.getContextPath() %>/createApplication?type=出張費">出張費申請</a>
             <a href="<%= request.getContextPath() %>/reimbursement">立替金申請</a>
 
