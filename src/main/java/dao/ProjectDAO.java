@@ -10,8 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import model.Project;
-import model.ProjectList;
+import bean.Project;
+import bean.ProjectList;
 import util.DBConnection;
 
 public class ProjectDAO {
@@ -437,7 +437,4 @@ public class ProjectDAO {
 	    }
 	    return false;
 	}
-
-
-
 }

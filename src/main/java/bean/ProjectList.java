@@ -1,4 +1,4 @@
-package model;
+package bean;
 
 // プロジェクト管理用bean
 public class ProjectList {
