@@ -11,9 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import bean.Project;
 import bean.BusinessTripBean.TransportationRequest;
 import dao.ProjectDAO;
-import model.Project;
 
 @WebServlet("/transportationRequest")
 public class TransportationRequestServlet extends HttpServlet {
