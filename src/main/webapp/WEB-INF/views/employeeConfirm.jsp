@@ -17,7 +17,8 @@ String buttonLabel = (editId != null) ? "更新" : "登録";
 <head>
 <meta charset="UTF-8">
 <title>社員登録確認</title>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/static/css/style.css">
 <style>
 .page-container {
 	max-width: 700px;
@@ -67,9 +68,6 @@ th {
 <body>
 	<div class="page-container">
 		<h2 style="text-align: center; color: #2c7be5;">登録内容の確認</h2>
-		<c:if test="${not empty error}">
-    <p style="color: red; text-align: center;">${error}</p>
-</c:if>
 		<table>
 			<tr>
 				<th>社員ID</th>
@@ -106,28 +104,35 @@ th {
 		</table>
 
 		<div class="btn-section">
-			<!-- Đăng ký hoặc cập nhật -->
-			<form action="<%=request.getContextPath()%>/employeeRegisterPage" method="post" style="display: inline;">
+			<form action="<%=request.getContextPath()%>/employeeRegisterPage"
+				method="post" style="display: inline;">
 				<input type="hidden" name="action" value="<%=actionType%>">
 				<button type="submit"><%=buttonLabel%></button>
 			</form>
 
-			<!-- Quay lại form nhập -->
-			<form action="<%=request.getContextPath()%>/employeeRegisterPage" method="post" style="display: inline;">
-				<input type="hidden" name="action" value="back">
-				<input type="hidden" name="employeeId" value="<%=emp.getEmployeeId()%>">
+			<form action="<%=request.getContextPath()%>/employeeRegisterPage"
+				method="post" style="display: inline;">
+				<input type="hidden" name="action" value="back"> <input
+					type="hidden" name="employeeId" value="<%=emp.getEmployeeId()%>">
 				<input type="hidden" name="fullName" value="<%=emp.getFullName()%>">
 				<input type="hidden" name="furigana" value="<%=emp.getFurigana()%>">
-				<input type="hidden" name="birthDate" value="<%=emp.getBirthDate()%>">
-				<input type="hidden" name="address" value="<%=emp.getAddress()%>">
-				<input type="hidden" name="joinDate" value="<%=emp.getJoinDate()%>">
+				<input type="hidden" name="birthDate"
+					value="<%=emp.getBirthDate()%>"> <input type="hidden"
+					name="address" value="<%=emp.getAddress()%>"> <input
+					type="hidden" name="joinDate" value="<%=emp.getJoinDate()%>">
 				<input type="hidden" name="password" value="<%=emp.getPassword()%>">
-				<input type="hidden" name="confirmPassword" value="<%=emp.getPassword()%>">
-				<input type="hidden" name="departmentId" value="<%=emp.getDepartmentId()%>">
-				<input type="hidden" name="positionId" value="<%=emp.getPositionId()%>">
+				<input type="hidden" name="confirmPassword"
+					value="<%=emp.getPassword()%>"> <input type="hidden"
+					name="departmentId" value="<%=emp.getDepartmentId()%>"> <input
+					type="hidden" name="positionId" value="<%=emp.getPositionId()%>">
 				<button type="submit">戻る</button>
 			</form>
 		</div>
 	</div>
+	<c:if test="${not empty error}">
+		<script>
+			alert("${error}");
+		</script>
+	</c:if>
 </body>
 </html>
