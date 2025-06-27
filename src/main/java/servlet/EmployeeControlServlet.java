@@ -50,7 +50,8 @@ public class EmployeeControlServlet extends HttpServlet {
 				EmployeeDAO dao = new EmployeeDAO();
 				boolean result = true;
 				for (String id : selectedIds) {
-					if (!dao.deleteEmployee(id)) {
+					// 物理削除 → 論理削除に変更！
+					if (!dao.logicalDeleteEmployee(id)) {
 						result = false;
 					}
 				}
