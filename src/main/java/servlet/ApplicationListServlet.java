@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import bean.Application;
 import dao.ApplicationDAO;
+import model.Application;
 
 @WebServlet("/applicationMain")
 public class ApplicationListServlet extends HttpServlet {
