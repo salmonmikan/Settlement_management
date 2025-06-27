@@ -1,16 +1,19 @@
 // ✅ Refactored BusinessTripDAO.java with RETURN_GENERATED_KEYS
 package dao;
 
+import static util.DBConnection.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step1Data;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static util.DBConnection.getConnection;
 
 public class BusinessTripDAO {
 
@@ -157,7 +160,7 @@ public class BusinessTripDAO {
         // Step1
         String sql1 = "SELECT * FROM business_trip_application WHERE application_id = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql1)) {
-            ps.setInt(1, applicationId);
+            ps.setInt(1, applicationId);//
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Step1Data s1 = new Step1Data(
