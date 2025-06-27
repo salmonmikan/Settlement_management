@@ -23,6 +23,7 @@ public class DepartmentDAO {
                 DepartmentBean bean = new DepartmentBean();
                 bean.setDepartment_id(rs.getString("department_id"));
                 bean.setDepartment_name(rs.getString("department_name"));
+                bean.setDelete_flag(rs.getInt("delete_flag")); // ★ 追加
                 list.add(bean);
             }
 
@@ -47,6 +48,7 @@ public class DepartmentDAO {
                 bean = new DepartmentBean();
                 bean.setDepartment_id(rs.getString("department_id"));
                 bean.setDepartment_name(rs.getString("department_name"));
+                bean.setDelete_flag(rs.getInt("delete_flag")); // ★ 追加
             }
 
         } catch (Exception e) {

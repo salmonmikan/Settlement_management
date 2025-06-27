@@ -6,6 +6,7 @@
 <%
     ArrayList<PositionBean> positionList = (ArrayList<PositionBean>) session.getAttribute("position_list");
     if (positionList == null) positionList = new ArrayList<>();
+    request.setAttribute("positionList", positionList); // JSTLで使うため
 %>
 
 <!DOCTYPE html>
@@ -71,17 +72,21 @@ h2 {
 						</tr>
 					</thead>
 					<tbody>
-						<%
-						for (PositionBean bean : positionList) {
-						%>
-						<tr>
-							<td><input type="checkbox" name="position_id" value="<%=bean.getPosition_id()%>" class="row-check"></td>
-							<td><%=bean.getPosition_id()%></td>
-							<td><%=bean.getPosition_name()%></td>
-						</tr>
-						<%
-						}
-						%>
+						<c:forEach var="pos" items="${positionList}">
+							<tr>
+								<td>
+									<input type="checkbox" name="position_id" value="${pos.position_id}" class="row-check"
+										<c:if test="${pos.delete_flag == 9}">disabled</c:if>>
+								</td>
+								<td>${pos.position_id}</td>
+								<td>
+									${pos.position_name}
+									<c:if test="${pos.delete_flag == 9}">
+										<span style="color: gray;">（削除不可）</span>
+									</c:if>
+								</td>
+							</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</form>

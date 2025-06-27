@@ -23,6 +23,7 @@ public class PositionDAO {
                 PositionBean bean = new PositionBean();
                 bean.setPosition_id(rs.getString("position_id"));
                 bean.setPosition_name(rs.getString("position_name"));
+                bean.setDelete_flag(rs.getInt("delete_flag")); // 追加
                 list.add(bean);
             }
 
@@ -47,6 +48,7 @@ public class PositionDAO {
                 bean = new PositionBean();
                 bean.setPosition_id(rs.getString("position_id"));
                 bean.setPosition_name(rs.getString("position_name"));
+                bean.setDelete_flag(rs.getInt("delete_flag")); // 追加
             }
 
         } catch (Exception e) {
