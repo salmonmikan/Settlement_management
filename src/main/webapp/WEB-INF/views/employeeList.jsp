@@ -13,12 +13,10 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 <style>
 .page-container {
-	max-width: 80%;
-	margin: 30px auto;
-	background-color: white;
-	border-radius: 10px;
-	padding: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    max-width: 80vw
 }
 
 table {
@@ -69,6 +67,9 @@ h2 {
 		</form>
 	</nav>
 	<div class="page-container">
+		<!-- Sidebar -->
+	    <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+	    <div>
 		<h2>社員一覧</h2>
 		<form method="post" action="employeeControl">
 			<div class="action-toolbar">
@@ -111,6 +112,7 @@ h2 {
 				</tbody>
 			</table>
 		</form>
+	</div>
 	</div>
 	<script type="text/javascript">
 	const checkboxes = document.querySelectorAll('.row-check');
