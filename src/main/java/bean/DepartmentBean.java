@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class DepartmentBean implements Serializable {
     private String department_id;
     private String department_name;
+    private int delete_flag; // 削除フラグ追加（0=通常、1=論理削除、9=削除不可）
 
     public DepartmentBean() {
     }
@@ -28,5 +29,13 @@ public class DepartmentBean implements Serializable {
 
     public void setDepartment_name(String department_name) {
         this.department_name = department_name;
+    }
+
+    public int getDelete_flag() {
+        return delete_flag;
+    }
+
+    public void setDelete_flag(int delete_flag) {
+        this.delete_flag = delete_flag;
     }
 }

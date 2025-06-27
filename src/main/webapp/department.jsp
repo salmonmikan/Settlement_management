@@ -6,6 +6,7 @@
 <%
     ArrayList<DepartmentBean> departmentList = (ArrayList<DepartmentBean>) session.getAttribute("department_list");
     if (departmentList == null) departmentList = new ArrayList<>();
+    request.setAttribute("departmentList", departmentList); // JSTL用
 %>
 
 <!DOCTYPE html>
@@ -71,17 +72,21 @@ h2 {
                         </tr>
                     </thead>
                     <tbody>
-                        <%
-                        for (DepartmentBean bean : departmentList) {
-                        %>
-                        <tr>
-                            <td><input type="checkbox" name="department_id" value="<%=bean.getDepartment_id()%>" class="row-check"></td>
-                            <td><%=bean.getDepartment_id()%></td>
-                            <td><%=bean.getDepartment_name()%></td>
-                        </tr>
-                        <%
-                        }
-                        %>
+                        <c:forEach var="dep" items="${departmentList}">
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="department_id" value="${dep.department_id}" class="row-check"
+                                           <c:if test="${dep.delete_flag == 9}">disabled style="cursor:not-allowed;"</c:if>>
+                                </td>
+                                <td>${dep.department_id}</td>
+                                <td>
+                                    ${dep.department_name}
+                                    <c:if test="${dep.delete_flag == 9}">
+                                        <span style="color: gray;">（削除不可）</span>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
             </form>
