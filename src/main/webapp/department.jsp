@@ -7,6 +7,11 @@
     ArrayList<DepartmentBean> departmentList = (ArrayList<DepartmentBean>) session.getAttribute("department_list");
     if (departmentList == null) departmentList = new ArrayList<>();
     request.setAttribute("departmentList", departmentList); // JSTL用
+
+    String successMsg = (String) session.getAttribute("successMsg");
+    String errorMsg = (String) session.getAttribute("errorMsg");
+    session.removeAttribute("successMsg");
+    session.removeAttribute("errorMsg");
 %>
 
 <!DOCTYPE html>
@@ -105,24 +110,12 @@ h2 {
             deleteBtn.disabled = checkedCount === 0;
         });
     });
+
+    <% if (successMsg != null) { %>
+        alert("<%= successMsg %>");
+    <% } else if (errorMsg != null) { %>
+        alert("<%= errorMsg %>");
+    <% } %>
     </script>
-
-    <%
-    String method = request.getMethod();
-    String successMsg = (String) request.getAttribute("successMsg");
-    String errorMsg = (String) request.getAttribute("errorMsg");
-
-    if ("POST".equalsIgnoreCase(method)) {
-        if (successMsg != null) {
-    %>
-    <script>alert("<%=successMsg%>");</script>
-    <%
-        } else if (errorMsg != null) {
-    %>
-    <script>alert("<%=errorMsg%>");</script>
-    <%
-        }
-    }
-    %>
 </body>
 </html>

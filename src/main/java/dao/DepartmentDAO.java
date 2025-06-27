@@ -23,7 +23,7 @@ public class DepartmentDAO {
                 DepartmentBean bean = new DepartmentBean();
                 bean.setDepartment_id(rs.getString("department_id"));
                 bean.setDepartment_name(rs.getString("department_name"));
-                bean.setDelete_flag(rs.getInt("delete_flag")); // ★ 追加
+                bean.setDelete_flag(rs.getInt("delete_flag"));
                 list.add(bean);
             }
 
@@ -48,7 +48,7 @@ public class DepartmentDAO {
                 bean = new DepartmentBean();
                 bean.setDepartment_id(rs.getString("department_id"));
                 bean.setDepartment_name(rs.getString("department_name"));
-                bean.setDelete_flag(rs.getInt("delete_flag")); // ★ 追加
+                bean.setDelete_flag(rs.getInt("delete_flag"));
             }
 
         } catch (Exception e) {
@@ -105,5 +105,26 @@ public class DepartmentDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // 次の部署IDを取得（D0001～形式）
+    public String getNextDepartmentId() {
+        String nextId = "D0001";
+        String sql = "SELECT MAX(CAST(SUBSTRING(department_id, 2) AS UNSIGNED)) AS max_num FROM department_master";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                int num = rs.getInt("max_num") + 1;
+                nextId = String.format("D%04d", num);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return nextId;
     }
 }

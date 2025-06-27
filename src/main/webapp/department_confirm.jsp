@@ -1,5 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="bean.DepartmentBean" %>
+<%
+    DepartmentBean bean = (DepartmentBean) request.getAttribute("department");
+    String action = (String) request.getAttribute("action");
+%>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -20,7 +24,6 @@ h2 {
     margin-bottom: 20px;
 }
 .box {
-    border: 1px solid #aaa;
     padding: 30px;
     margin-bottom: 20px;
 }
@@ -30,6 +33,8 @@ h2 {
 }
 .value {
     margin-bottom: 20px;
+    font-size: 1rem;
+    font-weight: bold;
 }
 .button-row {
     display: flex;
@@ -43,11 +48,6 @@ button {
 </style>
 </head>
 <body>
-
-<%
-    DepartmentBean bean = (DepartmentBean) request.getAttribute("department");
-    String action = (String) request.getAttribute("action"); // "create" or "update"
-%>
 
 <div class="container">
     <h2>部署確認</h2>
