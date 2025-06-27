@@ -39,7 +39,6 @@ public class EmployeeDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, emp.getEmployeeId());
-//            ps.setString(2, hashPassword(emp.getPassword()));
             ps.setString(2, emp.getPassword());
             ps.setString(3, emp.getFullName());
             ps.setString(4, emp.getFurigana());
@@ -58,13 +57,17 @@ public class EmployeeDAO {
         }
     }
 
-    // Lấy toàn bộ danh sách nhân viên
+    // 全社員取得（論理削除されていない）
     public List<Employee> getAllEmployees() {
         List<Employee> list = new ArrayList<>();
-        String sql = "SELECT s.*,d.*,p.* "
-        		+ "FROM staff as s "
-        		+ "JOIN department_master as d ON s.department_id = d.department_id "
-        		+ "JOIN position_master as p ON s.position_id = p.position_id;";
+        String sql = """
+            SELECT s.*, d.*, p.*
+            FROM staff AS s
+            JOIN department_master AS d ON s.department_id = d.department_id
+            JOIN position_master AS p ON s.position_id = p.position_id
+            WHERE s.delete_flag = 0
+            ORDER BY s.staff_id
+            """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -90,16 +93,16 @@ public class EmployeeDAO {
 
         return list;
     }
-    
+
+    // IDとパスワードで検索（論理削除除外）
     public Employee findByIdAndPassword(String staffId, String rawPassword) {
-    	Employee staff = null;
-        String sql = "SELECT * FROM staff WHERE staff_id = ? AND TRIM(password) = ?";
+        Employee staff = null;
+        String sql = "SELECT * FROM staff WHERE staff_id = ? AND TRIM(password) = ? AND delete_flag = 0";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, staffId);
-//            stmt.setString(2, hashPassword(rawPassword));
             stmt.setString(2, rawPassword);
 
             ResultSet rs = stmt.executeQuery();
@@ -107,10 +110,9 @@ public class EmployeeDAO {
             if (rs.next()) {
                 staff = new Employee();
                 staff.setEmployeeId(rs.getString("staff_id"));
-                staff.setFullName(rs.getString("name"));;
-                staff.setPositionId(rs.getString("position_id"));; 
-                //by Son
-                staff.setDepartmentId(rs.getString("department_id"));;
+                staff.setFullName(rs.getString("name"));
+                staff.setPositionId(rs.getString("position_id"));
+                staff.setDepartmentId(rs.getString("department_id"));
                 staff.setPassword(rs.getString("password"));
             }
 
@@ -119,11 +121,11 @@ public class EmployeeDAO {
         }
         return staff;
     }
-    
-    //IDから情報を取得
+
+    // IDで検索（論理削除除外）
     public Employee findById(String staffId) {
         Employee emp = null;
-        String sql = "SELECT * FROM staff WHERE staff_id = ?";
+        String sql = "SELECT * FROM staff WHERE staff_id = ? AND delete_flag = 0";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -149,18 +151,18 @@ public class EmployeeDAO {
         }
         return emp;
     }
- // UPDATE
+
+    // 更新
     public boolean updateEmployee(Employee emp) {
         String sql = """
             UPDATE staff 
             SET password = ?, name = ?, furigana = ?, birth_date = ?, address = ?, hire_date = ?, department_id = ?, position_id = ?
-            WHERE staff_id = ?
+            WHERE staff_id = ? AND delete_flag = 0
             """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            // ps.setString(1, hashPassword(emp.getPassword()));
             ps.setString(1, emp.getPassword());
             ps.setString(2, emp.getFullName());
             ps.setString(3, emp.getFurigana());
@@ -180,10 +182,9 @@ public class EmployeeDAO {
         }
     }
 
-    // DELETE
-   
-    public boolean deleteEmployee(String staffId) {
-        String sql = "DELETE FROM staff WHERE staff_id = ?";
+    // 論理削除
+    public boolean logicalDeleteEmployee(String staffId) {
+        String sql = "UPDATE staff SET delete_flag = 1 WHERE staff_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -197,5 +198,4 @@ public class EmployeeDAO {
             return false;
         }
     }
-
 }
