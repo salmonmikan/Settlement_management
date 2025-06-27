@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="bean.Application" %>
+<%@ page import="model.Application" %>
 <%@ page import="java.util.List" %>
 <%
   List<Application> applications = (List<Application>) request.getAttribute("applications");

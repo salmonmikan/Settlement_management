@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="bean.Application" %>
+<%@ page import="model.Application" %>
 <%-- <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="model.Application" %>
 >>>>>>> refs/remotes/origin/develop_dame
