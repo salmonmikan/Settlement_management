@@ -1,4 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="bean.PositionBean" %>
+<%
+    PositionBean bean = (PositionBean) request.getAttribute("position");
+    String positionId = bean != null ? bean.getPosition_id() : "";
+%>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -29,6 +34,9 @@ label {
 input[type="text"] {
     padding: 8px;
     font-size: 1rem;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
 }
 .button-row {
     display: flex;
@@ -37,6 +45,15 @@ input[type="text"] {
 button {
     padding: 8px 16px;
     font-size: 1rem;
+}
+.readonly-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+.readonly-text {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
 }
 </style>
 </head>
@@ -48,9 +65,11 @@ button {
         <!-- 確認画面へ送るためのaction -->
         <input type="hidden" name="action" value="confirm_create">
 
+        <!-- 自動採番ID（表示だけ。hiddenで送信） -->
         <div>
-            <label for="position_id">役職ID：</label>
-            <input type="text" id="position_id" name="position_id" required>
+            <label class="readonly-label">役職ID</label>
+            <div class="readonly-text"><%= positionId %></div>
+            <input type="hidden" name="position_id" value="<%= positionId %>">
         </div>
 
         <div>

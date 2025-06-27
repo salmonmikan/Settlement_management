@@ -17,14 +17,12 @@ import dao.DepartmentDAO;
 public class DepartmentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    // GET対応（すべてPOSTに委譲）
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doPost(request, response);
     }
 
-    // メイン処理（POST）
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -38,6 +36,14 @@ public class DepartmentServlet extends HttpServlet {
         String name = request.getParameter("department_name");
 
         try {
+            // ★ 初回アクセス対応：一覧表示
+            if (action == null) {
+                ArrayList<DepartmentBean> list = dao.findAll();
+                session.setAttribute("department_list", list);
+                response.sendRedirect("department.jsp");
+                return;
+            }
+
             switch (action) {
                 case "confirm_create":
                     DepartmentBean newBean = new DepartmentBean(id, name);
@@ -86,7 +92,11 @@ public class DepartmentServlet extends HttpServlet {
                     return;
 
                 case "add":
-                    response.sendRedirect("add_department.jsp");
+                    String newId = dao.getNextDepartmentId(); // ★ 自動採番
+                    DepartmentBean bean = new DepartmentBean();
+                    bean.setDepartment_id(newId);
+                    request.setAttribute("department", bean);
+                    request.getRequestDispatcher("add_department.jsp").forward(request, response);
                     return;
 
                 default:

@@ -17,14 +17,12 @@ import dao.PositionDAO;
 public class PositionControlServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    // GET対応（すべてPOSTに委譲）
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doPost(request, response);
     }
 
-    // メイン処理（POST）
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,6 +38,7 @@ public class PositionControlServlet extends HttpServlet {
         try {
             switch (action) {
                 case "confirm_create":
+                    // 登録確認画面へ
                     PositionBean newBean = new PositionBean(id, name);
                     request.setAttribute("position", newBean);
                     request.setAttribute("action", "create");
@@ -47,6 +46,7 @@ public class PositionControlServlet extends HttpServlet {
                     return;
 
                 case "confirm_update":
+                    // 編集確認画面へ
                     PositionBean updateCheckBean = new PositionBean(id, name);
                     request.setAttribute("position", updateCheckBean);
                     request.setAttribute("action", "update");
@@ -54,6 +54,7 @@ public class PositionControlServlet extends HttpServlet {
                     return;
 
                 case "create":
+                    // DB登録処理
                     PositionBean insertBean = new PositionBean(id, name);
                     if (dao.insert(insertBean)) {
                         session.setAttribute("successMsg", "登録に成功しました。");
@@ -86,7 +87,12 @@ public class PositionControlServlet extends HttpServlet {
                     return;
 
                 case "add":
-                    response.sendRedirect("add_position.jsp");
+                    // 自動採番IDを取得して登録画面へ
+                    String newId = dao.getNextPositionId();
+                    PositionBean bean = new PositionBean();
+                    bean.setPosition_id(newId);
+                    request.setAttribute("position", bean);
+                    request.getRequestDispatcher("add_position.jsp").forward(request, response);
                     return;
 
                 default:

@@ -23,7 +23,7 @@ public class PositionDAO {
                 PositionBean bean = new PositionBean();
                 bean.setPosition_id(rs.getString("position_id"));
                 bean.setPosition_name(rs.getString("position_name"));
-                bean.setDelete_flag(rs.getInt("delete_flag")); // 追加
+                bean.setDelete_flag(rs.getInt("delete_flag"));
                 list.add(bean);
             }
 
@@ -48,7 +48,7 @@ public class PositionDAO {
                 bean = new PositionBean();
                 bean.setPosition_id(rs.getString("position_id"));
                 bean.setPosition_name(rs.getString("position_name"));
-                bean.setDelete_flag(rs.getInt("delete_flag")); // 追加
+                bean.setDelete_flag(rs.getInt("delete_flag"));
             }
 
         } catch (Exception e) {
@@ -105,5 +105,27 @@ public class PositionDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // 次の役職IDを取得（自動採番、4桁対応 P0001～）
+    public String getNextPositionId() {
+        String nextId = "P0001";
+        String sql = "SELECT MAX(position_id) AS max_id FROM position_master WHERE position_id LIKE 'P____'";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next() && rs.getString("max_id") != null) {
+                String maxId = rs.getString("max_id").substring(1); // "P0012" → "0012"
+                int num = Integer.parseInt(maxId) + 1;
+                nextId = String.format("P%04d", num); // ★ 4桁ゼロ埋め
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return nextId;
     }
 }

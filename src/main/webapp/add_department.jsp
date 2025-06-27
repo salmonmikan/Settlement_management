@@ -1,4 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="bean.DepartmentBean" %>
+<%
+    DepartmentBean bean = (DepartmentBean) request.getAttribute("department");
+%>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -26,9 +30,12 @@ form {
 label {
     font-weight: bold;
 }
-input[type="text"] {
-    padding: 8px;
+.id-display {
     font-size: 1rem;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    padding-left: 0;
 }
 .button-row {
     display: flex;
@@ -45,12 +52,13 @@ button {
 <div class="container">
     <h2>部署新規登録</h2>
     <form action="department" method="post">
-        <!-- 確認画面へ送るためのaction -->
         <input type="hidden" name="action" value="confirm_create">
 
+        <!-- 表示専用 ID ＋ hidden 送信 -->
         <div>
-            <label for="department_id">部署ID：</label>
-            <input type="text" id="department_id" name="department_id" required>
+            <label for="department_id">部署ID：</label><br>
+            <span class="id-display"><%= bean.getDepartment_id() %></span>
+            <input type="hidden" name="department_id" value="<%= bean.getDepartment_id() %>">
         </div>
 
         <div>
