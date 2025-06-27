@@ -34,18 +34,16 @@ public class ProjectControl extends HttpServlet {
 		String[] Project_code = request.getParameterValues("Project_code");
 		switch (action) {
 		case "add": {
-			// 登録情報入力画面のため、何もせず遷移する
+			// 登録画面遷移のみ
 			break;
 		}
 		case "edit": {
 			ProjectDAO dao = new ProjectDAO();
 			ProjectList p = dao.findByProjectCode(Project_code);
-
 			String[] memberIds = dao.getStaffIdsByProject(p.getProject_code());
 			String joinedIds = String.join(",", memberIds);
 			p.setProject_members(joinedIds);
 
-			// Lấy toàn bộ danh sách nhân viên
 			Map<String, String> allStaff = dao.getStaffNamesByIds(memberIds);
 
 			request.setAttribute("allStaff", allStaff);
@@ -57,7 +55,8 @@ public class ProjectControl extends HttpServlet {
 
 		case "delete": {
 			try {
-				new ProjectDAO().deleteProjects(Project_code);
+				// ✅ 論理削除メソッドを呼び出す
+				new ProjectDAO().logicalDeleteProjects(Project_code);
 				session.setAttribute("successMsg", "削除が完了しました！");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -76,9 +75,6 @@ public class ProjectControl extends HttpServlet {
 			p.setStart_date(request.getParameter("Start_date"));
 			p.setEnd_date(request.getParameter("End_date"));
 
-			String startDate = request.getParameter("Start_date");
-			String endDate = request.getParameter("End_date");
-
 			String budgetStr = request.getParameter("Project_budget");
 			p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
 
@@ -95,13 +91,13 @@ public class ProjectControl extends HttpServlet {
 				request.setAttribute("memberMap", memberMap);
 			}
 
-			if (startDate != null && endDate != null && !startDate.isBlank() && !endDate.isBlank()) {
-				if (startDate.compareTo(endDate) > 0) {
-					request.setAttribute("errMsg", "開始日は終了日より前の日付を入力してください。");
-					request.setAttribute("project_edit", p); // Trả lại dữ liệu người dùng đã nhập
-					request.getRequestDispatcher("/WEB-INF/views/projectRegister.jsp").forward(request, response);
-					return;
-				}
+			if (p.getStart_date() != null && p.getEnd_date() != null &&
+			    !p.getStart_date().isBlank() && !p.getEnd_date().isBlank() &&
+			    p.getStart_date().compareTo(p.getEnd_date()) > 0) {
+				request.setAttribute("errMsg", "開始日は終了日より前の日付を入力してください。");
+				request.setAttribute("project_edit", p);
+				request.getRequestDispatcher("/WEB-INF/views/projectRegister.jsp").forward(request, response);
+				return;
 			}
 
 			request.getRequestDispatcher("/WEB-INF/views/confirm/projectConfirm.jsp").forward(request, response);
@@ -125,11 +121,10 @@ public class ProjectControl extends HttpServlet {
 
 				ProjectDAO dao = new ProjectDAO();
 
-				// Kiểm tra nhân viên có tồn tại không
 				if (memberStr != null && !memberStr.isEmpty()) {
 					String[] memberIds = memberStr.split("\\s*,\\s*");
 					if (!dao.areStaffIdsValid(memberIds)) {
-						request.setAttribute("errorMsg", "メンバーに存在しない社員IDが含まれています。正しいIDを入力してください。");
+						request.setAttribute("errorMsg", "メンバーに存在しない社員IDが含まれています。");
 						request.setAttribute("project_edit", p);
 						request.setAttribute("screenMode", "insert");
 						request.getRequestDispatcher("/WEB-INF/views/projectRegister.jsp").forward(request, response);
@@ -151,47 +146,45 @@ public class ProjectControl extends HttpServlet {
 		}
 
 		case "updateFinal": {
-		    try {
-		        ProjectList p = new ProjectList();
-		        p.setProject_code(request.getParameter("Project_code"));
-		        p.setProject_name(request.getParameter("Project_name"));
-		        p.setProject_owner(request.getParameter("Project_owner"));
-		        p.setStart_date(request.getParameter("Start_date"));
-		        p.setEnd_date(request.getParameter("End_date"));
+			try {
+				ProjectList p = new ProjectList();
+				p.setProject_code(request.getParameter("Project_code"));
+				p.setProject_name(request.getParameter("Project_name"));
+				p.setProject_owner(request.getParameter("Project_owner"));
+				p.setStart_date(request.getParameter("Start_date"));
+				p.setEnd_date(request.getParameter("End_date"));
 
-		        String budgetStr = request.getParameter("Project_budget");
-		        p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
+				String budgetStr = request.getParameter("Project_budget");
+				p.setProject_budget((budgetStr == null || budgetStr.isEmpty()) ? null : Integer.parseInt(budgetStr));
 
-		        String memberStr = request.getParameter("memberIds");
-		        p.setProject_members(memberStr != null ? memberStr : "");
+				String memberStr = request.getParameter("memberIds");
+				p.setProject_members(memberStr != null ? memberStr : "");
 
-		        ProjectDAO dao = new ProjectDAO();
+				ProjectDAO dao = new ProjectDAO();
 
-		        // Kiểm tra nhân viên có tồn tại không
-		        if (memberStr != null && !memberStr.isEmpty()) {
-		            String[] memberIds = memberStr.split("\\s*,\\s*");
-		            if (!dao.areStaffIdsValid(memberIds)) {
-		                request.setAttribute("errorMsg", "メンバーに存在しない社員IDが含まれています。正しいIDを入力してください。");
-		                request.setAttribute("project_edit", p);
-		                request.setAttribute("screenMode", "edit");
-		                request.getRequestDispatcher("/WEB-INF/views/projectRegister.jsp").forward(request, response);
-		                return;
-		            }
-		        }
+				if (memberStr != null && !memberStr.isEmpty()) {
+					String[] memberIds = memberStr.split("\\s*,\\s*");
+					if (!dao.areStaffIdsValid(memberIds)) {
+						request.setAttribute("errorMsg", "メンバーに存在しない社員IDが含まれています。");
+						request.setAttribute("project_edit", p);
+						request.setAttribute("screenMode", "edit");
+						request.getRequestDispatcher("/WEB-INF/views/projectRegister.jsp").forward(request, response);
+						return;
+					}
+				}
 
-		        dao.updateProject(p);
-		        session.setAttribute("successMsg", "更新が完了しました！");
-		        response.sendRedirect("project_management_view");
-		        return;
+				dao.updateProject(p);
+				session.setAttribute("successMsg", "更新が完了しました！");
+				response.sendRedirect("project_management_view");
+				return;
 
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		        session.setAttribute("errorMsg", "更新処理に失敗しました。");
-		        response.sendRedirect("project_management_view");
-		        return;
-		    }
+			} catch (Exception e) {
+				e.printStackTrace();
+				session.setAttribute("errorMsg", "更新処理に失敗しました。");
+				response.sendRedirect("project_management_view");
+				return;
+			}
 		}
-
 
 		default:
 			throw new IllegalArgumentException("ProjectControlでcaseの遷移に失敗しました");
