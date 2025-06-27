@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%@ page import="model.ProjectList"%>
+<%@ page import="bean.ProjectList"%>
 <%@ page import="java.util.Map"%>
 <%
 ProjectList bean = (ProjectList) request.getAttribute("projectConfirm");

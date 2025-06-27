@@ -56,8 +56,10 @@ public class EmployeeDAO {
 			return false;
 		}
 	}
-
-	// 全社員取得（論理削除されていない）
+	/**
+	 * 全社員取得（論理削除されていない）
+	 * @return 全社員情報(delete_flagで削除済みは除外)
+	 */
 	public List<Employee> getAllEmployees() {
 		List<Employee> list = new ArrayList<>();
 		String sql = """
