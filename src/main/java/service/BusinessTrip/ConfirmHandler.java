@@ -2,7 +2,7 @@
 package service.BusinessTrip;
 
 import bean.BusinessTripBean.BusinessTripBean;
-import bean.BusinessTripFormData;
+import bean.BusinessTripForm;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class ConfirmHandler {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        BusinessTripFormData formData = (BusinessTripFormData) session.getAttribute("tripFormData");
+        BusinessTripForm formData = (BusinessTripForm) session.getAttribute("tripFormData");
         
         // Safety check: if session is lost, redirect to the start.
         if (formData == null || formData.getBusinessTripBean() == null) {

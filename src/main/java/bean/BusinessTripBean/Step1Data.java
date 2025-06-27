@@ -1,26 +1,27 @@
 package bean.BusinessTripBean;
 
-public class Step1Data {
+import java.io.Serializable;
 
- private String projectCode;
- private String report;
- private String startDate;
- private String endDate;
- private String totalDays;
- 
- public Step1Data(String startDate, String endDate, String projectCode, String report, String totalDays) {
-     this.startDate = startDate;
-     this.endDate = endDate;
-     this.projectCode = projectCode;
-     this.report = report;
-     this.totalDays = totalDays;
- }
- 
- public String getStartDate() { return startDate; }
- public String getEndDate() { return endDate; }
- public String getProjectCode() { return projectCode; }
- public String getReport() { return report; }
- public String getTotalDays() { return totalDays; }
- 
+public class Step1Data implements Serializable {
+    private String startDate;
+    private String endDate;
+    private String projectCode;
+    private String report;
+    private int totalDays;
 
+    // Getters & Setters
+    public String getStartDate() { return startDate; }
+    public void setStartDate(String startDate) { this.startDate = startDate; }
+
+    public String getEndDate() { return endDate; }
+    public void setEndDate(String endDate) { this.endDate = endDate; }
+
+    public String getProjectCode() { return projectCode; }
+    public void setProjectCode(String projectCode) { this.projectCode = projectCode; }
+
+    public String getReport() { return report; }
+    public void setReport(String report) { this.report = report; }
+
+    public int getTotalDays() { return totalDays; }
+    public void setTotalDays(int totalDays) { this.totalDays = totalDays; }
 }

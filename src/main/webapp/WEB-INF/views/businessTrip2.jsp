@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%-- <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   String startDate = request.getParameter("startDateHidden");
   String endDate = request.getParameter("endDateHidden");
@@ -273,4 +273,4 @@
     	};
   </script>
 </body>
-</html>
+</html> --%>

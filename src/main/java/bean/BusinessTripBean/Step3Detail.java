@@ -1,63 +1,68 @@
 package bean.BusinessTripBean;
 
-public class Step3Detail {
+import java.io.Serializable;
+import java.util.List;
+
+public class Step3Detail implements Serializable {
+
     private String transProject;
     private String departure;
     private String arrival;
     private String transport;
-    private String fareAmount;
+    private int fareAmount;
     private String transTripType;
-    private String transBurden;
-    private String transExpenseTotal;
-    private String transMemo;
+    private String burden;
+    private String memo;
+    private int transExpenseTotal;
+    private List<String> receiptFileNames;
 
-    public Step3Detail(String transProject, String departure, String arrival,
-                       String transport, String fareAmount, String transTripType,
-                       String transBurden, String transExpenseTotal, String transMemo) {
-        this.transProject = transProject;
-        this.departure = departure;
-        this.arrival = arrival;
-        this.transport = transport;
-        this.fareAmount = fareAmount;
-        this.transTripType = transTripType;
-        this.transBurden = transBurden;
-        this.transExpenseTotal = transExpenseTotal;
-        this.transMemo = transMemo;
+    // Getter / Setter chuẩn cho field
+    public String getTransProject() { return transProject; }
+    public void setTransProject(String transProject) { this.transProject = transProject; }
+
+    public String getDeparture() { return departure; }
+    public void setDeparture(String departure) { this.departure = departure; }
+
+    public String getArrival() { return arrival; }
+    public void setArrival(String arrival) { this.arrival = arrival; }
+
+    public String getTransport() { return transport; }
+    public void setTransport(String transport) { this.transport = transport; }
+
+    public int getFareAmount() { return fareAmount; }
+    public void setFareAmount(int fareAmount) { this.fareAmount = fareAmount; }
+
+    public String getTransTripType() { return transTripType; }
+    public void setTransTripType(String transTripType) { this.transTripType = transTripType; }
+
+    public String getBurden() { return burden; }
+    public void setBurden(String burden) { this.burden = burden; }
+
+    public String getMemo() { return memo; }
+    public void setMemo(String memo) { this.memo = memo; }
+
+    public int getTransExpenseTotal() { return transExpenseTotal; }
+    public void setTransExpenseTotal(int transExpenseTotal) { this.transExpenseTotal = transExpenseTotal; }
+
+    public List<String> getReceiptFileNames() { return receiptFileNames; }
+    public void setReceiptFileNames(List<String> receiptFileNames) {
+        this.receiptFileNames = receiptFileNames;
     }
-
-    public String getTransProject() {
-        return transProject;
-    }
-
-    public String getDeparture() {
-        return departure;
-    }
-
-    public String getArrival() {
-        return arrival;
-    }
-
-    public String getTransport() {
-        return transport;
-    }
-
-    public String getFareAmount() {
-        return fareAmount;
-    }
-
-    public String getTransTripType() {
-        return transTripType;
-    }
-
     public String getTransBurden() {
-        return transBurden;
-    }
-
-    public String getTransExpenseTotal() {
-        return transExpenseTotal;
+        return this.burden;
     }
 
     public String getTransMemo() {
-        return transMemo;
+        return this.memo;
+    }
+
+    // 🔁 Alias method để giữ nguyên tên bạn mong muốn
+
+    public void setTransBurden(String burden) {
+        this.burden = burden;
+    }
+
+    public void setTransMemo(String memo) {
+        this.memo = memo;
     }
 }

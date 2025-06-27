@@ -214,31 +214,5 @@ public class ApplicationDAO {
         }
         return list;
     }
-    public List<Application> getApplicationsByApprover(String approverId) throws Exception {
-        List<Application> list = new ArrayList<>();
-        String sql = """
-            SELECT application_id, application_type, application_date, amount, status
-            FROM application_header
-            WHERE approver_id = ? AND delete_flag = 0
-            ORDER BY application_date DESC
-            """;
-
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, approverId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Application a = new Application();
-                    a.setApplicationId(rs.getInt("application_id"));
-                    a.setApplicationType(rs.getString("application_type"));
-                    a.setApplicationDate(rs.getTimestamp("application_date"));
-                    a.setAmount(rs.getInt("amount"));
-                    a.setStatus(rs.getString("status"));
-                    list.add(a);
-                }
-            }
-        }
-        return list;
-    }
+    
 }

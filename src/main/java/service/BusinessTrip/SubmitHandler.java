@@ -4,7 +4,7 @@ package service.BusinessTrip;
 import bean.BusinessTripBean.BusinessTripBean;
 import bean.BusinessTripBean.Step2Detail;
 import bean.BusinessTripBean.Step3Detail;
-import bean.BusinessTripFormData;
+import bean.BusinessTripForm;
 import bean.UploadedFile;
 import dao.ApplicationHeaderDAO;
 import dao.BusinessTripDAO;
@@ -42,7 +42,7 @@ public class SubmitHandler {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        BusinessTripFormData formData = (BusinessTripFormData) session.getAttribute("tripFormData");
+        BusinessTripForm formData = (BusinessTripForm) session.getAttribute("tripFormData");
 
         if (formData == null || formData.getBusinessTripBean() == null) {
             response.sendRedirect(request.getContextPath() + "/businessTrip");
