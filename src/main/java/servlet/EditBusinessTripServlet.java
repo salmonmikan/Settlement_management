@@ -24,7 +24,7 @@ public class EditBusinessTripServlet extends HttpServlet {
             request.setAttribute("applicationId", appId);
             request.setAttribute("editMode", true); // フラグ追加
 
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip1.jsp");
             rd.forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

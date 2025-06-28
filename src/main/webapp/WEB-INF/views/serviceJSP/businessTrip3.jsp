@@ -55,7 +55,7 @@
         </c:forEach>
       </div>
       
-      <div style="text-align: center; margin-top: 10px;"><button type="button" class="plus-btn" onclick="addTransBlock()">＋ 追加</button></div>
+      <div style="text-align: center; margin-top: 10px;"><button type="button" class="plus-btn" onclick="addTransBlock()">＋</button></div>
 
       <%-- Sửa lại khối nút bấm để hỗ trợ "Save and Go Back" --%>
       <div class="btn-section">

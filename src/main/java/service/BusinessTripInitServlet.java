@@ -47,6 +47,6 @@ public class BusinessTripInitServlet extends HttpServlet {
 
         // 3. Step 1のJSPにフォワードする
         // (Forward đến JSP của Step 1)
-        request.getRequestDispatcher("/WEB-INF/views/businessTrip/businessTrip1.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip1.jsp").forward(request, response);
     }
 }

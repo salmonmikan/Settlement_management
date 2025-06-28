@@ -6,8 +6,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import bean.BusinessTripBean;
 import bean.Step2Detail;
@@ -43,10 +46,12 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         }
 
         request.setAttribute("trip", trip);
-        request.getRequestDispatcher("/WEB-INF/views/businessTrip/businessTrip2.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip2.jsp").forward(request, response);
     }
 
- // Trong file service/BusinessTripStep2Servlet.java
+    // =========================================================================
+    // == PHIÊN BẢN doPost ĐÃ SỬA LỖI HOÀN CHỈNH
+    // =========================================================================
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -58,16 +63,20 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         }
 
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
-        trip.getStep2Details().clear();
+        
+        // ★ SỬA LỖI BƯỚC 1: Lưu lại danh sách chi tiết cũ trước khi xử lý
+        List<Step2Detail> oldDetails = new ArrayList<>(trip.getStep2Details());
 
-        // ★★★ THAY ĐỔI 1: Lấy tất cả các "Part" ra trước, chỉ một lần duy nhất ★★★
-        Collection<Part> parts = request.getParts();
+        // Xóa danh sách hiện tại trên bean chính để xây dựng lại
+        trip.getStep2Details().clear();
 
         String[] regionTypes = request.getParameterValues("regionType[]");
         
         if (regionTypes != null) {
+            Collection<Part> allParts = request.getParts();
             String[] tripTypes = request.getParameterValues("tripType[]");
             String[] hotels = request.getParameterValues("hotel[]");
+            // ... các mảng khác
             String[] burdens = request.getParameterValues("burden[]");
             String[] hotelFees = request.getParameterValues("hotelFee[]");
             String[] dailyAllowances = request.getParameterValues("dailyAllowance[]");
@@ -76,53 +85,56 @@ public class BusinessTripStep2Servlet extends HttpServlet {
             String[] memos = request.getParameterValues("memo[]");
 
             for (int i = 0; i < regionTypes.length; i++) {
-                Step2Detail detail = new Step2Detail();
+                Step2Detail newDetail = new Step2Detail();
                 try {
-                    detail.setRegionType(regionTypes[i]);
-                    detail.setTripType(tripTypes[i]);
-                    detail.setHotel(hotels[i]);
-                    detail.setBurden(burdens[i]);
-                    detail.setHotelFee(Integer.parseInt(hotelFees[i]));
-                    detail.setDailyAllowance(Integer.parseInt(dailyAllowances[i]));
-                    detail.setDays(Integer.parseInt(days[i]));
-                    detail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
-                    detail.setMemo(memos[i]);
-                } catch (NumberFormatException e) {
-                    System.err.println("Lỗi parse số ở Step 2, index " + i + ": " + e.getMessage());
+                    newDetail.setRegionType(regionTypes[i]);
+                    newDetail.setTripType(tripTypes[i]);
+                    newDetail.setHotel(hotels[i]);
+                    newDetail.setBurden(burdens[i]);
+                    newDetail.setHotelFee(Integer.parseInt(hotelFees[i]));
+                    newDetail.setDailyAllowance(Integer.parseInt(dailyAllowances[i]));
+                    newDetail.setDays(Integer.parseInt(days[i]));
+                    newDetail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
+                    newDetail.setMemo(memos[i]);
+                } catch (Exception e) {
+                    System.err.println("Lỗi parse dữ liệu text ở Step 2, index " + i + ": " + e.getMessage());
                 }
 
-                try {
-                    String fileInputName = "receipt_allowance_" + i;
-                    
-                    // ★★★ THAY ĐỔI 2: Lặp qua danh sách "parts" đã lấy sẵn, không gọi lại request.getParts() ★★★
-                    for (Part filePart : parts) {
-                        if (filePart.getName().equals(fileInputName) && filePart.getSize() > 0) {
+                String fileInputName = "receipt_allowance_" + i;
+                List<Part> newFileParts = allParts.stream()
+                    .filter(part -> fileInputName.equals(part.getName()) && part.getSize() > 0)
+                    .collect(Collectors.toList());
+
+                if (!newFileParts.isEmpty()) {
+                    // TRƯỜNG HỢP 1: Có file MỚI được upload. Xử lý chúng.
+                    newDetail.getTemporaryFiles().clear();
+                    for (Part filePart : newFileParts) {
+                        try {
                             String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                             String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-
-                            String absolutePath = getServletContext().getRealPath(TEMP_UPLOAD_DIR);
-                            File uploadDir = new File(absolutePath);
+                            String absoluteUploadPath = getServletContext().getRealPath(TEMP_UPLOAD_DIR);
+                            File uploadDir = new File(absoluteUploadPath);
                             if (!uploadDir.exists()) uploadDir.mkdirs();
-
                             File savedFile = new File(uploadDir, uniqueFileName);
                             try (InputStream input = filePart.getInputStream()) {
                                 Files.copy(input, savedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                             }
-
                             UploadedFile uploadedFile = new UploadedFile();
                             uploadedFile.setOriginalFileName(originalFileName);
                             uploadedFile.setUniqueStoredName(uniqueFileName);
                             uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
-                            uploadedFile.setBlockIndex(i);
-
-                            detail.getTemporaryFiles().add(uploadedFile);
+                            newDetail.getTemporaryFiles().add(uploadedFile);
+                        } catch (Exception e) {
+                             System.err.println("Lỗi xử lý file upload ở Step 2, index " + i + ": " + e.getMessage());
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } else {
+                    // TRƯỜNG HỢP 2: KHÔNG có file mới. Giữ lại file cũ từ session.
+                    if (i < oldDetails.size()) {
+                        newDetail.setTemporaryFiles(oldDetails.get(i).getTemporaryFiles());
+                    }
                 }
-
-                trip.getStep2Details().add(detail);
+                trip.getStep2Details().add(newDetail);
             }
         }
 

@@ -31,7 +31,7 @@ public class ReimbursementServlet extends HttpServlet {
             request.setAttribute("projectList", new ArrayList<>());
         }
 
-        request.getRequestDispatcher("/WEB-INF/views/reimbursement.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/reimbursement.jsp").forward(request, response);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class BusinessTripStep3Servlet extends HttpServlet {
         }
         
         request.setAttribute("trip", trip);
-        request.getRequestDispatcher("/WEB-INF/views/businessTrip/businessTrip3.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip3.jsp").forward(request, response);
     }
 
     @Override

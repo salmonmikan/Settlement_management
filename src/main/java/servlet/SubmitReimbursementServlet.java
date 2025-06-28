@@ -65,9 +65,8 @@ public class SubmitReimbursementServlet extends HttpServlet {
                 }
             }
 
-            // Sau khi lưu thành công, chuyển sang màn hình kết quả
             request.setAttribute("successMsg", successCount + "件の申請を登録しました。");
-            request.getRequestDispatcher("/WEB-INF/views/reimbursement.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/reimbursement.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

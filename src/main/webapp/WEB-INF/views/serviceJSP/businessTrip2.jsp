@@ -34,9 +34,9 @@
              <div class="form-group">
 			  <label>領収書添付（日当・宿泊費）</label>
 			  <input type="file" name="receipt_allowance_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
-			  <small style="color: gray;">
+			  <!-- <small style="color: gray;">
 			    (Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)
-			  </small>
+			  </small> -->
 			  <ul class="fileList">
 			    <c:forEach var="file" items="${detail.temporaryFiles}">
 			      <li>
@@ -53,7 +53,7 @@
       
       <%-- ★★★ KHÔI PHỤC NÚT ADD BLOCK ★★★ --%>
       <div style="text-align: center; margin-top: 10px;">
-        <button type="button" class="plus-btn" onclick="addAllowanceBlock()">＋ 追加</button>
+        <button type="button" class="plus-btn" onclick="addAllowanceBlock()">＋</button>
       </div>
 
       <%-- ★★★ KHỐI NÚT BẤM ĐÚNG CHUẨN ★★★ --%>

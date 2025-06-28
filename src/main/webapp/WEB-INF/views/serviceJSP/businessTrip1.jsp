@@ -13,24 +13,14 @@
   <div class="page-container">
     <h2>出張情報</h2>
     
-    <%-- 
-      GHI CHÚ QUAN TRỌNG:
-      - form action sẽ trỏ đến Servlet xử lý Step 1, ví dụ /businessTripStep1
-      - Dữ liệu sẽ được đọc từ đối tượng 'trip' trong session (hoặc request).
-      - 'trip' là tên gợi ý cho đối tượng BusinessTripBean của bạn.
-    --%>
     <form action="${pageContext.request.contextPath}/businessTripStep1" method="post">
       
-      <%-- 
-        THAY THẾ: Loại bỏ các hidden input không cần thiết như totalDays, startDateHidden, endDateHidden.
-        Dữ liệu này sẽ được quản lý hoàn toàn trong đối tượng BusinessTripBean trong session.
-      --%>
+      
       
       <div class="form-section">
         <div class="form-group">
           <label>出張期間</label>
           <div style="display: flex; gap: 1rem;">
-            <%-- Dữ liệu được điền lại từ bean trong session/request --%>
             <input type="date" name="startDate" id="startDate" value="${trip.step1Data.startDate}" required>
             <span>～</span>
             <input type="date" name="endDate" id="endDate" value="${trip.step1Data.endDate}" required>
@@ -42,7 +32,6 @@
           <select name="projectCode" required>
             <option value="">選択してください</option>
             <c:forEach var="p" items="${projectList}">
-              <%-- Logic chọn 'selected' được đơn giản hóa --%>
               <option value="${p.id}" ${p.id == trip.step1Data.projectCode ? 'selected' : ''}>
                 ${p.id}：${p.name}
               </option>
