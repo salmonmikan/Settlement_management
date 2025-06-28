@@ -1,261 +1,255 @@
+// =================================================================
+// == businessTrip.js - Phiên bản FULL hoàn chỉnh và ổn định ==
+// =================================================================
 
-// === Trip Step 1 ===
-document.getElementById("step3Form").addEventListener("submit", function (e) {
-  const step = document.getElementById("stepHidden").value;
-  if (step !== "3") {
-    alert("step が不正です。フォーム送信が中止されました。");
-    e.preventDefault();
-  }
-});
-function setHiddenFields() {
-	
-	
-  const startInput = document.getElementById("startDate");
-  const endInput = document.getElementById("endDate");
-  const start = new Date(startInput.value);
-  const end = new Date(endInput.value);
-  if (end < start) {
-    alert("終了日は開始日より後の日付を選択してください。");
-    return false;
-  }
-  const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
-  document.getElementById("totalDays").value = totalDays;
-  document.getElementById("startDateHidden").value = startInput.value;
-  document.getElementById("endDateHidden").value = endInput.value;
-  return true;
+function initializeStep2(diffDays, positionId) {
+    const firstBlock = document.querySelector(".allowance-block");
+    if (!firstBlock) return;
+    setupAllowanceBlock(firstBlock, diffDays, positionId);
 }
 
-function setHiddenFields() {
-    const start = document.getElementById("startDate").value;
-    const end = document.getElementById("endDate").value;
+function setupAllowanceBlock(block, diffDays, positionId) {
+    // Gán 日数 và thêm ghi chú + kiểm tra tổng ngày
+    const daysInput = block.querySelector("input[name='days[]']");
+    if (daysInput) {
+		const isFirstBlock = block === document.querySelector(".allowance-block");
+		daysInput.value = isFirstBlock ? diffDays : 0;
 
-    document.getElementById("startDateHidden").value = start;
-    document.getElementById("endDateHidden").value = end;
+        // Thêm ghi chú nếu chưa có
+        if (!block.querySelector(".days-note")) {
+            const note = document.createElement("small");
+            note.textContent = "※実際の日数に合わせて調整してください。";
+            note.className = "days-note";
+            note.style.color = "gray";
+            daysInput.parentNode.appendChild(note);
+        }
 
-    if (start && end) {
-        const diffTime = new Date(end) - new Date(start);
-        const days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        document.getElementById("totalDays").value = days;
+        daysInput.addEventListener('input', () => {
+            calculateTotal(block);
+            validateTotalDays(diffDays);
+        });
     }
-    return true;
-}
 
-// === Trip Step 2 ===
-function updateAllowanceAndHotel(elem) {
-  const block = elem.closest(".allowance-block");
-  const tripType = block.querySelector("select[name='tripType[]']").value;
-  const region = block.querySelector("select[name='regionType[]']").value;
-  const rankType = sessionPosition;
-  const isManager = !(rankType.includes("一般社員"));
-
-  let hotelFee = 0, dailyFee = 0;
-  if (tripType === "短期出張") {
-    if (region === "物価高水準地域") {
-      hotelFee = 10000;
-      dailyFee = isManager ? 4000 : 2200;
-    } else if (region === "上記以外") {
-      hotelFee = 8000;
-      dailyFee = isManager ? 4000 : 2200;
-    } else if (region === "会社施設・縁故先宿泊") {
-      hotelFee = 0;
-      dailyFee = 5000;
+    // Gán 日当 theo chức vụ
+    const dailyAllowanceInput = block.querySelector("input[name='dailyAllowance[]']");
+    if (dailyAllowanceInput) {
+        const dailyFee = (positionId === 'P0004') ? 2200 : 4000;
+        dailyAllowanceInput.value = dailyFee;
     }
-  } else if (tripType === "長期出張") {
-    hotelFee = 0;
-    dailyFee = (region === "会社施設・縁故先宿泊") ? 3500 : 1000;
-  } else if (tripType === "研修出張") {
-    hotelFee = 0;
-    dailyFee = 1000;
-  }
 
-  block.setAttribute('data-hotel-fee', hotelFee);
-  block.querySelector("input[name='dailyAllowance[]']").value = dailyFee;
-  handleBurdenChange(block.querySelector("select[name='burden[]']"));
-}
-
-function calcTotal(elem) {
-  const block = elem.closest(".allowance-block");
-  const burden = block.querySelector("select[name='burden[]']").value;
-  const days = parseInt(block.querySelector("input[name='days[]']").value || 0);
-  const hotelFee = parseInt(block.querySelector("input[name='hotelFee[]']").value || 0);
-  const daily = parseInt(block.querySelector("input[name='dailyAllowance[]']").value || 0);
-  const total = (burden === "自己") ? (hotelFee + daily) * days : daily * days;
-  block.querySelector("input[name='expenseTotal[]']").value = total;
-}
-
-function handleBurdenChange(select) {
-  const block = select.closest(".allowance-block");
-  const burden = select.value;
-  const hotelFeeInput = block.querySelector("input[name='hotelFee[]']");
-  const calculated = parseInt(block.getAttribute('data-hotel-fee') || 0);
-
-  if (burden === "自己") {
-    hotelFeeInput.value = calculated;
-  } else {
-    hotelFeeInput.value = "";
-  }
-
-  calcTotal(select);
-}
-
-/*function addAllowanceBlock() {
-  const container = document.getElementById("allowance-container");
-  const blocks = document.querySelectorAll(".allowance-block");
-  const index = blocks.length;
-
-  const template = document.querySelector(".allowance-block");
-  const clone = template.cloneNode(true);
-
-  clone.querySelectorAll("input, textarea").forEach(el => el.value = "");
-  clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
-
-  const fileInput = clone.querySelector(".fileInput");
-  fileInput.name = `receiptStep2_${index}[]`;
-  fileInput.setAttribute("multiple", true);
-
-  container.appendChild(clone);
-
-  fileInput.addEventListener("change", function(e) {
-    const fileList = clone.querySelector(".fileList");
-    fileList.innerHTML = "";
-    Array.from(e.target.files).forEach(file => {
-      const li = document.createElement("li");
-      li.textContent = file.name;
-      fileList.appendChild(li);
+    // Gán sự kiện dropdown tính phí khách sạn
+    ['regionType[]', 'tripType[]', 'burden[]'].forEach(name => {
+        const sel = block.querySelector(`select[name='${name}']`);
+        if (sel) {
+            sel.addEventListener('change', () => calculateHotelFee(sel));
+        }
     });
-  });
 
-  updateAllowanceAndHotel(clone.querySelector("select[name='regionType[]']"));
-}*/
+    // Gán sự kiện file input
+    const fileInput = block.querySelector(".fileInput");
+    if (fileInput) {
+        fileInput.addEventListener("change", () => handleFileSelection(fileInput));
+    }
+}
+
+function calculateHotelFee(elem) {
+    const block = elem.closest(".allowance-block");
+    const region = block.querySelector("select[name='regionType[]']").value;
+    const tripType = block.querySelector("select[name='tripType[]']").value;
+    const burden = block.querySelector("select[name='burden[]']").value;
+    const hotelFeeInput = block.querySelector("input[name='hotelFee[]']");
+
+    if (region && tripType && burden) {
+        let baseHotelFee = 0;
+        if (tripType === "短期出張") {
+            if (region === "物価高水準地域") baseHotelFee = 10000;
+            else if (region === "上記以外") baseHotelFee = 8000;
+        }
+
+        hotelFeeInput.value = (burden === "自己") ? baseHotelFee : 0;
+
+        calculateTotal(block);
+    }
+}
+
+function calculateTotal(block) {
+    const totalInput = block.querySelector("input[name='expenseTotal[]']");
+    const hotelFee = parseInt(block.querySelector("input[name='hotelFee[]']").value || 0);
+    const dailyFee = parseInt(block.querySelector("input[name='dailyAllowance[]']").value || 0);
+    const days = parseInt(block.querySelector("input[name='days[]']").value || 0);
+
+    totalInput.value = (hotelFee + dailyFee) * days;
+}
+
+function handleFileSelection(fileInput) {
+    const block = fileInput.closest('.form-group');
+    const fileListElement = block.querySelector(".fileList");
+    fileListElement.innerHTML = "";
+
+    Array.from(fileInput.files).forEach(file => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(file);
+        a.textContent = file.name;
+        a.target = "_blank";
+        li.appendChild(a);
+        fileListElement.appendChild(li);
+    });
+}
+
+function validateTotalDays(maxDays) {
+    const allBlocks = document.querySelectorAll(".allowance-block");
+    let total = 0;
+
+    allBlocks.forEach(block => {
+        const daysInput = block.querySelector("input[name='days[]']");
+        total += parseInt((daysInput && daysInput.value) || 0);
+    });
+
+    allBlocks.forEach(block => {
+        const daysInput = block.querySelector("input[name='days[]']");
+        if (!daysInput) return;
+
+        let error = block.querySelector(".days-error");
+        if (total > maxDays) {
+            if (!error) {
+                error = document.createElement("div");
+                error.className = "days-error";
+                error.style.color = "red";
+                error.style.fontSize = "0.85rem";
+                daysInput.parentNode.appendChild(error);
+            }
+            error.textContent = `※合計日数が出張期間を超えています（最大 ${maxDays} 日）`;
+            daysInput.style.borderColor = "red";
+        } else {
+            if (error) error.remove();
+            daysInput.style.borderColor = "";
+        }
+    });
+}
+
 function addAllowanceBlock() {
     const container = document.getElementById("allowance-container");
-    const newBlock = container.firstElementChild.cloneNode(true);
+    const template = container.querySelector(".allowance-block");
+    if (!template) return;
 
-    const currentCount = container.children.length;
+    const clone = template.cloneNode(true);
+    const newIndex = container.children.length;
 
-    // Cập nhật name cho input file
-    const fileInput = newBlock.querySelector("input[type='file']");
+    // Reset nội dung input
+    clone.querySelectorAll("input[type='text'], input[type='number'], textarea").forEach(el => el.value = "");
+    clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
+
+    const fileInput = clone.querySelector(".fileInput");
     if (fileInput) {
-        fileInput.name = "receiptStep2_" + currentCount + "[]";
+        fileInput.name = "receipt_allowance_" + newIndex;
+        fileInput.value = "";
     }
 
-    // Xóa dữ liệu trong block mới
-    newBlock.querySelectorAll("input, textarea").forEach(input => {
-        if (input.type !== "hidden") input.value = "";
-    });
+    const fileList = clone.querySelector(".fileList");
+    if (fileList) fileList.innerHTML = "";
 
-    newBlock.querySelector(".remove-btn").classList.remove("d-none");
+    const removeBtn = clone.querySelector('.remove-btn');
+    if (removeBtn) removeBtn.style.display = 'block';
 
-    container.appendChild(newBlock);
+    container.appendChild(clone);
+    setupAllowanceBlock(clone, diffDays, positionId);
 }
 
 function removeAllowanceBlock(btn) {
-  const blocks = document.querySelectorAll(".allowance-block");
-  if (blocks.length > 1) {
     btn.closest(".allowance-block").remove();
-  } else {
-    alert("最低1つの明細が必要です");
-  }
+    validateTotalDays(diffDays); // cập nhật lại nếu xóa block
 }
+/**
+ * HÀM TÍNH TOÁN TRUNG TÂM CHO STEP 3
+ * Tính toán lại tổng tiền cho một block chi phí di chuyển.
+ * @param {HTMLElement} block - Phần tử div.trans-block cần tính toán.
+ */
+function updateTransBlockCalculations(block) {
+    if (!block) return;
 
-function initializeAllowanceBlock(diffDays) {
-  const firstBlock = document.querySelector(".allowance-block");
-  if (firstBlock) {
-    const daysInput = firstBlock.querySelector("input[name='days[]']");
-    if (daysInput.value === "" || parseInt(daysInput.value) <= 1) {
-      daysInput.value = diffDays;
+    // Lấy giá trị từ các input/select
+    const amount = parseInt(block.querySelector("input[name='fareAmount[]']").value || 0);
+    const tripType = block.querySelector("select[name='transTripType[]']").value;
+    const burden = block.querySelector("select[name='transBurden[]']").value;
+    const totalInput = block.querySelector("input[name='expenseTotal[]']");
+
+    let total = 0;
+    // Chỉ tính tổng nếu người trả là "自己" (Tự túc)
+    if (burden === "自己") {
+        const multiplier = (tripType === "往復") ? 2 : 1; // Nếu là khứ hồi thì nhân 2
+        total = amount * multiplier;
     }
-    updateAllowanceAndHotel(firstBlock.querySelector("select[name='regionType[]']"));
-
-    const fileInput = firstBlock.querySelector("input[type='file']");
-    const fileList = firstBlock.querySelector(".fileList");
-    fileInput.addEventListener("change", function(e) {
-      fileList.innerHTML = "";
-      Array.from(e.target.files).forEach(file => {
-        const li = document.createElement("li");
-        li.textContent = file.name;
-        fileList.appendChild(li);
-      });
-    });
-  }
+    
+    totalInput.value = total;
 }
 
+/**
+ * Hàm khởi tạo cho các block của Step 3 khi trang tải xong.
+ */
+function initializeTransStep3() {
+    const allBlocks = document.querySelectorAll(".trans-block");
+    allBlocks.forEach(block => {
+        // Gán sự kiện cho các input/select đã có sẵn (trường hợp back lại)
+        const amountInput = block.querySelector("input[name='fareAmount[]']");
+        const tripTypeSelect = block.querySelector("select[name='transTripType[]']");
+        const burdenSelect = block.querySelector("select[name='transBurden[]']");
 
-// === Trip Step 3 ===
+        amountInput.addEventListener('input', () => updateTransBlockCalculations(block));
+        tripTypeSelect.addEventListener('change', () => updateTransBlockCalculations(block));
+        burdenSelect.addEventListener('change', () => updateTransBlockCalculations(block));
+        
+        // Gán sự kiện cho file input
+        const fileInput = block.querySelector(".fileInput");
+        fileInput.addEventListener('change', () => handleFileSelection(fileInput));
+
+        // Tính toán lại lần đầu cho các block đã có dữ liệu
+        updateTransBlockCalculations(block);
+    });
+}
+
+/**
+ * Hàm thêm một block chi phí di chuyển mới.
+ */
 function addTransBlock() {
-  const container = document.getElementById("trans-container");
-  const blocks = document.querySelectorAll(".trans-block");
-  const index = blocks.length;
+    const container = document.getElementById("trans-container");
+    const template = container.querySelector(".trans-block");
+    if (!template) return;
 
-  const template = document.querySelector(".trans-block");
-  const clone = template.cloneNode(true);
+    const clone = template.cloneNode(true);
+    const newIndex = container.children.length;
 
-  clone.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
-  clone.querySelector(".remove-btn").classList.remove("d-none");
+    // Reset các giá trị trong block mới
+    clone.querySelectorAll("input[type='text'], input[type='number'], textarea").forEach(el => el.value = "");
+    clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
 
-  const fileInput = clone.querySelector("input[type='file']");
-  fileInput.name = `receiptStep3_${index}[]`;
-  fileInput.setAttribute("multiple", true);
-
-  const fileList = clone.querySelector(".fileList");
-  fileList.innerHTML = "";
-  fileInput.addEventListener("change", function(e) {
-    fileList.innerHTML = "";
-    Array.from(e.target.files).forEach(file => {
-      const li = document.createElement("li");
-      li.textContent = file.name;
-      fileList.appendChild(li);
-    });
-  });
-
-  container.appendChild(clone);
-}
-
-function removeTransBlock(btn) {
-  const block = btn.closest(".trans-block");
-  const allBlocks = document.querySelectorAll(".trans-block");
-  if (allBlocks.length > 1) {
-    block.remove();
-  } else {
-    alert("最低1つの明細が必要です");
-  }
-}
-
-function calcFareTotal(elem) {
-  const block = elem.closest('.trans-block');
-  const amountInput = block.querySelector("input[name='fareAmount[]']");
-  const tripType = block.querySelector("select[name='transTripType[]']").value;
-  const burden = block.querySelector("select[name='burden[]']").value;
-  const totalInput = block.querySelector("input[name='expenseTotal[]']");
-
-  const amount = parseInt(amountInput.value || 0);
-
-  if (burden === "自己") {
-    const multiplier = (tripType === "往復") ? 2 : 1;
-    totalInput.value = amount * multiplier;
-  } else {
-    totalInput.value = 0;
-  }
-}
-
-function initializeTransBlock() {
-  const firstBlock = document.querySelector(".trans-block");
-  if (firstBlock) {
-    const fileInput = firstBlock.querySelector("input[type='file']");
-    const fileList = firstBlock.querySelector(".fileList");
-
-    fileInput.addEventListener("change", function(e) {
-      fileList.innerHTML = "";
-      Array.from(e.target.files).forEach(file => {
-        const li = document.createElement("li");
-        li.textContent = file.name;
-        fileList.appendChild(li);
-      });
-    });
-
-    const fareInput = firstBlock.querySelector("input[name='fareAmount[]']");
-    if (fareInput && fareInput.value) {
-      calcFareTotal(fareInput);
+    // Xử lý file input
+    const fileInput = clone.querySelector(".fileInput");
+    if (fileInput) { 
+        fileInput.name = "receipt_transport_" + newIndex;
+        fileInput.value = "";
     }
-  }
+    const fileList = clone.querySelector(".fileList");
+    if (fileList) { fileList.innerHTML = ""; }
+  
+    // Hiển thị nút xóa
+    const removeBtn = clone.querySelector('.remove-btn');
+    if (removeBtn) { removeBtn.style.display = 'block'; }
+    
+    container.appendChild(clone);
+    
+    // ★ QUAN TRỌNG: Gán lại các sự kiện cho block vừa được thêm vào
+    initializeTransStep3();
+}
+
+/**
+ * Hàm xóa một block chi phí di chuyển.
+ */
+function removeTransBlock(btn) {
+    const container = btn.closest('#trans-container');
+    if (container.children.length > 1) {
+        btn.closest(".trans-block").remove();
+    } else {
+        alert("最低1つの明細が必要です。");
+    }
 }

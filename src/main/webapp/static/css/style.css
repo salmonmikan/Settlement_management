@@ -73,7 +73,8 @@ label {
 }
 
 button,
-.btn-section a {
+.btn-section a,
+.btn-link-back {
   padding: 0.5rem 1rem;
   background: var(--primary-color);
   color: #fff;
@@ -85,7 +86,8 @@ button,
   transition: background 0.3s;
 }
 button:hover,
-.btn-section a:hover {
+.btn-section a:hover,
+.btn-link-back:hover {
   background: var(--primary-color-hover);
 }
 

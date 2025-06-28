@@ -35,27 +35,26 @@ public class LoginServlet extends HttpServlet {
 
         if (staff != null) {
             HttpSession session = request.getSession();
+
+            // === GIỮ NGUYÊN ĐỂ KHÔNG ẢNH HƯỞNG TEAM ===
+            // Lưu các thông tin riêng lẻ vào session.
+            // Các thành viên khác trong team có thể đang dùng các key này.
             session.setAttribute("staffId", staff.getEmployeeId());
             session.setAttribute("staffName", staff.getFullName());
+            session.setAttribute("position_id", staff.getPositionId());
+            session.setAttribute("department_id", staff.getDepartmentId());
 
-            String position = staff.getPositionId();
-            String department = staff.getDepartmentId();
-
-            session.setAttribute("position_id", position);
-            session.setAttribute("department_id", department);
-
-            // Xác định role và lưu vào session
-            RoleUtil.UserRole role = RoleUtil.detectRole(position, department);
+            // Xác định role và lưu vào session, cái này rất hữu ích
+            RoleUtil.UserRole role = RoleUtil.detectRole(staff.getPositionId(), staff.getDepartmentId());
             session.setAttribute("userRole", role);
-
-            System.out.println("position = " + position);
-            System.out.println("department = " + department);
-            System.out.println("role = " + role);
+            
+            // Ghi chú: Nên dùng Logger thay cho System.out trong dự án thực tế
+            System.out.println("Login success for staffId: " + staff.getEmployeeId() + ", Role: " + role);
 
             request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
         } else {
-            System.out.println("Login failed - user not found");
-            request.setAttribute("error", "IDまたはパスワードが違います");
+            System.out.println("Login failed - user not found or wrong password");
+            request.setAttribute("error", "社員IDまたはパスワードが違います"); // ID hoặc mật khẩu không đúng
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }
     }

@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import bean.BusinessTripBean.ReimbursementBean;
+import bean.ReimbursementBean;
 import util.DBConnection;
 
 public class ReimbursementDAO {

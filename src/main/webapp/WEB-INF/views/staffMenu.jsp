@@ -1,60 +1,61 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%
-		String staffName = (String) session.getAttribute("staffName");
-		if (staffName == null) {
-			response.sendRedirect(request.getContextPath() + "/views/login.jsp");
-			return;
-		};
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%-- [SỬA LỖI & CẢI THIỆN] Kiểm tra đăng nhập an toàn bằng JSTL --%>
+<c:if test="${empty sessionScope.staffName}">
+    <%-- Nếu trong session không có "staffName", chuyển hướng về trang login --%>
+    <c:redirect url="/LoginServlet" />
+</c:if>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <title>スタッフダッシュボード - ABC株式会社システム</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
-<!--  cdn link-->
+  <%-- [CẢI THIỆN] Sử dụng EL (Expression Language) cho các đường dẫn --%>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
+  <script src="${pageContext.request.contextPath}/static/js/script.js"></script>
 </head>
 <body>
 
 	<nav>
 		精算管理システム
-		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
+		<form class="logoutForm" action="${pageContext.request.contextPath}/logOutServlet" method="post">
     	<button type="submit"  title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
 		</form>
 	</nav>
 
   <div class="page-container">
-    <p style="text-align: right;">ようこそ、<%= staffName %> さん！</p>
+    <%-- [CẢI THIỆN] Hiển thị tên người dùng bằng EL --%>
+    <p style="text-align: right;">ようこそ、${sessionScope.staffName} さん！</p>
 
     <div class="staff-dashboard-wrapper">
 
-      <!-- Sidebar -->
+      <%-- Giả sử sidebar của bạn nằm ở đây, tôi giữ nguyên --%>
       <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
-      <!-- Main content -->
       <div class="staff-main-content">
         <div class="panel">
           <h4>申請する</h4>
           <div class="btn-section">
-            <a href="<%= request.getContextPath() %>/transportationRequest">交通費申請</a>
-            <a href="<%= request.getContextPath() %>/businessTrip">出張費申請</a>
-            <a href="<%= request.getContextPath() %>/reimbursement">立替金申請</a>
-
+            <%-- [CẢI THIỆN] Sử dụng EL cho các đường dẫn --%>
+            <a href="${pageContext.request.contextPath}/transportationRequest">交通費申請</a>
+            <a href="${pageContext.request.contextPath}/businessTripInit">出張費申請</a>
+            <a href="${pageContext.request.contextPath}/reimbursement">立替金申請</a>
           </div>
         </div>
 
         <div class="panel">
           <h4>申請状況</h4>
           <ul>
-            <li><a href="approvalList.jsp?status=pending">未提出</a></li>
-            <li><a href="approvalList.jsp?status=pending">提出済: 1件</a></li>
-            <li><a href="approvalList.jsp?status=approved">差戻: 1件</a></li>
+             <%-- Bạn cần sửa các link này để trỏ đến Servlet xử lý, không phải file jsp --%>
+            <li><a href="${pageContext.request.contextPath}/approvalList?status=not_submitted">未提出</a></li>
+            <li><a href="${pageContext.request.contextPath}/approvalList?status=submitted">提出済: 1件</a></li>
+            <li><a href="${pageContext.request.contextPath}/approvalList?status=rejected">差戻: 1件</a></li>
           </ul>
         </div>
       </div>
-
     </div>
   </div>
 

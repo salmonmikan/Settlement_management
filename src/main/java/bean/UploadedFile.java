@@ -1,58 +1,33 @@
-// Filename: src/main/java/bean/UploadedFile.java
+// Trong file bean/UploadedFile.java
 package bean;
 
 import java.io.Serializable;
 
 public class UploadedFile implements Serializable {
-    private static final long serialVersionUID = 1L; // Good practice for Serializable classes
+    private static final long serialVersionUID = 1L;
 
-    private String originalFileName; // Tên file gốc mà người dùng upload
-    private String tempStoredPath;   // Đường dẫn tới file đã lưu tạm trên server
-    private String mimeType;         // Kiểu file, ví dụ "image/jpeg"
-    private long size;               // Kích thước file (bytes)
+    private String originalFileName;
+    private String uniqueStoredName;
+    private String temporaryPath; 
+    private String storedFilePath;
+    
+    // ★★★ THÊM THUỘC TÍNH NÀY VÀO ★★★
+    private int blockIndex;
 
-    public UploadedFile() {
-        // Constructor mặc định
-    }
+    // --- Getters and Setters ---
+    public String getOriginalFileName() { return originalFileName; }
+    public void setOriginalFileName(String originalFileName) { this.originalFileName = originalFileName; }
+    
+    public String getUniqueStoredName() { return uniqueStoredName; }
+    public void setUniqueStoredName(String uniqueStoredName) { this.uniqueStoredName = uniqueStoredName; }
+    
+    public String getTemporaryPath() { return temporaryPath; }
+    public void setTemporaryPath(String temporaryPath) { this.temporaryPath = temporaryPath; }
 
-    public UploadedFile(String originalFileName, String tempStoredPath, String mimeType, long size) {
-        this.originalFileName = originalFileName;
-        this.tempStoredPath = tempStoredPath;
-        this.mimeType = mimeType;
-        this.size = size;
-    }
+    public String getStoredFilePath() { return storedFilePath; }
+    public void setStoredFilePath(String storedFilePath) { this.storedFilePath = storedFilePath; }
 
-    // --- Getters & Setters ---
-
-    public String getOriginalFileName() {
-        return originalFileName;
-    }
-
-    public void setOriginalFileName(String originalFileName) {
-        this.originalFileName = originalFileName;
-    }
-
-    public String getTempStoredPath() {
-        return tempStoredPath;
-    }
-
-    public void setTempStoredPath(String tempStoredPath) {
-        this.tempStoredPath = tempStoredPath;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
+    // ★★★ THÊM GETTER/SETTER NÀY VÀO ★★★
+    public int getBlockIndex() { return blockIndex; }
+    public void setBlockIndex(int blockIndex) { this.blockIndex = blockIndex; }
 }
