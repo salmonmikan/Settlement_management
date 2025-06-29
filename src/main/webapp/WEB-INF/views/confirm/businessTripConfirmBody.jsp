@@ -70,7 +70,7 @@
       <tr><th>出張期間</th><td>${trip.step1Data.startDate} ～ ${trip.step1Data.endDate}</td></tr>
       <tr><th>PJコード</th><td>${trip.step1Data.projectCode}</td></tr>
       <tr><th>出張報告</th><td style="white-space: pre-wrap;">${trip.step1Data.tripReport}</td></tr>
-      <tr><th>合計日数</th><td>${trip.step1Data.totalDays} 日間</td></tr>
+      <%-- <tr><th>合計日数</th><td>${trip.step1Data.totalDays} 日間</td></tr> --%>
     </table>
   </div>
 

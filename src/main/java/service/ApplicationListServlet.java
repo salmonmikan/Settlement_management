@@ -1,4 +1,4 @@
-package servlet;
+package service;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,7 +57,7 @@ public class ApplicationListServlet extends HttpServlet {
         }
 
         // --- Chuyển đến trang hiển thị ---
-        request.getRequestDispatcher("/WEB-INF/views/applicationMain.jsp")
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/applicationMain.jsp")
                .forward(request, response);
     }
 }

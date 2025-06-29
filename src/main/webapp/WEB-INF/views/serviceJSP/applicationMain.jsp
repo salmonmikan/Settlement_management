@@ -200,12 +200,19 @@
 	  });
 	
 	  document.querySelectorAll('.clickable-row').forEach(row => {
-	    row.addEventListener('click', function (e) {
-	      if (e.target.tagName === 'INPUT') return;
-	      const id = this.dataset.id;
-	      window.location.href = 'applicationDetail?id=' + id;
-	    });
-	  });
+		  row.addEventListener('click', function (e) {
+		    const targetCell = e.target.closest('td');
+
+		    
+		    if (targetCell && targetCell.cellIndex === 0) {
+		      return;
+		    }
+
+		    
+		    const id = this.dataset.id;
+		    window.location.href = 'applicationDetail?id=' + id;
+		  });
+		});
 	
 	  function confirmSubmit() {
 	    const checked = document.querySelectorAll('.row-check:checked');
