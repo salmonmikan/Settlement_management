@@ -3,13 +3,15 @@
 
 <style>
 .btn-like-back {
-        background: var(--primary-color);
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
     transition: background 0.2s;
+    max-width: 100px;
+    height:36.8px;
 }
 </style>
 <div class="btn-section">

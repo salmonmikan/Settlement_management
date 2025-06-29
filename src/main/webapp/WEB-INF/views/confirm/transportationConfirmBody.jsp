@@ -3,16 +3,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%-- 
-  File này hiển thị nội dung chi tiết của đơn "Lập替金" (Reimbursement)
-  theo cấu trúc hiển thị mới, tách bạch cho từng block.
+  File này hiển thị nội dung chi tiết của đơn "Chi phí đi lại" (交通費)
+  theo cấu trúc hiển thị riêng cho từng block.
 --%>
 
-<%-- Sử dụng chung bộ style với các trang confirm khác để giao diện nhất quán --%>
 <style>
+  /* Style chung cho trang confirm */
   .confirm-table { width: 100%; border-collapse: collapse; }
-  .confirm-table th, .confirm-table td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle; }
-  .confirm-table th { background-color: #f8f9fa; font-weight: bold; width: 120px; }
+  .confirm-table th, .confirm-table td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; }
+  .confirm-table th { background-color: #f8f9fa; font-weight: bold; width: 150px; }
   
+  /* Style cho mỗi block riêng biệt */
   .confirm-section { 
     margin-bottom: 20px; 
     padding: 20px; 
@@ -29,6 +30,7 @@
     color: var(--primary-color);
   }
   
+  /* Style cho phần ghi chú và file */
   .detail-extra-info { margin-top: 15px; }
   .memo-block { padding: 10px; background-color: #f9f9f9; border-radius: 4px; white-space: pre-wrap; margin-top: 5px; }
   
@@ -44,47 +46,38 @@
 
 <div class="page-container" style="display: flex; flex-direction: column; gap: 15px;">
 
-  <%-- Bắt đầu vòng lặp qua từng chi tiết của đơn Reimbursement --%>
-  <c:forEach var="detail" items="${reimbursementApp.details}" varStatus="loop">
+  <%-- =================================================================== --%>
+  <%-- BẮT ĐẦU VÒNG LẶP CHO MỖI BLOCK --%>
+  <%-- =================================================================== --%>
+  <c:forEach var="detail" items="${transportationApp.details}" varStatus="loop">
     
-    <%-- Khung riêng cho mỗi block --%>
+    <%-- Khung bao quanh cho một block duy nhất --%>
     <div class="confirm-section">
-      <h3>精算明細 ${loop.count}</h3> <%-- Tiêu đề: Chi tiết thanh toán 1, 2... --%>
+      <h3>精算明細 ${loop.count}</h3> <%-- Tiêu đề cho block: Chi tiết 1, Chi tiết 2... --%>
 
       <%-- 1. Bảng chứa thông tin chính của block --%>
       <table class="confirm-table">
-        <tr>
-            <th>PJコード</th>
-            <td>${detail.projectCode}</td>
-        </tr>
-        <tr>
-            <th>日付</th>
-            <td>${detail.date}</td>
-        </tr>
-        <tr>
-            <th>訪問先</th>
-            <td>${detail.destinations}</td>
-        </tr>
-        <tr>
-            <th>勘定科目</th>
-            <td>${detail.accountingItem}</td>
-        </tr>
-         <tr>
-            <th>金額</th>
-            <td colspan="3"><fmt:formatNumber value="${detail.amount}" type="number" />円</td>
-        </tr>
+        <tr><th>PJコード</th><td>${detail.projectCode}</td></tr>
+        <tr><th>訪問月・日</th><td>${detail.date}</td></tr>
+        <tr><th>出発</th><td>${detail.departure}</td></tr>
+        <tr><th>到着</th><td>${detail.arrival}</td></tr>
+        <tr><th>交通機関</th><td>${detail.transport}</td></tr>
+        <tr><th>金額（税込）</th><td><fmt:formatNumber value="${detail.fareAmount}" type="number" />円</td></tr>
+        <tr><th>区分</th><td>${detail.transTripType}</td></tr>
+        <tr><th>負担者</th><td>${detail.burden}</td></tr>
+        <tr><th>合計</th><td><fmt:formatNumber value="${detail.expenseTotal}" type="number" />円</td></tr>
       </table>
 
-      <%-- Khu vực chứa ghi chú và file của riêng block này --%>
+      <%-- Khu vực chứa ghi chú và file của RIÊNG block này --%>
       <div class="detail-extra-info">
         
-        <%-- 2. Hiển thị ghi chú (摘要) nếu có --%>
-        <c:if test="${not empty detail.report}">
+        <%-- 2. Hiển thị ghi chú (摘要) của RIÊNG block này --%>
+        <c:if test="${not empty detail.transMemo}">
           <div><strong>摘要:</strong></div>
-          <div class="memo-block">${detail.report}</div>
+          <div class="memo-block">${detail.transMemo}</div>
         </c:if>
 
-        <%-- 3. Hiển thị file đính kèm nếu có --%>
+        <%-- 3. Hiển thị file của RIÊNG block này --%>
         <c:if test="${not empty detail.temporaryFiles}">
           <div style="margin-top: 10px;"><strong>領収書ファイル:</strong></div>
           <ul class="receipt-list">
@@ -100,11 +93,11 @@
       </div>
     </div> <%-- Kết thúc khung của một block --%>
 
-  </c:forEach>
+  </c:forEach> <%-- Kết thúc vòng lặp --%>
   
-  <%-- Tổng số tiền của toàn bộ đơn --%>
+  <%-- Hiển thị tổng số tiền của toàn bộ đơn đăng ký (nằm ngoài vòng lặp) --%>
   <div class="confirm-page-total">
-    総合計金額: <fmt:formatNumber value="${reimbursementApp.totalAmount}" type="number" /> 円
+    総合計金額: <fmt:formatNumber value="${transportationApp.totalAmount}" type="number" /> 円
   </div>
 
 </div>

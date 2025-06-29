@@ -51,7 +51,7 @@
 		<div class="panel" style="max-height: 150px;">
           <h4>申請する</h4>
           <div class="btn-section">
-            <a href="<%= request.getContextPath() %>/transportationRequest">交通費申請</a>
+            <a href="<%= request.getContextPath() %>/transportationInit">交通費申請</a>
             <a href="<%= request.getContextPath() %>/businessTripInit">出張費申請</a>
             <a href="<%= request.getContextPath() %>/reimbursementInit">立替金申請</a>
           </div>

@@ -11,12 +11,30 @@
 <style>
 .remove-btn { position: absolute; top: 1px; right: 1px; background: none; border: none; font-size: 1.2rem; color: #888; cursor: pointer; }
 .fileList a { color: #0056b3; text-decoration: underline; cursor: pointer; }
+.file-delete-btn{    
+    background: none;
+    padding:4px;
+    color: red;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    height: 36.8px;}
+    
+    .file-delete-btn:hover {
+      background: none;
+	  transform: scale(1.2);
+	  opacity: 0.8;
+	}
 </style>
 </head>
 <body>
 <div class="page-container">
 <h2>日当・宿泊費申請</h2>
 <form action="${pageContext.request.contextPath}/businessTripStep2" method="post" enctype="multipart/form-data">
+<input type="hidden" id="filesToDelete" name="filesToDelete" value="">
 <div style="display: flex; flex-direction: column; gap: 10px" id="allowance-container">
 <c:forEach var="detail" items="${trip.step2Details}" varStatus="loop">
 <div class="form-section allowance-block" style="position: relative;">
@@ -33,16 +51,22 @@
 <div class="form-group">
 <label>領収書添付（日当・宿泊費）</label>
 <input type="file" name="receipt_allowance_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
-<!-- <small style="color: gray;">
-(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)
-</small> -->
+
 <ul class="fileList">
-<c:forEach var="file" items="${detail.temporaryFiles}">
+<%-- <c:forEach var="file" items="${detail.temporaryFiles}">
 <li>
 <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
 ${file.originalFileName}
 </a>
 </li>
+</c:forEach> --%>
+<c:forEach var="file" items="${detail.temporaryFiles}">
+  <li data-file-type="existing" data-unique-name="${file.uniqueStoredName}">
+    <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
+      ${file.originalFileName}
+    </a>
+    <button type="button" class="file-delete-btn" onclick="deleteExistingFile(this)">×</button>
+  </li>
 </c:forEach>
 </ul>
 </div>

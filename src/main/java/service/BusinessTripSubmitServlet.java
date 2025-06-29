@@ -73,10 +73,9 @@ public class BusinessTripSubmitServlet extends HttpServlet {
 
             trip.calculateTotalAmount();
 
-            // ★★★ Dòng này gọi hàm insertApplication với 4 tham số, bao gồm `conn`
             int applicationId = appDAO.insertApplication("出張費申請", staffId, trip.getTotalAmount(), conn);
             
-            String approverId = appDAO.findManagerId(staffId);
+//            String approverId = appDAO.findManagerId(staffId);
 //            if (approverId == null) {
 //                throw new Exception("Không tìm thấy người duyệt đơn (部長).");
 //            }
@@ -107,10 +106,6 @@ public class BusinessTripSubmitServlet extends HttpServlet {
                 }
             }
 
-            // Dòng này có thể comment đi nếu bạn muốn status ban đầu là "未提出"
-            // ★★★ Dòng này gọi hàm submitApplicationIfNotYet với 4 tham số, bao gồm `conn`
-            // appDAO.submitApplicationIfNotYet(applicationId, staffId, approverId, conn);
-
             conn.commit(); 
             
             session.removeAttribute("trip");
@@ -124,7 +119,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
             
             request.setAttribute("errorMessage", "Lỗi nghiêm trọng khi nộp đơn: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/errorPage.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }
