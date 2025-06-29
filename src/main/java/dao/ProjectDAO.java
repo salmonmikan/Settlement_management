@@ -16,6 +16,28 @@ import bean.ProjectList;
 import util.DBConnection;
 
 public class ProjectDAO {
+	public List<Project> getProjectsByStaff(String staffId) throws Exception {
+	    List<Project> list = new ArrayList<>();
+	    Connection conn = util.DBConnection.getConnection();
+	    String sql = """
+	        SELECT pm.project_code, p.project_name
+	        FROM project_management pm
+	        JOIN project_manage p ON pm.project_code = p.project_code
+	        WHERE pm.staff_id = ?
+	        ORDER BY pm.project_code
+	    """;
+	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, staffId);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                list.add(new Project(rs.getString("project_code"), rs.getString("project_name")));
+	            }
+	        }
+	    } finally {
+	        conn.close();
+	    }
+	    return list;
+	}
 
     public List<Project> getAllProjects() throws Exception {
         List<Project> list = new ArrayList<>();

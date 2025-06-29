@@ -1,13 +1,15 @@
 package servlet;
 
-import bean.BusinessTripBean.BusinessTripBean;
-import dao.BusinessTripDAO;
+import java.io.IOException;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.util.List;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import bean.BusinessTripBean;
 
 @WebServlet("/editBusinessTrip")
 public class EditBusinessTripServlet extends HttpServlet {
@@ -24,7 +26,7 @@ public class EditBusinessTripServlet extends HttpServlet {
             request.setAttribute("applicationId", appId);
             request.setAttribute("editMode", true); // フラグ追加
 
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip1.jsp");
             rd.forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import bean.Project;
-import bean.BusinessTripBean.TransportationRequest;
+import bean.TransportationRequest;
 import dao.ProjectDAO;
 
 @WebServlet("/transportationRequest")

@@ -2,6 +2,15 @@
 package util;
 
 public class RoleUtil {
+
+    // --- Định nghĩa các hằng số để loại bỏ "Magic Strings" ---
+    private static final String POSITION_MANAGEMENT = "P0001";
+    private static final String POSITION_BUCHO = "P0002";
+    private static final String POSITION_STAFF = "P0004";
+    
+    private static final String DEPARTMENT_MANAGEMENT = "D0002"; // Phòng kế toán/quản lý
+    // Thêm các department khác nếu cần
+
     public enum UserRole {
         STAFF,          // nhân viên thường (gửi đơn)
         BUCHO,          // trưởng phòng (duyệt đơn)
@@ -10,18 +19,19 @@ public class RoleUtil {
     }
 
     public static UserRole detectRole(String positionId, String departmentId) {
-        if ("P0004".equals(positionId)) {
+        // Sử dụng hằng số giúp code dễ đọc và dễ bảo trì hơn rất nhiều
+        if (POSITION_STAFF.equals(positionId)) {
             return UserRole.STAFF; // nhân viên thường (có thể gửi đơn)
         }
 
-        if ("P0002".equals(positionId)) {
+        if (POSITION_BUCHO.equals(positionId)) {
             return UserRole.BUCHO; // trưởng phòng (duyệt đơn của cấp dưới)
         }
 
-        if ("P0001".equals(positionId) && "D0002".equals(departmentId)) {
+        if (POSITION_MANAGEMENT.equals(positionId) && DEPARTMENT_MANAGEMENT.equals(departmentId)) {
             return UserRole.MANAGEMENT; // quản lý phòng kế toán (quản lý đơn đã duyệt)
         }
 
         return UserRole.UNKNOWN;
     }
-} 
+}

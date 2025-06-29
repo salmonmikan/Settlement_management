@@ -19,7 +19,7 @@ public class ProjectListServlet extends HttpServlet {
             ProjectDAO dao = new ProjectDAO();
             List<Project> projectList = dao.getAllProjects();
             req.setAttribute("projectList", projectList);
-            req.getRequestDispatcher("/WEB-INF/views/businessTrip1.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip1.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
         }

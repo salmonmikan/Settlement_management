@@ -1,4 +1,4 @@
-package bean.BusinessTripBean;
+package bean;
 
 public class TransportationRequest {
 	private String transportationRequestId;

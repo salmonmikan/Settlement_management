@@ -4,58 +4,57 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import bean.BusinessTripBean.ReimbursementBean;
-import util.DBConnection;
+import bean.ReimbursementDetailBean;
 
 public class ReimbursementDAO {
 
-    // Tạo ID tự động từ bảng sequence
-    private String generateRequestId(Connection conn) throws SQLException {
-        String sqlInsert = "INSERT INTO reimbursement_id_sequence VALUES ()";
-        String sqlSelect = "SELECT LAST_INSERT_ID()";
-
-        try (PreparedStatement ps = conn.prepareStatement(sqlInsert)) {
-            ps.executeUpdate();
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sqlSelect);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return String.format("RE%06d", rs.getInt(1));
-            }
-        }
-        return null;
-    }
-
-    // Hàm lưu đơn hoàn trả
-    public String insertReimbursement(ReimbursementBean bean) {
+    /**
+     * Chèn một record vào bảng reimbursement_request
+     * @param detail         Chi tiết từng block reimbursement
+     * @param applicationId  ID của đơn cha trong bảng application_header
+     * @param conn           Kết nối DB (truyền từ ngoài để xử lý transaction)
+     * @return               reimbursement_id vừa được insert
+     * @throws SQLException
+     */
+    public int insert(ReimbursementDetailBean detail, int applicationId, Connection conn) throws SQLException {
         String sql = "INSERT INTO reimbursement_request " +
-                     "(reimbursement_id, staff_id, project_code, date, destinations, accounting_item, amount, memo, abstract_note) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "(application_id, project_code, date, destinations, accounting_item, amount, report) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, applicationId);
+            stmt.setString(2, detail.getProjectCode());
 
-            String newId = generateRequestId(conn);
+            // ✅ FORMAT NGÀY: xử lý cả trường hợp YYYY/MM/DD hoặc YYYY-MM-DD
+            String dateStr = detail.getDate();
+            if (dateStr != null && !dateStr.isBlank()) {
+                try {
+                    // Chuyển '/' thành '-' để tránh lỗi IllegalArgumentException
+                    dateStr = dateStr.replace("/", "-");
+                    stmt.setDate(3, java.sql.Date.valueOf(dateStr)); // Chấp nhận định dạng YYYY-MM-DD
+                } catch (IllegalArgumentException e) {
+                    throw new SQLException("日付の形式が不正です（形式: YYYY-MM-DD）: " + dateStr, e);
+                }
+            } else {
+                stmt.setNull(3, java.sql.Types.DATE);
+            }
 
-            stmt.setString(1, newId);
-            stmt.setString(2, bean.getStaffId());
-            stmt.setString(3, bean.getProjectCode());
-            stmt.setDate(4, bean.getDate());
-            stmt.setString(5, bean.getDestinations());
-            stmt.setString(6, bean.getAccountingItem());
-            stmt.setInt(7, bean.getAmount());
-            stmt.setString(8, bean.getMemo());
-            stmt.setString(9, bean.getAbstractNote());
+            stmt.setString(4, detail.getDestinations());
+            stmt.setString(5, detail.getAccountingItem());
+            stmt.setInt(6, detail.getAmount());
+            stmt.setString(7, detail.getReport());
 
             stmt.executeUpdate();
 
-            return newId;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1); // reimbursement_id
+                } else {
+                    throw new SQLException("Creating reimbursement detail failed, no ID obtained.");
+                }
+            }
         }
     }
 }
