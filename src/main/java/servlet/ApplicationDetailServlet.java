@@ -1,8 +1,8 @@
 package servlet;
 
-import bean.BusinessTripBean.BusinessTripBean;
+import bean.BusinessTripBean;
 import dao.ApplicationDAO;
-import dao.BusinessTripDAO;
+import dao.BusinessTripApplicationDAO;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -30,7 +30,7 @@ public class ApplicationDetailServlet extends HttpServlet {
             request.setAttribute("mode", "detail");
 
             if ("出張費".equals(type)) {
-                BusinessTripDAO dao = new BusinessTripDAO();
+                BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
                 
                 request.setAttribute("businessTripBean", bean); // dùng cho confirm.jsp

@@ -1,9 +1,9 @@
-<%@page import="model.ProjectList"%>
+<%@page import="bean.ProjectList"%>
 
 <%@page import="java.util.ArrayList"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page import="java.util.List"%>
-<%@ page import="bean.BusinessTripBean.Employee"%>
+<%@ page import="bean.Employee"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!--数値カンマ対応-->
 <%@ page import="java.text.DecimalFormat"%>

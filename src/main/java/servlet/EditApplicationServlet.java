@@ -1,16 +1,20 @@
 package servlet;
 
-import bean.BusinessTripBean.BusinessTripBean;
-import bean.BusinessTripBean.Step1Data;
-import bean.BusinessTripBean.Step2Detail;
-import bean.BusinessTripBean.Step3Detail;
-import dao.BusinessTripDAO;
+import java.io.IOException;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.util.List;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import bean.BusinessTripBean;
+import bean.Step1Data;
+import bean.Step2Detail;
+import bean.Step3Detail;
+import dao.BusinessTripDAO;
 
 @WebServlet("/editApplication")
 public class EditApplicationServlet extends HttpServlet {

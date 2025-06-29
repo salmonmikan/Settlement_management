@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import bean.ProjectList;
 import dao.ProjectDAO;
-import model.ProjectList;
 
 // プロジェクト管理表示用
 @WebServlet("/position_management_view")

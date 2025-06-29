@@ -1,6 +1,12 @@
+/.DS_Store
 /bean/
 /dao/
 /listener/
 /model/
+/service/
 /servlet/
 /util/
+/bean/
+/.DS_Store
+.DS_Store
+*/.DS_Store

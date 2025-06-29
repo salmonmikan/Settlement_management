@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="java.util.*, bean.BusinessTripBean.TransportationRequest" %>
+<%@ page import="java.util.*, bean.TransportationRequest" %>
 <%
     List<TransportationRequest> transList = (List<TransportationRequest>) session.getAttribute("transportationList");
     Integer grandTotal = (Integer) session.getAttribute("transportationTotal");

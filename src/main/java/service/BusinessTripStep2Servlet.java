@@ -1,0 +1,167 @@
+package service;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import bean.BusinessTripBean;
+import bean.Step2Detail;
+import bean.UploadedFile;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+
+@WebServlet("/businessTripStep2")
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 15)
+public class BusinessTripStep2Servlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    private static final String TEMP_UPLOAD_DIR = "/temp_uploads";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("trip") == null) {
+            response.sendRedirect(request.getContextPath() + "/businessTripInit");
+            return;
+        }
+
+        BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
+
+        if (trip.getStep2Details().isEmpty()) {
+            trip.getStep2Details().add(new Step2Detail());
+        }
+
+        request.setAttribute("trip", trip);
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip2.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("trip") == null) {
+            response.sendRedirect(request.getContextPath() + "/businessTripInit");
+            return;
+        }
+
+        BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
+
+        // ★★★ XỬ LÝ FILE CẦN XOÁ (TỪ NÚT × TRÊN GIAO DIỆN) ★★★
+        String filesToDeleteParam = request.getParameter("filesToDelete");
+        if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
+            List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
+            String realPath = getServletContext().getRealPath("");
+
+            for (Step2Detail detail : trip.getStep2Details()) {
+                detail.getTemporaryFiles().stream()
+                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
+                    .forEach(file -> {
+                        try {
+                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
+                        } catch (IOException e) {
+                            System.err.println("Không thể xoá file: " + file.getTemporaryPath());
+                            e.printStackTrace();
+                        }
+                    });
+
+                detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
+            }
+        }
+
+        // ★ BƯỚC 1: Lưu lại danh sách chi tiết cũ trước khi xử lý
+        List<Step2Detail> oldDetails = new ArrayList<>(trip.getStep2Details());
+
+        // Xóa danh sách hiện tại để xây dựng lại
+        trip.getStep2Details().clear();
+
+        String[] regionTypes = request.getParameterValues("regionType[]");
+
+        if (regionTypes != null) {
+            Collection<Part> allParts = request.getParts();
+            String[] tripTypes = request.getParameterValues("tripType[]");
+            String[] hotels = request.getParameterValues("hotel[]");
+            String[] burdens = request.getParameterValues("burden[]");
+            String[] hotelFees = request.getParameterValues("hotelFee[]");
+            String[] dailyAllowances = request.getParameterValues("dailyAllowance[]");
+            String[] days = request.getParameterValues("days[]");
+            String[] expenseTotals = request.getParameterValues("expenseTotal[]");
+            String[] memos = request.getParameterValues("memo[]");
+
+            for (int i = 0; i < regionTypes.length; i++) {
+                Step2Detail newDetail = new Step2Detail();
+                try {
+                    newDetail.setRegionType(regionTypes[i]);
+                    newDetail.setTripType(tripTypes[i]);
+                    newDetail.setHotel(hotels[i]);
+                    newDetail.setBurden(burdens[i]);
+                    newDetail.setHotelFee(Integer.parseInt(hotelFees[i]));
+                    newDetail.setDailyAllowance(Integer.parseInt(dailyAllowances[i]));
+                    newDetail.setDays(Integer.parseInt(days[i]));
+                    newDetail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
+                    newDetail.setMemo(memos[i]);
+                } catch (Exception e) {
+                    System.err.println("Lỗi parse dữ liệu text ở Step 2, index " + i + ": " + e.getMessage());
+                }
+
+                String fileInputName = "receipt_allowance_" + i;
+                List<Part> newFileParts = allParts.stream()
+                    .filter(part -> fileInputName.equals(part.getName()) && part.getSize() > 0)
+                    .collect(Collectors.toList());
+
+                if (!newFileParts.isEmpty()) {
+                    newDetail.getTemporaryFiles().clear();
+                    for (Part filePart : newFileParts) {
+                        try {
+                            String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                            String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+                            String absoluteUploadPath = getServletContext().getRealPath(TEMP_UPLOAD_DIR);
+                            File uploadDir = new File(absoluteUploadPath);
+                            if (!uploadDir.exists()) uploadDir.mkdirs();
+                            File savedFile = new File(uploadDir, uniqueFileName);
+                            try (InputStream input = filePart.getInputStream()) {
+                                Files.copy(input, savedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            }
+                            UploadedFile uploadedFile = new UploadedFile();
+                            uploadedFile.setOriginalFileName(originalFileName);
+                            uploadedFile.setUniqueStoredName(uniqueFileName);
+                            uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
+                            newDetail.getTemporaryFiles().add(uploadedFile);
+                        } catch (Exception e) {
+                            System.err.println("Lỗi xử lý file upload ở Step 2, index " + i + ": " + e.getMessage());
+                        }
+                    }
+                } else {
+                    if (i < oldDetails.size()) {
+                        newDetail.setTemporaryFiles(oldDetails.get(i).getTemporaryFiles());
+                    }
+                }
+
+                trip.getStep2Details().add(newDetail);
+            }
+        }
+
+        session.setAttribute("trip", trip);
+
+        String action = request.getParameter("action");
+        if ("go_back".equals(action)) {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep3");
+        }
+    }
+}

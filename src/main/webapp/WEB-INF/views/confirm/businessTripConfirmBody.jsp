@@ -1,130 +1,114 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="bean.BusinessTripBean.*, java.util.*" %>
-<%
-  BusinessTripBean bt = (BusinessTripBean) request.getAttribute("businessTripBean");
-  Step1Data s1 = bt.getStep1Data();
-  List<Step2Detail> s2List = bt.getStep2List();
-  List<Step3Detail> s3List = bt.getStep3List();
-  int totalAmount = bt.getTotalStep2Amount() + bt.getTotalStep3Amount();
-  Map<String, List<String>> receiptMap = (Map<String, List<String>>) session.getAttribute("receiptMap");
-%>
-<style>
-	.memo-block {
-	  padding: 6px 12px;
-	  background-color: #f9f9f9;
-	  border-left: 4px solid #ccc;
-	  font-size: 0.95em;
-	  margin-top: 4px;
-	}
-</style>
-<div style="display: flex; flex-direction: column; gap: 5px; " class="page-container">
-	<!-- Step1 -->
-	<div class="form-section">
-	  <h3 style="color: var(--primary-color)">基本情報</h3>
-	  <table>
-	    <tr><th>出張期間</th><td><%= s1.getStartDate() %> ～ <%= s1.getEndDate() %></td></tr>
-	    <tr><th>PJコード</th><td><%= s1.getProjectCode() %></td></tr>
-	    <tr><th>出張報告</th><td><%= s1.getReport() %></td></tr>
-	    <tr><th>合計日数</th><td><%= s1.getTotalDays() %>日間</td></tr>
-	  </table>
-	</div>
-	
-	<!-- Step2 -->
-	<div style="display: flex; flex-direction: column; gap: 5px; " class="form-section">
-	  <h3 style="color: var(--primary-color)">日当・宿泊費</h3>
-	  <!-- Table: hiển thị dữ liệu chính -->
-<table>
-  <tr>
-    <th>地域区分</th><th>出徒区分</th><th>負担者</th><th>宿泊先</th>
-    <th>日当</th><th>宿泊費</th><th>日数</th><th>合計</th>
-  </tr>
-  <% for (Step2Detail s2 : s2List) { %>
-    <tr>
-      <td><%= s2.getRegionType() %></td>
-      <td><%= s2.getTripType() %></td>
-      <td><%= s2.getBurden() %></td>
-      <td><%= s2.getHotel() %></td>
-      <td><%= s2.getDailyAllowance() %></td>
-      <td><%= s2.getHotelFee() %></td>
-      <td><%= s2.getDays() %></td>
-      <td><%= s2.getExpenseTotal() %>円</td>
-    </tr>
-  <% } %>
-</table>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<!-- Memo: nằm ngoài bảng, lặp lại tương ứng -->
-<% for (Step2Detail s2 : s2List) { %>
-  <div class="memo-block">
-    <strong>摘要:</strong> <%= s2.getMemo() %>
+<%-- 
+  File này giờ đây cực kỳ "sạch sẽ".
+  Nó chỉ nhận dữ liệu từ Servlet và hiển thị, không tính toán gì cả.
+  Chúng ta giả định Servlet đã đặt một đối tượng BusinessTripBean vào request với tên là "trip".
+--%>
+<style>
+  .confirm-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  .confirm-table th, .confirm-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  .confirm-table th { background-color: #f8f9fa; font-weight: bold; width: 150px; }
+  .confirm-section { margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px; }
+  .confirm-section h3 { color: var(--primary-color); margin-top: 0; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; }
+  .memo-block { padding: 6px 12px; background-color: #f9f9f9; border-left: 4px solid #ccc; font-size: 0.95em; margin-top: 4px; white-space: pre-wrap; }
+  .receipt-list { list-style-type: '📎'; padding-left: 20px; }
+  .confirm-page-total { margin-top: 10px; text-align: right; background-color: #e0f7fa; padding: 10px 15px; font-weight: bold; font-size: 1.2em; }
+</style>
+
+<div class="page-container" style="display: flex; flex-direction: column; gap: 15px;">
+
+  <div class="confirm-section">
+    <h3>基本情報</h3>
+    <table class="confirm-table">
+      <tr><th>出張期間</th><td>${trip.step1Data.startDate} ～ ${trip.step1Data.endDate}</td></tr>
+      <tr><th>PJコード</th><td>${trip.step1Data.projectCode}</td></tr>
+      <tr><th>出張報告</th><td style="white-space: pre-wrap;">${trip.step1Data.tripReport}</td></tr>
+      <tr><th>合計日数</th><td>${trip.step1Data.totalDays} 日間</td></tr>
+    </table>
   </div>
-<% } %>
-	  <%-- <p class="confirmPage-total">日当・宿泊費 合計: <%= bt.getTotalStep2Amount() %> 円</p> --%>
-	
-	  <% 
-	    List<String> step2Files = receiptMap != null ? receiptMap.getOrDefault("step2", Collections.emptyList()) : Collections.emptyList();
-	    if (!step2Files.isEmpty()) {
-	  %>
-	    <div class="form-section">
-	      <h4 style="margin-top: 0">日当・宿泊費 領収書ファイル:</h4>
-	      <ul>
-	        <% for (int i = 0; i < step2Files.size(); i++) {
-	             String file = step2Files.get(i);
-	             String original = file.substring(file.indexOf("_") + 1);
-	        %>
-	          <li><%= original %></li>
-	          <input type="hidden" name="receiptStep2_<%= i %>" value="<%= file %>">
-	        <% } %>
-	      </ul>
-	    </div>
-	  <% } %>
-	</div>
-	
-	<!-- Step3 -->
-	<div style="display: flex; flex-direction: column; gap: 5px; " class="form-section">
-	    <h3 style="color: var(--primary-color)">交通費</h3>
-		<table>
-		  <tr>
-		    <th>訪問先</th><th>出発</th><th>到着</th><th>交通機関</th>
-		    <th>金額</th><th>区分</th><th>負担者</th><th>合計</th>
-		  </tr>
-		  <% for (Step3Detail s3 : s3List) { %>
-		    <tr>
-		      <td><%= s3.getTransProject() %></td>
-		      <td><%= s3.getDeparture() %></td>
-		      <td><%= s3.getArrival() %></td>
-		      <td><%= s3.getTransport() %></td>
-		      <td><%= s3.getFareAmount() %></td>
-		      <td><%= s3.getTransTripType() %></td>
-		      <td><%= s3.getTransBurden() %></td>
-		      <td><%= s3.getTransExpenseTotal() %>円</td>
-		    </tr>
-		  <% } %>
-		</table>
-		
-		<% for (Step3Detail s3 : s3List) { %>
-		  <div class="memo-block">
-		    <strong>摘要:</strong> <%= s3.getTransMemo() %>
-		  </div>
-		<% } %>
-		
-		<% 
-		  List<String> step3Files = receiptMap != null ? receiptMap.getOrDefault("step3", Collections.emptyList()) : Collections.emptyList();
-		  if (!step3Files.isEmpty()) {
-		%>
-		  <div class="form-section">
-		    <h4 style="margin-top: 0">交通費 領収書ファイル:</h4>
-		    <ul>
-		      <% for (int i = 0; i < step3Files.size(); i++) {
-		           String file = step3Files.get(i);
-		           String original = file.substring(file.indexOf("_") + 1);
-		      %>
-		        <li><%= original %></li>
-		        <input type="hidden" name="receiptStep3_<%= i %>" value="<%= file %>">
-		      <% } %>
-		    </ul>
-		  </div>
-		<% } %>
-	</div>
-	
-	<div class="confirmPage-total">総合計金額: <%= totalAmount %> 円</div>
+
+  <div class="confirm-section">
+    <h3>日当・宿泊費</h3>
+    <c:if test="${not empty trip.step2Details}">
+      <table class="confirm-table">
+        <tr><th>地域区分</th><th>出張区分</th><th>負担者</th><th>宿泊先</th><th>日当</th><th>宿泊費</th><th>日数</th><th>合計</th></tr>
+        <c:forEach var="detail" items="${trip.step2Details}">
+          <tr>
+            <td>${detail.regionType}</td>
+            <td>${detail.tripType}</td>
+            <td>${detail.burden}</td>
+            <td>${detail.hotel}</td>
+            <td><fmt:formatNumber value="${detail.dailyAllowance}" type="number" />円</td>
+            <td><fmt:formatNumber value="${detail.hotelFee}" type="number" />円</td>
+            <td>${detail.days}</td>
+            <td><fmt:formatNumber value="${detail.expenseTotal}" type="number" />円</td>
+          </tr>
+          <c:if test="${not empty detail.memo}">
+            <tr><td colspan="8"><div class="memo-block"><b>摘要:</b> ${detail.memo}</div></td></tr>
+          </c:if>
+        </c:forEach>
+      </table>
+
+      <%-- Hiển thị các file đã đính kèm --%>
+      <h4>日当・宿泊費 領収書ファイル:</h4>
+      <ul class="receipt-list">
+		  <c:forEach var="detail" items="${trip.step2Details}">
+		    <c:forEach var="file" items="${detail.temporaryFiles}">
+		      <li>
+		        <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
+		          ${file.originalFileName}
+		        </a>
+		      </li>
+		    </c:forEach>
+		  </c:forEach>
+		</ul>
+    </c:if>
+    <c:if test="${empty trip.step2Details}"><p>登録なし</p></c:if>
+  </div>
+
+  <div class="confirm-section">
+    <h3>交通費</h3>
+    <c:if test="${not empty trip.step3Details}">
+      <table class="confirm-table">
+        <tr><th>訪問先</th><th>出発</th><th>到着</th><th>交通機関</th><th>金額</th><th>区分</th><th>負担者</th><th>合計</th></tr>
+        <c:forEach var="detail" items="${trip.step3Details}">
+          <tr>
+            <td>${detail.transProject}</td>
+            <td>${detail.departure}</td>
+            <td>${detail.arrival}</td>
+            <td>${detail.transport}</td>
+            <td><fmt:formatNumber value="${detail.fareAmount}" type="number" />円</td>
+            <td>${detail.transTripType}</td>
+            <td>${detail.transBurden}</td>
+            <td><fmt:formatNumber value="${detail.transExpenseTotal}" type="number" />円</td>
+          </tr>
+          <c:if test="${not empty detail.transMemo}">
+            <tr><td colspan="8"><div class="memo-block"><b>摘要:</b> ${detail.transMemo}</div></td></tr>
+          </c:if>
+        </c:forEach>
+      </table>
+      
+      <%-- Hiển thị các file đã đính kèm --%>
+      <h4>交通費 領収書ファイル:</h4>
+      <ul class="receipt-list">
+		  <c:forEach var="detail" items="${trip.step3Details}">
+		    <c:forEach var="file" items="${detail.temporaryFiles}">
+		      <li>
+		        <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
+		          ${file.originalFileName}
+		        </a>
+		      </li>
+		    </c:forEach>
+		  </c:forEach>
+		</ul>
+    </c:if>
+    <c:if test="${empty trip.step3Details}"><p>登録なし</p></c:if>
+  </div>
+
+  <div class="confirm-page-total">
+    総合計金額: <fmt:formatNumber value="${trip.totalAmount}" type="number" /> 円
+  </div>
 </div>
