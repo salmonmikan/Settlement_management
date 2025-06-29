@@ -15,9 +15,20 @@ import bean.Project;
 import bean.TransportationRequest;
 import dao.ProjectDAO;
 
+/**
+ * TransportationRequestServlet は、交通費申請画面の表示および申請情報の確認画面への遷移を担当するサーブレットです。
+ */
 @WebServlet("/transportationRequest")
 public class TransportationRequestServlet extends HttpServlet {
 
+	/**
+     * GETリクエストでプロジェクト情報を取得し、交通費申請画面を表示します。
+     *
+     * @param request  リクエストオブジェクト
+     * @param response レスポンスオブジェクト
+     * @throws ServletException サーブレット処理時の例外
+     * @throws IOException      入出力処理時の例外
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,6 +43,16 @@ public class TransportationRequestServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/transportationRequest.jsp").forward(request, response);
     }
 
+    /**
+     * POSTリクエストで入力された交通費申請情報を処理し、確認画面に遷移します。
+     *
+     * <p>複数件の申請ブロックを受け取り、セッションに保存した上で確認画面へフォワードします。</p>
+     *
+     * @param request  リクエストオブジェクト
+     * @param response レスポンスオブジェクト
+     * @throws ServletException サーブレット処理時の例外
+     * @throws IOException      入出力処理時の例外
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
