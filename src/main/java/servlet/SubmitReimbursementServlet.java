@@ -12,9 +12,29 @@
 //import bean.BusinessTripBean.ReimbursementBean;
 //import dao.ReimbursementDAO;
 //
+/**
+ * SubmitReimbursementServletは、立替金申請の登録処理を担当するサーブレットです。
+ *
+ * <p>入力された複数の立替金情報を一括でデータベースに登録します。</p>
+ */
 //@WebServlet("/submitReimbursement")
 //public class SubmitReimbursementServlet extends HttpServlet {
 //
+ /**
+     * POSTリクエストを処理し、立替金申請をデータベースへ登録します。
+     *
+     * <p>
+     * ・セッションから社員IDを取得<br>
+     * ・リクエストパラメータ（申請内容）を取得<br>
+     * ・1件ずつReimbursementBeanに格納して登録<br>
+     * ・正常／異常時に応じて遷移先やメッセージを制御
+     * </p>
+     *
+     * @param request  リクエスト情報
+     * @param response レスポンス情報
+     * @throws ServletException サーブレット処理時の例外
+     * @throws IOException 入出力エラー
+     */
 //    @Override
 //    protected void doPost(HttpServletRequest request, HttpServletResponse response)
 //            throws ServletException, IOException {

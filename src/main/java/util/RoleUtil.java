@@ -1,6 +1,10 @@
 // src/util/RoleUtil.java
 package util;
 
+/**
+ * RoleUtil クラスは、社員の役職IDと部署IDに基づいて、
+ * アプリケーション内でのロール（役割）を判定するユーティリティクラスです。
+ */
 public class RoleUtil {
 
     // --- Định nghĩa các hằng số để loại bỏ "Magic Strings" ---
@@ -18,6 +22,13 @@ public class RoleUtil {
         UNKNOWN         // không xác định
     }
 
+    /**
+     * 社員の役職IDと部署IDに基づいて、ユーザーのロールを判定します。
+     *
+     * @param positionId 社員の役職ID
+     * @param departmentId 社員の部署ID
+     * @return 該当するユーザーロール（{@link UserRole}）
+     */
     public static UserRole detectRole(String positionId, String departmentId) {
         // Sử dụng hằng số giúp code dễ đọc và dễ bảo trì hơn rất nhiều
         if (POSITION_STAFF.equals(positionId)) {

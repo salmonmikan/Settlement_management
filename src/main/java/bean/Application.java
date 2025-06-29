@@ -1,7 +1,12 @@
 //package bean;
 //
 //import java.sql.Timestamp;
-//
+
+/**
+ * 各種申請に関する情報を保持するモデルクラスです。
+ * 申請ID、申請種別、申請日、金額、ステータスの各項目を管理します。
+ */
+
 //public class Application {
 //    private int applicationId;         // 申請ID
 //    private String applicationType;    // 申請種別

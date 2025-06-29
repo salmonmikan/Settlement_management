@@ -13,8 +13,29 @@ import jakarta.servlet.http.HttpSession;
 import dao.ApplicationDAO;
 import model.Application;
 
+/**
+ * SubmitApplicationServletは、申請の提出処理を担当するサーブレットです。
+ *
+ * 対象：未提出状態の申請のみ
+ * 処理：申請ステータスの更新と承認者の設定
+ */
 @WebServlet("/submitApplication")
 public class SubmitApplicationServlet extends HttpServlet {
+	/**
+     * POSTリクエストを処理し、選択された申請を提出状態に更新します。
+     *
+     * <p>
+     * ・セッションから社員IDを取得<br>
+     * ・未提出の申請のみ処理対象とする<br>
+     * ・承認者（部長）を自動設定<br>
+     * ・対象の申請の状態・承認者情報を一括更新
+     * </p>
+     *
+     * @param request  リクエスト情報
+     * @param response レスポンス情報
+     * @throws ServletException サーブレット処理時の例外
+     * @throws IOException 入出力エラー
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
