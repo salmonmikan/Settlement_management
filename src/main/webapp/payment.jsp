@@ -8,36 +8,11 @@
 <title>支払い管理 - ABC株式会社</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
 <script src="<%=request.getContextPath()%>/static/js/script.js"></script>
-<style>
-.page-container {
-	display: flex;
-    gap: 50px;
-    align-items: flex-start;
-}
-form {
-	display: flex;
-	flex-direction: column;
-}
-.table-area {
-	flex: 1;
-	padding-bottom: 1rem;
-}
-.btn-section {
-	margin-top: auto;
-	padding-top: 1.5rem;
-	display: flex;
-	justify-content: center;
-	gap: 1rem;
-}
-td:nth-child(5) {
-	text-align: right;
-}
-</style>
 </head>
 <body>
 	<div class="page-container">
     	<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-    	<div>
+    	<div class="content-container">
 		<h2>申請一覧</h2>
 
 		<form action="payment" method="post">
