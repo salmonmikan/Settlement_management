@@ -8,7 +8,7 @@
 <% if ("出張費".equals(type)) { %>
   <jsp:include page="/WEB-INF/views/confirm/businessTripConfirmBody.jsp" />
 <% } else if ("交通費".equals(type)) { %>
-  <jsp:include page="/WEB-INF/views/confirm/transportConfirmBody.jsp" />
+  <jsp:include page="/WEB-INF/views/confirm/transportationConfirmBody.jsp" />
 <% } else if ("立替金".equals(type)) { %>
   <jsp:include page="/WEB-INF/views/confirm/reimbursementConfirmBody.jsp" />
 <% } else { %>

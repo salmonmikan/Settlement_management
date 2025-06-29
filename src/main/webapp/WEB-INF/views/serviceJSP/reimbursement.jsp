@@ -6,11 +6,29 @@
 <meta charset="UTF-8">
 <title>立替金精算書</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
+<script src="${pageContext.request.contextPath}/static/js/reimbursement.js"></script>
 <style>
     /* Các style của bạn có thể giữ nguyên ở đây */
     .remove-btn { position: absolute; top: 1px; right: 1px; background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; font-weight: bold; }
     .fileList { list-style-type: none; padding-left: 0; margin-top: 8px; }
     #reimbursement-template { display: none; }
+    .file-delete-btn{    
+    background: none;
+    padding:4px;
+    color: red;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    height: 36.8px;}
+    
+    .file-delete-btn:hover {
+      background: none;
+	  transform: scale(1.2);
+	  opacity: 0.8;
+	}
 </style>
 </head>
 <body>
@@ -22,10 +40,7 @@
 
         <div id="reimbursement-container" style="display: flex; flex-direction: column; gap: 10px">
             
-            <%-- ================================================================== --%>
-            <%-- PHẦN 1: DÙNG JSP ĐỂ HIỂN THỊ LẠI DỮ LIỆU KHI BẤM "BACK" --%>
-            <%-- ================================================================== --%>
-            <%-- Vòng lặp này chỉ chạy khi server gửi về đối tượng reimbursement có chứa details --%>
+          
             <c:forEach var="detail" items="${reimbursement.details}" varStatus="loop">
                 <div class="form-section reimbursement-block" style="position: relative;">
                     <button type="button" class="remove-btn" onclick="removeReimbursementBlock(this)">×</button>
@@ -103,129 +118,6 @@
         </div>
     </div>
 </template>
-
-
-<script>
-// ==================================================================
-// PHẦN 3: JAVASCRIPT ĐƯỢC CẬP NHẬT ĐỂ TƯƠNG THÍCH
-// ==================================================================
-document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("reimbursement-container");
-    // CHỈ thêm block đầu tiên nếu server KHÔNG render sẵn block nào
-    if (container.children.length === 0) {
-        addReimbursementBlock();
-    } else {
-        // Nếu server ĐÃ render sẵn các block, chỉ cần chạy reindex để đảm bảo mọi thứ đúng
-        reindexBlocks();
-    }
-});
-
-function reindexBlocks() {
-    const container = document.getElementById("reimbursement-container");
-    const blocks = container.querySelectorAll(".reimbursement-block");
-    blocks.forEach((block, index) => {
-        const fileInput = block.querySelector(".fileInput");
-        if (fileInput) {
-            fileInput.name = 'receipt_reimbursement_' + index;
-        }
-    });
-    updateRemoveButtons();
-}
-
-function updateRemoveButtons() {
-    const container = document.getElementById("reimbursement-container");
-    const blocks = container.querySelectorAll(".reimbursement-block");
-    const showRemoveButton = blocks.length > 1;
-    blocks.forEach(block => {
-        const removeBtn = block.querySelector('.remove-btn');
-        if (removeBtn) {
-            removeBtn.style.display = showRemoveButton ? 'block' : 'none';
-        }
-    });
-}
-
-function addReimbursementBlock() {
-    const container = document.getElementById("reimbursement-container");
-    const template = document.getElementById("reimbursement-template");
-    const clone = template.content.cloneNode(true);
-    container.appendChild(clone);
-    reindexBlocks();
-}
-
-function removeReimbursementBlock(btn) {
-    const container = document.getElementById("reimbursement-container");
-    if (container.children.length > 1) {
-        btn.closest(".reimbursement-block").remove();
-        reindexBlocks();
-    } else {
-        alert("最低1つの明細が必要です。");
-    }
-}
-
-function handleFileSelection(input) {
-    // Lấy phần tử <ul> để hiển thị danh sách file
-    const list = input.closest('.form-group').querySelector('.fileList');
-
-    // Bước 1: Xóa các preview cũ của những file MỚI CHỌN (có thẻ li không chứa data-file-type)
-    // Nó sẽ không xóa các file đã được lưu từ server (khi bấm back)
-    list.querySelectorAll('li:not([data-file-type="existing"])').forEach(li => li.remove());
-
-    // Bước 2: Lặp qua tất cả các file người dùng vừa chọn trong ô input
-    Array.from(input.files).forEach(file => {
-        // Tạo một dòng mới <li>
-        const li = document.createElement('li');
-
-        // Tạo link xem trước file <a>
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(file);
-        a.textContent = file.name;
-        a.target = '_blank';
-        li.appendChild(a);
-
-        // =======================================================
-        // === PHẦN SỬA ĐỔI BẮT ĐẦU TỪ ĐÂY ===
-        // =======================================================
-
-        // Tạo nút xóa '×'
-        const deleteBtn = document.createElement('button');
-        deleteBtn.type = 'button'; // Quan trọng: để không submit form
-        deleteBtn.textContent = '×';
-        deleteBtn.className = 'file-delete-btn'; // Dùng lại class CSS cũ cho đồng bộ
-        
-        // Định nghĩa hành động khi bấm nút xóa
-        deleteBtn.onclick = function() {
-            // Xóa tất cả các file đã chọn trong input này
-            input.value = ''; 
-            
-            // Chạy lại chính hàm này để cập nhật lại danh sách hiển thị (giờ đã rỗng)
-            // Đây là cách làm sạch sẽ, tái sử dụng logic có sẵn.
-            handleFileSelection(input); 
-        };
-
-        // Thêm nút xóa vào dòng <li>
-        li.appendChild(deleteBtn);
-
-        // =======================================================
-        // === PHẦN SỬA ĐỔI KẾT THÚC TẠI ĐÂY ===
-        // =======================================================
-
-        // Thêm dòng <li> hoàn chỉnh vào danh sách <ul>
-        list.appendChild(li);
-    });
-}
-
-function deleteExistingFile(btn) {
-    const li = btn.closest('li');
-    const uniqueName = li.dataset.uniqueName;
-    const filesToDeleteInput = document.getElementById("filesToDelete");
-    const currentDeleteList = filesToDeleteInput.value ? filesToDeleteInput.value.split(',') : [];
-    if (!currentDeleteList.includes(uniqueName)) {
-        currentDeleteList.push(uniqueName);
-        filesToDeleteInput.value = currentDeleteList.join(',');
-    }
-    li.remove();
-}
-</script>
 
 </body>
 </html>

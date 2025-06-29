@@ -1,4 +1,3 @@
-// File: src/main/java/service/ReimbursementSubmitServlet.java
 package service;
 
 import java.io.File;
@@ -11,12 +10,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import bean.ReimbursementApplicationBean;
-import bean.ReimbursementDetailBean;
+import bean.TransportationApplicationBean;
+import bean.TransportationDetailBean;
 import bean.UploadedFile;
 import dao.ApplicationDAO;
 import dao.ReceiptDAO;
-import dao.ReimbursementDAO;
+import dao.TransportationDAO; // Sử dụng DAO mới
 import util.DBConnection;
 
 import jakarta.servlet.ServletException;
@@ -26,23 +25,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/reimbursementSubmit")
-public class ReimbursementSubmitServlet extends HttpServlet {
+@WebServlet("/transportationSubmit")
+public class TransportationSubmitServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final String PERMANENT_UPLOAD_DIR = "/uploads"; // Thư mục lưu file chính thức
+    private static final String PERMANENT_UPLOAD_DIR = "/uploads";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         String staffId = (String) session.getAttribute("staffId");
 
-        // ★★★ LOGIC ĐÚNG: LẤY BEAN TỪ SESSION, KHÔNG ĐỌC LẠI REQUEST ★★★
-        if (session == null || session.getAttribute("reimbursement") == null || staffId == null) {
+        if (session == null || session.getAttribute("transportationApp") == null || staffId == null) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
 
-        ReimbursementApplicationBean reimbursement = (ReimbursementApplicationBean) session.getAttribute("reimbursement");
+        TransportationApplicationBean transportationApp = (TransportationApplicationBean) session.getAttribute("transportationApp");
         Connection conn = null;
 
         try {
@@ -50,30 +48,31 @@ public class ReimbursementSubmitServlet extends HttpServlet {
             conn.setAutoCommit(false);
 
             ApplicationDAO appDAO = new ApplicationDAO();
-            ReimbursementDAO reimbursementDAO = new ReimbursementDAO();
+            TransportationDAO transportationDAO = new TransportationDAO(); // Dùng DAO mới
             ReceiptDAO receiptDAO = new ReceiptDAO();
 
-            reimbursement.calculateTotalAmount();
+            transportationApp.calculateTotalAmount();
             
-            int applicationId = appDAO.insertApplication("立替金", staffId, reimbursement.getTotalAmount(), conn);
+            int applicationId = appDAO.insertApplication("交通費", staffId, transportationApp.getTotalAmount(), conn);
 
-            for (ReimbursementDetailBean detail : reimbursement.getDetails()) {
-                
-                int blockId = reimbursementDAO.insert(detail, applicationId, conn);
+            
+            for (TransportationDetailBean detail : transportationApp.getDetails()) {
+              
+                int blockId = transportationDAO.insert(detail, applicationId, conn);
 
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
                 for (int i = 0; i < filesForBlock.size(); i++) {
                     UploadedFile tempFile = filesForBlock.get(i);
                     moveFileToFinalLocation(tempFile, request);
                     
-                    receiptDAO.insert(applicationId, "reimbursement_request", blockId, i, tempFile, staffId, conn);
+                    receiptDAO.insert(applicationId, "transportation_request", blockId, i, tempFile, staffId, conn);
                 }
             }
             
             conn.commit();
-            session.removeAttribute("reimbursement"); 
+            session.removeAttribute("transportationApp"); 
 
-            request.setAttribute("message", "申請が正常に送信されました。 (Mã đơn: " + applicationId + ")");
+            request.setAttribute("message", "交通費申請が正常に送信されました。 (applicationId + ");
             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
         } catch (Exception e) {
@@ -86,19 +85,17 @@ public class ReimbursementSubmitServlet extends HttpServlet {
         }
     }
 
-    // ★★★ SỬA LỖI CÚ PHÁP: DÙNG Files.exists và Files.createDirectories ★★★
     private void moveFileToFinalLocation(UploadedFile tempFile, HttpServletRequest request) throws IOException {
         String realPath = request.getServletContext().getRealPath("");
-        Path source = Paths.get(realPath + tempFile.getTemporaryPath());
+        Path source = Paths.get(realPath, tempFile.getTemporaryPath());
         
         if (Files.exists(source)) {
-            Path destinationDir = Paths.get(realPath + PERMANENT_UPLOAD_DIR);
+            Path destinationDir = Paths.get(realPath, PERMANENT_UPLOAD_DIR);
             if (!Files.exists(destinationDir)) {
                 Files.createDirectories(destinationDir);
             }
             Path destination = destinationDir.resolve(tempFile.getUniqueStoredName());
             Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
-            // Cập nhật lại đường dẫn trong bean thành đường dẫn cuối cùng
             tempFile.setStoredFilePath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
         }
     }

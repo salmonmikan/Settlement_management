@@ -3,6 +3,7 @@ package service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import bean.BusinessTripBean;
 import bean.Project;
 import bean.Step1Data;
 import dao.ProjectDAO;
+import dao.ProjectListDAO;
 
 /**
  * 出張申請のステップ1を処理するサーブレット。
@@ -30,21 +32,30 @@ public class BusinessTripStep1Servlet extends HttpServlet {
      * (Được gọi khi nút "Back" được nhấn từ Step 2)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 「戻る」の場合、セッションデータは変更せず、単純にページを表示する
-        // (Trường hợp "Back", không thay đổi dữ liệu session, chỉ đơn giản là hiển thị lại trang)
         
-        // DBからプロジェクトリストを再取得する
-        // (Lấy lại danh sách project từ DB)
-         try {
-            ProjectDAO projectDAO = new ProjectDAO();
-            List<Project> projectList = projectDAO.getAllProjects();
-            request.setAttribute("projectList", projectList);
+        try {
+            ProjectListDAO projectDAO = new ProjectListDAO();
+            List<ProjectListDAO.Project> daoProjectList = projectDAO.getAllProjects();
+
+           
+            List<Project> projectListForJsp = new ArrayList<>();
+            
+            for (ProjectListDAO.Project daoProject : daoProjectList) {
+               
+                Project jspProject = new Project(daoProject.getId(), daoProject.getName());
+                
+                
+                projectListForJsp.add(jspProject);
+            }
+
+            
+            request.setAttribute("projectList", projectListForJsp);
+            
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("projectList", new ArrayList<Project>());
         }
-
-        // Step 1のJSPにフォワードする
-        // (Forward đến JSP của Step 1)
+        
         request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip1.jsp").forward(request, response);
     }
 

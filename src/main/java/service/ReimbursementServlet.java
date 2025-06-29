@@ -26,6 +26,7 @@ import bean.ReimbursementApplicationBean;
 import bean.ReimbursementDetailBean;
 import bean.UploadedFile;
 import dao.ProjectDAO;
+import dao.ProjectListDAO;
 
 @WebServlet("/reimbursement")
 @MultipartConfig
@@ -51,12 +52,32 @@ public class ReimbursementServlet extends HttpServlet {
 
         // Lấy danh sách project để hiển thị trong dropdown
         try {
-            ProjectDAO projectDAO = new ProjectDAO();
-            List<Project> projectList = projectDAO.getAllProjects();
-            request.setAttribute("projectList", projectList);
+            // Bước 1: Gọi DAO như bình thường.
+            // Biến daoProjectList sẽ có kiểu List<ProjectListDAO.Project>
+            ProjectListDAO projectDAO = new ProjectListDAO();
+            List<ProjectListDAO.Project> daoProjectList = projectDAO.getAllProjects();
+
+            // Bước 2: Tạo một danh sách mới, trống, với kiểu dữ liệu mà JSP cần (List<bean.Project>)
+            // Đảm bảo bạn đã import bean.Project ở đầu file.
+            List<Project> projectListForJsp = new ArrayList<>();
+
+            // Bước 3: Dùng vòng lặp để chuyển đổi từng đối tượng.
+            for (ProjectListDAO.Project daoProject : daoProjectList) {
+                // Tạo một đối tượng bean.Project mới
+                Project jspProject = new Project(daoProject.getId(), daoProject.getName());
+                
+                // Thêm đối tượng đã chuyển đổi vào danh sách mới
+                projectListForJsp.add(jspProject);
+            }
+
+            // Bước 4: Đặt danh sách ĐÃ CHUYỂN ĐỔI vào request.
+            // JSP sẽ nhận được đúng kiểu dữ liệu nó cần.
+            request.setAttribute("projectList", projectListForJsp);
+            
         } catch (Exception e) {
             e.printStackTrace();
-            // Cân nhắc hiển thị trang lỗi nếu không lấy được project
+            // Nếu có lỗi, đặt một danh sách trống để tránh lỗi trên JSP
+            request.setAttribute("projectList", new ArrayList<Project>());
         }
 
         // Đặt bean vào request để JSP có thể truy cập và hiển thị

@@ -250,3 +250,110 @@ function removeTransBlock(btn) {
         alert("最低1つの明細が必要です。");
     }
 }
+
+// =========================================================================================
+//  BỘ LOGIC XỬ LÝ FILE ĐÍNH KÈM (Thêm vào cuối file businessTrip.js)
+// =========================================================================================
+
+/**
+ * Hàm này được gọi bởi thuộc tính onchange của thẻ input file.
+ * Nó quản lý việc thêm file mới vào một danh sách tạm.
+ */
+function handleFileSelection(input) {
+    // Khởi tạo mảng tạm để quản lý file nếu chưa có
+    if (!input._customFiles) {
+        input._customFiles = [];
+    }
+
+    // Thêm các file mới chọn vào mảng tạm, tránh thêm file trùng lặp
+    Array.from(input.files).forEach(file => {
+        if (!input._customFiles.some(f => f.name === file.name && f.size === file.size)) {
+            input._customFiles.push(file);
+        }
+    });
+
+    // Cập nhật lại ô input và danh sách hiển thị
+    updateFileInputAndPreview(input);
+}
+
+/**
+ * Xóa một file vừa mới được chọn (chưa upload lên server).
+ * @param {HTMLElement} button - Nút 'x' được bấm.
+ * @param {string} fileName - Tên file cần xóa.
+ * @param {HTMLInputElement} input - Thẻ input file tương ứng.
+ */
+function deleteNewFile(button, fileName, input) {
+    // Lọc ra khỏi mảng tạm file có tên tương ứng
+    input._customFiles = input._customFiles.filter(f => f.name !== fileName);
+    
+    // Cập nhật lại giao diện
+    updateFileInputAndPreview(input);
+}
+
+/**
+ * Hàm trung tâm: Cập nhật cả thẻ <input> và danh sách preview <ul>.
+ * @param {HTMLInputElement} input - Thẻ input file cần cập nhật.
+ */
+function updateFileInputAndPreview(input) {
+    const list = input.closest('.form-group').querySelector('.fileList');
+    const dataTransfer = new DataTransfer();
+
+    // Xóa các preview file mới cũ (có thẻ li không chứa data-file-type)
+    list.querySelectorAll('li:not([data-file-type="existing"])').forEach(li => li.remove());
+
+    // Từ mảng tạm, tạo lại danh sách preview và điền vào DataTransfer
+    if (input._customFiles) {
+        input._customFiles.forEach(file => {
+            // Thêm file vào đối tượng DataTransfer để cập nhật giá trị của thẻ input
+            dataTransfer.items.add(file);
+
+            // Tạo các phần tử HTML để hiển thị preview
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.textContent = file.name;
+            a.target = '_blank';
+            li.appendChild(a);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.textContent = '×';
+            deleteBtn.className = 'file-delete-btn';
+            
+            // Nút xóa giờ sẽ gọi hàm deleteNewFile với tên file cụ thể
+            deleteBtn.onclick = function() {
+                deleteNewFile(this, file.name, input);
+            };
+
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+        });
+    }
+
+    // Cập nhật file trong ô input thật bằng các file trong DataTransfer
+    input.files = dataTransfer.files;
+}
+
+/**
+ * Xử lý việc "xóa" một file đã tồn tại trên server.
+ * Nó không thực sự xóa file, mà thêm tên file vào một danh sách để server xử lý.
+ * @param {HTMLElement} btn - Nút 'x' được bấm.
+ */
+function deleteExistingFile(btn) {
+    const li = btn.closest('li');
+    const uniqueName = li.dataset.uniqueName;
+    const filesToDeleteInput = document.getElementById("filesToDelete");
+
+    // Nếu không tìm thấy thẻ input ẩn, báo lỗi và dừng lại
+    if (!filesToDeleteInput) {
+        console.error("Không tìm thấy thẻ input với id='filesToDelete'.");
+        return;
+    }
+
+    const currentDeleteList = filesToDeleteInput.value ? filesToDeleteInput.value.split(',') : [];
+    if (!currentDeleteList.includes(uniqueName)) {
+        currentDeleteList.push(uniqueName);
+        filesToDeleteInput.value = currentDeleteList.join(',');
+    }
+    li.remove();
+}

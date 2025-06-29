@@ -11,6 +11,23 @@
   <style>
     .remove-btn { position: absolute; top: 1px; right: 1px; background: none; border: none; font-size: 1.2rem; color: #888; cursor: pointer; }
     .fileList a { color: #0056b3; text-decoration: underline; cursor: pointer; }
+    .file-delete-btn{    
+    background: none;
+    padding:4px;
+    color: red;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    height: 36.8px;}
+    
+    .file-delete-btn:hover {
+      background: none;
+	  transform: scale(1.2);
+	  opacity: 0.8;
+	}
   </style>
 </head>
 <body>
@@ -18,7 +35,7 @@
     <h2>交通費申請</h2>
 
     <form action="${pageContext.request.contextPath}/businessTripStep3" method="post" enctype="multipart/form-data">
-      
+      <input type="hidden" id="filesToDelete" name="filesToDelete" value="">
       <div style="display: flex; flex-direction: column; gap: 10px" id="trans-container">
         
         <c:forEach var="detail" items="${trip.step3Details}" varStatus="loop">
@@ -40,13 +57,21 @@
 			  <input type="file" name="receipt_transport_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
 			 
 			  <ul class="fileList">
-			    <c:forEach var="file" items="${detail.temporaryFiles}">
+			    <%-- <c:forEach var="file" items="${detail.temporaryFiles}">
 			      <li>
 			        <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
 			          ${file.originalFileName}
 			        </a>
 			      </li>
-			    </c:forEach>
+			    </c:forEach> --%>
+			    <c:forEach var="file" items="${detail.temporaryFiles}">
+				  <li data-file-type="existing" data-unique-name="${file.uniqueStoredName}">
+				    <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
+				      ${file.originalFileName}
+				    </a>
+				    <button type="button" class="file-delete-btn" onclick="deleteExistingFile(this)">×</button>
+				  </li>
+				</c:forEach>
 			  </ul>
 			</div>
           </div>
