@@ -15,6 +15,9 @@ public class RoleUtil {
     private static final String DEPARTMENT_MANAGEMENT = "D0002"; // Phòng kế toán/quản lý
     // Thêm các department khác nếu cần
 
+    /**
+     * アプリケーションで使用されるユーザーロールを表す列挙型です。
+     */
     public enum UserRole {
         STAFF,          // nhân viên thường (gửi đơn)
         BUCHO,          // trưởng phòng (duyệt đơn)
