@@ -84,6 +84,7 @@ button,
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s;
+  height:36.8px;
 }
 button:hover,
 .btn-section a:hover,
@@ -94,6 +95,7 @@ button:hover,
 .btn-section {
   display: flex;
   justify-content: center;
+  align-content:center;
   gap: 0.3rem;
   margin-top: 1.3rem;
 }

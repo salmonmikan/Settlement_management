@@ -32,25 +32,33 @@ public class ReimbursementServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String TEMP_UPLOAD_DIR = "/uploads"; // Thư mục tạm
 
+ // Gợi ý: Thay thế toàn bộ method doGet trong ReimbursementServlet.java bằng phiên bản này.
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         ReimbursementApplicationBean reimbursement = (ReimbursementApplicationBean) session.getAttribute("reimbursement");
 
+        // Nếu không có đơn nào trong session (lần đầu truy cập), tạo một đơn mới và lưu vào session.
         if (reimbursement == null) {
             reimbursement = new ReimbursementApplicationBean();
             session.setAttribute("reimbursement", reimbursement);
         }
-        if (reimbursement.getDetails().isEmpty()) {
-            reimbursement.getDetails().add(new ReimbursementDetailBean());
-        }
+        
+        // XÓA BỎ logic tự động thêm detail rỗng ở đây.
+        // Việc này sẽ do JavaScript trên JSP đảm nhiệm một cách thông minh hơn.
+
+        // Lấy danh sách project để hiển thị trong dropdown
         try {
             ProjectDAO projectDAO = new ProjectDAO();
             List<Project> projectList = projectDAO.getAllProjects();
             request.setAttribute("projectList", projectList);
         } catch (Exception e) {
             e.printStackTrace();
+            // Cân nhắc hiển thị trang lỗi nếu không lấy được project
         }
+
+        // Đặt bean vào request để JSP có thể truy cập và hiển thị
         request.setAttribute("reimbursement", reimbursement);
         request.getRequestDispatcher("/WEB-INF/views/serviceJSP/reimbursement.jsp").forward(request, response);
     }

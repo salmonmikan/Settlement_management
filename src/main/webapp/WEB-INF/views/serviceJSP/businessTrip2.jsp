@@ -33,9 +33,7 @@
 <div class="form-group">
 <label>領収書添付（日当・宿泊費）</label>
 <input type="file" name="receipt_allowance_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
-<!-- <small style="color: gray;">
-(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)
-</small> -->
+
 <ul class="fileList">
 <c:forEach var="file" items="${detail.temporaryFiles}">
 <li>

@@ -7,48 +7,10 @@
 <title>立替金精算書</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
 <style>
-    /* Giữ nguyên các style của bạn cho đẹp */
-    .remove-btn {
-        position: absolute;
-        top: 1px;
-        right: 1px;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: #888;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    .fileList {
-        list-style-type: none;
-        padding-left: 0;
-        margin-top: 8px;
-    }
-    .fileList li {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 4px;
-        border-bottom: 1px solid #eee;
-        word-break: break-word;
-    }
-    .fileList a {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-    .file-delete-btn {
-        background: none;
-        border: none;
-        color: #d9534f;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 1.2rem;
-        padding: 0 5px;
-    }
-    /* Thêm style để ẩn template đi */
-    #reimbursement-template {
-        display: none;
-    }
+    /* Các style của bạn có thể giữ nguyên ở đây */
+    .remove-btn { position: absolute; top: 1px; right: 1px; background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; font-weight: bold; }
+    .fileList { list-style-type: none; padding-left: 0; margin-top: 8px; }
+    #reimbursement-template { display: none; }
 </style>
 </head>
 <body>
@@ -58,12 +20,51 @@
     <form action="<%=request.getContextPath()%>/reimbursement" method="post" enctype="multipart/form-data">
         <input type="hidden" id="filesToDelete" name="filesToDelete" value="">
 
-        <%-- Container chính, ban đầu sẽ trống. JS sẽ thêm các block vào đây --%>
         <div id="reimbursement-container" style="display: flex; flex-direction: column; gap: 10px">
+            
+            <%-- ================================================================== --%>
+            <%-- PHẦN 1: DÙNG JSP ĐỂ HIỂN THỊ LẠI DỮ LIỆU KHI BẤM "BACK" --%>
+            <%-- ================================================================== --%>
+            <%-- Vòng lặp này chỉ chạy khi server gửi về đối tượng reimbursement có chứa details --%>
+            <c:forEach var="detail" items="${reimbursement.details}" varStatus="loop">
+                <div class="form-section reimbursement-block" style="position: relative;">
+                    <button type="button" class="remove-btn" onclick="removeReimbursementBlock(this)">×</button>
+                    
+                    <div class="form-group"><label>日付</label><input type="date" name="date[]" value="${detail.date}" required></div>
+                    <div class="form-group"><label>訪問先</label><input type="text" name="destinations[]" value="${detail.destinations}" /></div>
+                    <div class="form-group">
+                        <label>PJコード</label>
+                        <select name="projectCode[]" required>
+                            <option value="">選択してください</option>
+                            <c:forEach var="p" items="${projectList}">
+                                <option value="${p.id}" ${p.id == detail.projectCode ? 'selected' : ''}>${p.id}：${p.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>勘定科目</label><input type="text" name="accountingItem[]" value="${detail.accountingItem}" /></div>
+                    <div class="form-group"><label>摘要</label><textarea name="report[]">${detail.report}</textarea></div>
+                    <div class="form-group"><label>金額</label><input type="number" name="amount[]" value="${detail.amount}" required></div>
+                    <div class="form-group">
+                        <label>領収書添付</label>
+                        <%-- Tên file sẽ được JS đặt lại chính xác ở dưới --%>
+                        <input type="file" name="receipt_reimbursement_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
+                        <ul class="fileList">
+                            <%-- Hiển thị các file đã được tải lên trước đó --%>
+                            <c:forEach var="file" items="${detail.temporaryFiles}">
+                                <li data-file-type="existing" data-unique-name="${file.uniqueStoredName}">
+                                    <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">${file.originalFileName}</a>
+                                    <%-- Nút xóa file cũ cần hàm JS riêng --%>
+                                    <button type="button" class="file-delete-btn" onclick="deleteExistingFile(this)">×</button>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </div>
+            </c:forEach>
         </div>
 
         <div style="text-align: center; margin-top: 10px;">
-            <button type="button" class="plus-btn" onclick="addReimbursementBlock()">＋ 追加</button>
+            <button type="button" class="plus-btn" onclick="addReimbursementBlock()">＋</button>
         </div>
 
         <div class="btn-section">
@@ -75,14 +76,12 @@
 
 <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
-<%-- 
-  TEMPLATE - KHUNG SƯỜN MẪU CHO MỘT BLOCK
-  Đây là cách làm đúng. Chúng ta sẽ sao chép từ template này thay vì từ một block đang tồn tại.
---%>
+<%-- ================================================================== --%>
+<%-- PHẦN 2: TEMPLATE CHO JAVASCRIPT ĐỂ THÊM BLOCK MỚI --%>
+<%-- ================================================================== --%>
 <template id="reimbursement-template">
     <div class="form-section reimbursement-block" style="position: relative;">
         <button type="button" class="remove-btn" onclick="removeReimbursementBlock(this)">×</button>
-        
         <div class="form-group"><label>日付</label><input type="date" name="date[]" required></div>
         <div class="form-group"><label>訪問先</label><input type="text" name="destinations[]" placeholder="例: ABC株式会社" /></div>
         <div class="form-group">
@@ -99,7 +98,6 @@
         <div class="form-group"><label>金額</label><input type="number" name="amount[]" required></div>
         <div class="form-group">
             <label>領収書添付</label>
-            <%-- Tên sẽ được đặt động bằng JavaScript. Để trống hoặc đặt tên mẫu --%>
             <input type="file" name="receipt_reimbursement_" multiple class="fileInput" onchange="handleFileSelection(this)">
             <ul class="fileList"></ul>
         </div>
@@ -108,43 +106,35 @@
 
 
 <script>
-// Chờ cho toàn bộ trang được tải xong
+// ==================================================================
+// PHẦN 3: JAVASCRIPT ĐƯỢC CẬP NHẬT ĐỂ TƯƠNG THÍCH
+// ==================================================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Tự động thêm block đầu tiên khi trang được tải
-    addReimbursementBlock();
+    const container = document.getElementById("reimbursement-container");
+    // CHỈ thêm block đầu tiên nếu server KHÔNG render sẵn block nào
+    if (container.children.length === 0) {
+        addReimbursementBlock();
+    } else {
+        // Nếu server ĐÃ render sẵn các block, chỉ cần chạy reindex để đảm bảo mọi thứ đúng
+        reindexBlocks();
+    }
 });
 
-// Hàm cập nhật lại chỉ số (index) của tất cả các block
-// Rất quan trọng khi xóa một block ở giữa
 function reindexBlocks() {
     const container = document.getElementById("reimbursement-container");
     const blocks = container.querySelectorAll(".reimbursement-block");
-    
     blocks.forEach((block, index) => {
         const fileInput = block.querySelector(".fileInput");
         if (fileInput) {
-            // === DÒNG SỬA ĐỔI DUY NHẤT LÀ ĐÂY ===
-
-            // Code cũ (Gây lỗi trên JSP):
-            // fileInput.name = `receipt_reimbursement_${index}`; 
-
-            // Code mới (Hoạt động chính xác):
-            // Sử dụng phép nối chuỗi truyền thống để tránh xung đột với JSP EL
             fileInput.name = 'receipt_reimbursement_' + index;
-
-            // =======================================
         }
     });
-
-    // Cập nhật trạng thái của nút xóa
     updateRemoveButtons();
 }
 
-// Hàm cập nhật trạng thái các nút xóa
 function updateRemoveButtons() {
     const container = document.getElementById("reimbursement-container");
     const blocks = container.querySelectorAll(".reimbursement-block");
-    // Nếu chỉ có 1 block, ẩn nút xóa đi. Nếu có nhiều hơn, hiện tất cả.
     const showRemoveButton = blocks.length > 1;
     blocks.forEach(block => {
         const removeBtn = block.querySelector('.remove-btn');
@@ -154,52 +144,86 @@ function updateRemoveButtons() {
     });
 }
 
-
-// HÀM THÊM BLOCK MỚI (ĐÃ VIẾT LẠI HOÀN TOÀN)
 function addReimbursementBlock() {
     const container = document.getElementById("reimbursement-container");
     const template = document.getElementById("reimbursement-template");
-
-    // 1. Sao chép nội dung từ template
     const clone = template.content.cloneNode(true);
-
-    // 2. Thêm block mới vào container
     container.appendChild(clone);
-
-    // 3. Cập nhật lại toàn bộ chỉ số.
-    // Hàm này sẽ tự động đặt tên đúng cho block vừa thêm vào.
     reindexBlocks();
 }
 
-
-// HÀM XÓA BLOCK (ĐÃ VIẾT LẠI)
 function removeReimbursementBlock(btn) {
     const container = document.getElementById("reimbursement-container");
     if (container.children.length > 1) {
-        // Tìm và xóa block cha của nút được bấm
         btn.closest(".reimbursement-block").remove();
-        // Sau khi xóa, cập nhật lại toàn bộ chỉ số để chúng tuần tự trở lại
         reindexBlocks();
     } else {
         alert("最低1つの明細が必要です。");
     }
 }
 
-
-// Hàm xử lý hiển thị file đã chọn (giữ nguyên)
 function handleFileSelection(input) {
+    // Lấy phần tử <ul> để hiển thị danh sách file
     const list = input.closest('.form-group').querySelector('.fileList');
-    list.innerHTML = ""; // Xóa danh sách file preview cũ
 
+    // Bước 1: Xóa các preview cũ của những file MỚI CHỌN (có thẻ li không chứa data-file-type)
+    // Nó sẽ không xóa các file đã được lưu từ server (khi bấm back)
+    list.querySelectorAll('li:not([data-file-type="existing"])').forEach(li => li.remove());
+
+    // Bước 2: Lặp qua tất cả các file người dùng vừa chọn trong ô input
     Array.from(input.files).forEach(file => {
+        // Tạo một dòng mới <li>
         const li = document.createElement('li');
+
+        // Tạo link xem trước file <a>
         const a = document.createElement('a');
         a.href = URL.createObjectURL(file);
         a.textContent = file.name;
         a.target = '_blank';
         li.appendChild(a);
+
+        // =======================================================
+        // === PHẦN SỬA ĐỔI BẮT ĐẦU TỪ ĐÂY ===
+        // =======================================================
+
+        // Tạo nút xóa '×'
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button'; // Quan trọng: để không submit form
+        deleteBtn.textContent = '×';
+        deleteBtn.className = 'file-delete-btn'; // Dùng lại class CSS cũ cho đồng bộ
+        
+        // Định nghĩa hành động khi bấm nút xóa
+        deleteBtn.onclick = function() {
+            // Xóa tất cả các file đã chọn trong input này
+            input.value = ''; 
+            
+            // Chạy lại chính hàm này để cập nhật lại danh sách hiển thị (giờ đã rỗng)
+            // Đây là cách làm sạch sẽ, tái sử dụng logic có sẵn.
+            handleFileSelection(input); 
+        };
+
+        // Thêm nút xóa vào dòng <li>
+        li.appendChild(deleteBtn);
+
+        // =======================================================
+        // === PHẦN SỬA ĐỔI KẾT THÚC TẠI ĐÂY ===
+        // =======================================================
+
+        // Thêm dòng <li> hoàn chỉnh vào danh sách <ul>
         list.appendChild(li);
     });
+}
+
+function deleteExistingFile(btn) {
+    const li = btn.closest('li');
+    const uniqueName = li.dataset.uniqueName;
+    const filesToDeleteInput = document.getElementById("filesToDelete");
+    const currentDeleteList = filesToDeleteInput.value ? filesToDeleteInput.value.split(',') : [];
+    if (!currentDeleteList.includes(uniqueName)) {
+        currentDeleteList.push(uniqueName);
+        filesToDeleteInput.value = currentDeleteList.join(',');
+    }
+    li.remove();
 }
 </script>
 

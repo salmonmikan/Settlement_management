@@ -43,6 +43,6 @@ public class SubmitTransportationRequestServlet extends HttpServlet {
         session.removeAttribute("transportationTotal");
 
         request.setAttribute("successCount", successCount);
-        request.getRequestDispatcher("/WEB-INF/views/transportationRequest.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/transportation.jsp").forward(request, response);
     }
 }

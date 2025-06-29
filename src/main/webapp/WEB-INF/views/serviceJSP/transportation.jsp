@@ -93,7 +93,7 @@ Integer successCount = (Integer) request.getAttribute("successCount");
           <div class="form-group">
             <label>領収書添付（交通費）</label>
             <input type="file" name="receiptStep3_0[]" multiple class="fileInput">
-            <small style="color: gray;">(Ctrlキーを押しながら複数ファイルを選択するか、または一つずつ追加して一括送信可)</small>
+           
             <ul class="fileList"></ul>
           </div>
 
