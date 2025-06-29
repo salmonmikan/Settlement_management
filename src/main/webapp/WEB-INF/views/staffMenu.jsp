@@ -42,7 +42,7 @@
             <%-- [CẢI THIỆN] Sử dụng EL cho các đường dẫn --%>
             <a href="${pageContext.request.contextPath}/transportationRequest">交通費申請</a>
             <a href="${pageContext.request.contextPath}/businessTripInit">出張費申請</a>
-            <a href="${pageContext.request.contextPath}/reimbursement">立替金申請</a>
+            <a href="${pageContext.request.contextPath}/reimbursementInit">立替金申請</a>
           </div>
         </div>
 

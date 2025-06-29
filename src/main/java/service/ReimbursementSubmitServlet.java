@@ -1,0 +1,109 @@
+// File: src/main/java/service/ReimbursementSubmitServlet.java
+package service;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import bean.ReimbursementApplicationBean;
+import bean.ReimbursementDetailBean;
+import bean.UploadedFile;
+import dao.ApplicationDAO;
+import dao.ReceiptDAO;
+import dao.ReimbursementDAO;
+import util.DBConnection;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/reimbursementSubmit")
+public class ReimbursementSubmitServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    private static final String PERMANENT_UPLOAD_DIR = "/uploads"; // Thư mục lưu file chính thức
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        String staffId = (String) session.getAttribute("staffId");
+
+        // ★★★ LOGIC ĐÚNG: LẤY BEAN TỪ SESSION, KHÔNG ĐỌC LẠI REQUEST ★★★
+        if (session == null || session.getAttribute("reimbursement") == null || staffId == null) {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
+
+        ReimbursementApplicationBean reimbursement = (ReimbursementApplicationBean) session.getAttribute("reimbursement");
+        Connection conn = null;
+
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            ApplicationDAO appDAO = new ApplicationDAO();
+            ReimbursementDAO reimbursementDAO = new ReimbursementDAO();
+            ReceiptDAO receiptDAO = new ReceiptDAO();
+
+            // 1. Tính tổng tiền lần cuối để chắc chắn
+            reimbursement.calculateTotalAmount();
+            
+            // 2. Lưu vào application_header
+            int applicationId = appDAO.insertApplication("立替金", staffId, reimbursement.getTotalAmount(), conn);
+
+            // 3. Dùng vòng lặp để lưu chi tiết và file từ Bean trong session
+            for (ReimbursementDetailBean detail : reimbursement.getDetails()) {
+                // Lưu chi tiết và lấy về ID của nó (sẽ là block_id)
+                int blockId = reimbursementDAO.insert(detail, applicationId, conn);
+
+                List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
+                for (int i = 0; i < filesForBlock.size(); i++) {
+                    UploadedFile tempFile = filesForBlock.get(i);
+                    moveFileToFinalLocation(tempFile, request); // Di chuyển file từ tạm sang chính thức
+                    
+                    // Lưu record file vào DB, dùng tên bảng làm block_type
+                    receiptDAO.insert(applicationId, "reimbursement_request", blockId, i, tempFile, staffId, conn);
+                }
+            }
+            
+            conn.commit();
+            session.removeAttribute("reimbursement"); // Dọn dẹp session sau khi thành công
+
+            request.setAttribute("message", "申請が正常に送信されました。 (Mã đơn: " + applicationId + ")");
+            request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
+            request.setAttribute("errorMessage", "データベース保存エラー：" + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/errorPage.jsp").forward(request, response);
+        } finally {
+            if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
+        }
+    }
+
+    // ★★★ SỬA LỖI CÚ PHÁP: DÙNG Files.exists và Files.createDirectories ★★★
+    private void moveFileToFinalLocation(UploadedFile tempFile, HttpServletRequest request) throws IOException {
+        String realPath = request.getServletContext().getRealPath("");
+        Path source = Paths.get(realPath + tempFile.getTemporaryPath());
+        
+        if (Files.exists(source)) {
+            Path destinationDir = Paths.get(realPath + PERMANENT_UPLOAD_DIR);
+            if (!Files.exists(destinationDir)) {
+                Files.createDirectories(destinationDir);
+            }
+            Path destination = destinationDir.resolve(tempFile.getUniqueStoredName());
+            Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+            // Cập nhật lại đường dẫn trong bean thành đường dẫn cuối cùng
+            tempFile.setStoredFilePath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
+        }
+    }
+}

@@ -49,9 +49,6 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip2.jsp").forward(request, response);
     }
 
-    // =========================================================================
-    // == PHIÊN BẢN doPost ĐÃ SỬA LỖI HOÀN CHỈNH
-    // =========================================================================
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -63,20 +60,41 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         }
 
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
-        
-        // ★ SỬA LỖI BƯỚC 1: Lưu lại danh sách chi tiết cũ trước khi xử lý
+
+        // ★★★ XỬ LÝ FILE CẦN XOÁ (TỪ NÚT × TRÊN GIAO DIỆN) ★★★
+        String filesToDeleteParam = request.getParameter("filesToDelete");
+        if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
+            List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
+            String realPath = getServletContext().getRealPath("");
+
+            for (Step2Detail detail : trip.getStep2Details()) {
+                detail.getTemporaryFiles().stream()
+                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
+                    .forEach(file -> {
+                        try {
+                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
+                        } catch (IOException e) {
+                            System.err.println("Không thể xoá file: " + file.getTemporaryPath());
+                            e.printStackTrace();
+                        }
+                    });
+
+                detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
+            }
+        }
+
+        // ★ BƯỚC 1: Lưu lại danh sách chi tiết cũ trước khi xử lý
         List<Step2Detail> oldDetails = new ArrayList<>(trip.getStep2Details());
 
-        // Xóa danh sách hiện tại trên bean chính để xây dựng lại
+        // Xóa danh sách hiện tại để xây dựng lại
         trip.getStep2Details().clear();
 
         String[] regionTypes = request.getParameterValues("regionType[]");
-        
+
         if (regionTypes != null) {
             Collection<Part> allParts = request.getParts();
             String[] tripTypes = request.getParameterValues("tripType[]");
             String[] hotels = request.getParameterValues("hotel[]");
-            // ... các mảng khác
             String[] burdens = request.getParameterValues("burden[]");
             String[] hotelFees = request.getParameterValues("hotelFee[]");
             String[] dailyAllowances = request.getParameterValues("dailyAllowance[]");
@@ -106,7 +124,6 @@ public class BusinessTripStep2Servlet extends HttpServlet {
                     .collect(Collectors.toList());
 
                 if (!newFileParts.isEmpty()) {
-                    // TRƯỜNG HỢP 1: Có file MỚI được upload. Xử lý chúng.
                     newDetail.getTemporaryFiles().clear();
                     for (Part filePart : newFileParts) {
                         try {
@@ -125,15 +142,15 @@ public class BusinessTripStep2Servlet extends HttpServlet {
                             uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
                             newDetail.getTemporaryFiles().add(uploadedFile);
                         } catch (Exception e) {
-                             System.err.println("Lỗi xử lý file upload ở Step 2, index " + i + ": " + e.getMessage());
+                            System.err.println("Lỗi xử lý file upload ở Step 2, index " + i + ": " + e.getMessage());
                         }
                     }
                 } else {
-                    // TRƯỜNG HỢP 2: KHÔNG có file mới. Giữ lại file cũ từ session.
                     if (i < oldDetails.size()) {
                         newDetail.setTemporaryFiles(oldDetails.get(i).getTemporaryFiles());
                     }
                 }
+
                 trip.getStep2Details().add(newDetail);
             }
         }

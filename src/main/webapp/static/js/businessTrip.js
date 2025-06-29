@@ -1,6 +1,3 @@
-// =================================================================
-// == businessTrip.js - Phiên bản FULL hoàn chỉnh và ổn định ==
-// =================================================================
 
 function initializeStep2(diffDays, positionId) {
     const firstBlock = document.querySelector(".allowance-block");
@@ -39,7 +36,7 @@ function setupAllowanceBlock(block, diffDays, positionId) {
 
     // Gán sự kiện dropdown tính phí khách sạn
     ['regionType[]', 'tripType[]', 'burden[]'].forEach(name => {
-        const sel = block.querySelector(`select[name='${name}']`);
+        const sel = block.querySelector(select[name='${name}']);
         if (sel) {
             sel.addEventListener('change', () => calculateHotelFee(sel));
         }
@@ -62,8 +59,8 @@ function calculateHotelFee(elem) {
     if (region && tripType && burden) {
         let baseHotelFee = 0;
         if (tripType === "短期出張") {
-            if (region === "物価高水準地域") baseHotelFee = 10000;
-            else if (region === "上記以外") baseHotelFee = 8000;
+            if (region === "東京") baseHotelFee = 10000;
+            else if (region === "東京以外") baseHotelFee = 8000;
         }
 
         hotelFeeInput.value = (burden === "自己") ? baseHotelFee : 0;
