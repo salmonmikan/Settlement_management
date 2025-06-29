@@ -1,0 +1,41 @@
+package bean;
+
+import java.io.Serializable;
+
+public class PositionBean implements Serializable {
+    private String position_id;
+    private String position_name;
+    private int delete_flag; // 追加
+
+    public PositionBean() {
+    }
+
+    public PositionBean(String position_id, String position_name) {
+        this.position_id = position_id;
+        this.position_name = position_name;
+    }
+
+    public String getPosition_id() {
+        return position_id;
+    }
+
+    public void setPosition_id(String position_id) {
+        this.position_id = position_id;
+    }
+
+    public String getPosition_name() {
+        return position_name;
+    }
+
+    public void setPosition_name(String position_name) {
+        this.position_name = position_name;
+    }
+
+    public int getDelete_flag() {
+        return delete_flag;
+    }
+
+    public void setDelete_flag(int delete_flag) {
+        this.delete_flag = delete_flag;
+    }
+}

@@ -13,12 +13,10 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 <style>
 .page-container {
-	max-width: 80%;
-	margin: 30px auto;
-	background-color: white;
-	border-radius: 10px;
-	padding: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    max-width: 80vw
 }
 
 table {
@@ -69,53 +67,52 @@ h2 {
 		</form>
 	</nav>
 	<div class="page-container">
+		<!-- Sidebar -->
+	    <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+	    <div>
 		<h2>社員一覧</h2>
-		<c:if test="${not empty success}">
-			<div
-				style="color: red; text-align: center; padding: 10px; margin: 10px 0;">
-				${success}</div>
-		</c:if>
-		<form method="post" action ="employeeControl">
-		<div class="action-toolbar">
-			<div class="spacer"></div>
-			<button type="button" onclick="goToRegister()">＋ 新規追加</button>
-			<button type="submit" name="action" value="edit" id="editBtn"
-				disabled>編集</button>
-			<button type="submit" name="action" value="delete" id="deleteBtn"
-				disabled onclick="return confirm('本当に削除しますか？')">削除</button>
-		</div>
-		<table>
-			<thead>
-				<tr>
-					<th>選択</th>
-					<th>社員ID</th>
-					<th>氏名</th>
-					<th>ふりがな</th>
-					<th>生年月日</th>
-					<th>住所</th>
-					<th>入社日</th>
-					<th>部署</th>
-					<th>役職</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="emp" items="${employeeList}">
+		<form method="post" action="employeeControl">
+			<div class="action-toolbar">
+				<div class="spacer"></div>
+				<button type="button" onclick="goToRegister()">＋ 新規追加</button>
+				<button type="submit" name="action" value="edit" id="editBtn"
+					disabled>編集</button>
+				<button type="submit" name="action" value="delete" id="deleteBtn"
+					disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+			</div>
+			<table>
+				<thead>
 					<tr>
-						<td><input type="checkbox" name="employeeID"
-							value="${emp.employeeId}" class="row-check"></td>
-						<td>${emp.employeeId}</td>
-						<td>${emp.fullName}</td>
-						<td>${emp.furigana}</td>
-						<td>${emp.birthDate}</td>
-						<td>${emp.address}</td>
-						<td>${emp.joinDate}</td>
-						<td>${emp.departmentName}</td>
-						<td>${emp.positionName}</td>
+						<th>選択</th>
+						<th>社員ID</th>
+						<th>氏名</th>
+						<th>ふりがな</th>
+						<th>生年月日</th>
+						<th>住所</th>
+						<th>入社日</th>
+						<th>部署</th>
+						<th>役職</th>
 					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					<c:forEach var="emp" items="${employeeList}">
+						<tr>
+							<td><input type="checkbox" name="employeeID"
+								value="${emp.employeeId}" class="row-check"></td>
+							<td>${emp.employeeId}</td>
+							<td>${emp.fullName}</td>
+							<td>${emp.furigana}</td>
+							<td>${emp.birthDate}</td>
+							<td>${emp.address}</td>
+							<td>${emp.joinDate}</td>
+							<td>${emp.departmentName}</td>
+							<td>${emp.positionName}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
 		</form>
+	</div>
 	</div>
 	<script type="text/javascript">
 	const checkboxes = document.querySelectorAll('.row-check');
@@ -138,6 +135,14 @@ h2 {
 	    location.href = '<%=request.getContextPath()%>/employeeRegisterPage';
 	}
 	</script>
+
+	<c:if test="${not empty success}">
+		<script>alert("${success}");</script>
+	</c:if>
+
+	<c:if test="${not empty errorMsg}">
+		<script>alert("${errorMsg}");</script>
+	</c:if>
 
 </body>
 </html>

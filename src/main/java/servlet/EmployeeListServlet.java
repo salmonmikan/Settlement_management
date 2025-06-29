@@ -22,11 +22,12 @@ public class EmployeeListServlet extends HttpServlet {
 	}
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	HttpSession session = request.getSession();
+    	session.removeAttribute("errorMsg"); // 念のため。employeeList.jspにエラー処理がある
 
         EmployeeDAO dao = new EmployeeDAO();
         List<Employee> employeeList = dao.getAllEmployees();
 
-        HttpSession session = request.getSession();
         String success = (String) session.getAttribute("success");
         session.removeAttribute("success");
 

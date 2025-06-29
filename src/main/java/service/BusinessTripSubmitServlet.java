@@ -1,6 +1,5 @@
 package service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +8,14 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import bean.BusinessTripBean;
 import bean.Step2Detail;
@@ -20,13 +27,6 @@ import dao.BusinessTripApplicationDAO;
 import dao.BusinessTripTransportationDetailDAO;
 import dao.ReceiptDAO;
 import util.DBConnection;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/businessTripSubmit")
 public class BusinessTripSubmitServlet extends HttpServlet {
@@ -61,11 +61,11 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             int applicationId = appDAO.insertApplication("出張費申請", staffId, trip.getTotalAmount(), conn);
             
             String approverId = appDAO.findManagerId(staffId);
-            if (approverId == null) {
-                throw new Exception("Không tìm thấy người duyệt đơn (部長).");
-            }
-            // ★★★ Dòng này gọi hàm setApprover với 3 tham số, bao gồm `conn`
-            appDAO.setApprover(applicationId, approverId, conn);
+//            if (approverId == null) {
+//                throw new Exception("Không tìm thấy người duyệt đơn (部長).");
+//            }
+//            // ★★★ Dòng này gọi hàm setApprover với 3 tham số, bao gồm `conn`
+//            appDAO.setApprover(applicationId, approverId, conn);
 
             int tripApplicationId = tripAppDAO.insert(trip.getStep1Data(), applicationId, conn);
 

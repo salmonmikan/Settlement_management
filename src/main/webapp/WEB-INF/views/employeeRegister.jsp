@@ -39,9 +39,6 @@ h2 {
 		<h2>社員登録フォーム</h2>
 
 		<%-- Hiển thị lỗi nếu có --%>
-		<c:if test="${not empty error}">
-			<p style="color: red; text-align: center;">${error}</p>
-		</c:if>
 
 		<form action="<%= request.getContextPath() %>/employeeRegisterPage"
 			method="post">
@@ -93,7 +90,6 @@ h2 {
 			<div class="btn-section">
 				<button type="button" onclick="goBack()">戻る</button>
 				<button type="submit">確認</button>
-				<button type="reset">リセット</button>
 
 			</div>
 		</form>
@@ -116,5 +112,8 @@ h2 {
     }
 }
 	</script>
+	<c:if test="${not empty error}">
+		<script>alert("${error}");</script>
+	</c:if>
 </body>
 </html>

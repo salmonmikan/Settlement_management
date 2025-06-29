@@ -5,24 +5,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import bean.DepartmentBean;
+import bean.PositionBean;
 import util.DBConnection;
 
-public class DepartmentDAO {
+public class PositionDAO {
 
     // 全件取得（論理削除除く 0:通常, 9:削除不可）
-    public ArrayList<DepartmentBean> findAll() {
-        ArrayList<DepartmentBean> list = new ArrayList<>();
-        String sql = "SELECT * FROM department_master WHERE delete_flag IN (0, 9) ORDER BY department_id";
+    public ArrayList<PositionBean> findAll() {
+        ArrayList<PositionBean> list = new ArrayList<>();
+        String sql = "SELECT * FROM position_master WHERE delete_flag IN (0, 9) ORDER BY position_id";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                DepartmentBean bean = new DepartmentBean();
-                bean.setDepartment_id(rs.getString("department_id"));
-                bean.setDepartment_name(rs.getString("department_name"));
+                PositionBean bean = new PositionBean();
+                bean.setPosition_id(rs.getString("position_id"));
+                bean.setPosition_name(rs.getString("position_name"));
                 bean.setDelete_flag(rs.getInt("delete_flag"));
                 list.add(bean);
             }
@@ -34,9 +34,9 @@ public class DepartmentDAO {
     }
 
     // ID検索（論理削除されてないもの限定）
-    public DepartmentBean findById(String id) {
-        DepartmentBean bean = null;
-        String sql = "SELECT * FROM department_master WHERE department_id = ? AND delete_flag IN (0, 9)";
+    public PositionBean findById(String id) {
+        PositionBean bean = null;
+        String sql = "SELECT * FROM position_master WHERE position_id = ? AND delete_flag IN (0, 9)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -45,9 +45,9 @@ public class DepartmentDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                bean = new DepartmentBean();
-                bean.setDepartment_id(rs.getString("department_id"));
-                bean.setDepartment_name(rs.getString("department_name"));
+                bean = new PositionBean();
+                bean.setPosition_id(rs.getString("position_id"));
+                bean.setPosition_name(rs.getString("position_name"));
                 bean.setDelete_flag(rs.getInt("delete_flag"));
             }
 
@@ -58,14 +58,14 @@ public class DepartmentDAO {
     }
 
     // 登録
-    public boolean insert(DepartmentBean bean) {
-        String sql = "INSERT INTO department_master (department_id, department_name, delete_flag) VALUES (?, ?, 0)";
+    public boolean insert(PositionBean bean) {
+        String sql = "INSERT INTO position_master (position_id, position_name, delete_flag) VALUES (?, ?, 0)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, bean.getDepartment_id());
-            ps.setString(2, bean.getDepartment_name());
+            ps.setString(1, bean.getPosition_id());
+            ps.setString(2, bean.getPosition_name());
             return ps.executeUpdate() == 1;
 
         } catch (Exception e) {
@@ -75,14 +75,14 @@ public class DepartmentDAO {
     }
 
     // 更新（delete_flag = 0 のみ対象）
-    public boolean update(DepartmentBean bean) {
-        String sql = "UPDATE department_master SET department_name = ? WHERE department_id = ? AND delete_flag = 0";
+    public boolean update(PositionBean bean) {
+        String sql = "UPDATE position_master SET position_name = ? WHERE position_id = ? AND delete_flag = 0";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, bean.getDepartment_name());
-            ps.setString(2, bean.getDepartment_id());
+            ps.setString(1, bean.getPosition_name());
+            ps.setString(2, bean.getPosition_id());
             return ps.executeUpdate() == 1;
 
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class DepartmentDAO {
 
     // 論理削除（delete_flag = 0 のみ対象、9は削除不可）
     public boolean delete(String id) {
-        String sql = "UPDATE department_master SET delete_flag = 1 WHERE department_id = ? AND delete_flag = 0";
+        String sql = "UPDATE position_master SET delete_flag = 1 WHERE position_id = ? AND delete_flag = 0";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -107,18 +107,19 @@ public class DepartmentDAO {
         }
     }
 
-    // 次の部署IDを取得（D0001～形式）
-    public String getNextDepartmentId() {
-        String nextId = "D0001";
-        String sql = "SELECT MAX(CAST(SUBSTRING(department_id, 2) AS UNSIGNED)) AS max_num FROM department_master";
+    // 次の役職IDを取得（自動採番、4桁対応 P0001～）
+    public String getNextPositionId() {
+        String nextId = "P0001";
+        String sql = "SELECT MAX(position_id) AS max_id FROM position_master WHERE position_id LIKE 'P____'";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            if (rs.next()) {
-                int num = rs.getInt("max_num") + 1;
-                nextId = String.format("D%04d", num);
+            if (rs.next() && rs.getString("max_id") != null) {
+                String maxId = rs.getString("max_id").substring(1); // "P0012" → "0012"
+                int num = Integer.parseInt(maxId) + 1;
+                nextId = String.format("P%04d", num); // ★ 4桁ゼロ埋め
             }
 
         } catch (Exception e) {

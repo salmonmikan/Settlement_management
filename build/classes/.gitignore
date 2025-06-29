@@ -6,3 +6,7 @@
 /service/
 /servlet/
 /util/
+/bean/
+/.DS_Store
+.DS_Store
+*/.DS_Store

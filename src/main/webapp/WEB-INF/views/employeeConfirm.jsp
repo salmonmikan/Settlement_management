@@ -10,7 +10,7 @@ if (emp == null) {
 
 String editId = (String) session.getAttribute("editEmployeeId");
 String actionType = (editId != null) ? "update" : "register";
-String buttonLabel = (editId != null) ? "更新" : "登録";
+String buttonLabel = (editId != null) ? "更新" : "確認";
 %>
 <!DOCTYPE html>
 <html lang="ja">
@@ -52,68 +52,37 @@ th {
 .btn-section button {
 	margin: 0 10px;
 	padding: 10px 25px;
-	background-color: #2c7be5;
+	background-color: #00A9B7;
 	color: white;
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
+	font-size: 1rem;
 }
 
 .btn-section button:hover {
-	opacity: 0.9;
+	opacity: 0.85;
 }
 </style>
 </head>
 <body>
 	<div class="page-container">
-		<h2 style="text-align: center; color: #2c7be5;">登録内容の確認</h2>
-		<c:if test="${not empty error}">
-    <p style="color: red; text-align: center;">${error}</p>
-</c:if>
+		<h2 style="text-align: center; color: #00A9B7;">登録内容の確認</h2>
 		<table>
-			<tr>
-				<th>社員ID</th>
-				<td><%=emp.getEmployeeId()%></td>
-			</tr>
-			<tr>
-				<th>氏名</th>
-				<td><%=emp.getFullName()%></td>
-			</tr>
-			<tr>
-				<th>ふりがな</th>
-				<td><%=emp.getFurigana()%></td>
-			</tr>
-			<tr>
-				<th>生年月日</th>
-				<td><%=emp.getBirthDate()%></td>
-			</tr>
-			<tr>
-				<th>住所</th>
-				<td><%=emp.getAddress()%></td>
-			</tr>
-			<tr>
-				<th>入社日</th>
-				<td><%=emp.getJoinDate()%></td>
-			</tr>
-			<tr>
-				<th>部署ID</th>
-				<td><%=emp.getDepartmentId()%></td>
-			</tr>
-			<tr>
-				<th>役職ID</th>
-				<td><%=emp.getPositionId()%></td>
-			</tr>
+			<tr><th>社員ID</th><td><%=emp.getEmployeeId()%></td></tr>
+			<tr><th>氏名</th><td><%=emp.getFullName()%></td></tr>
+			<tr><th>ふりがな</th><td><%=emp.getFurigana()%></td></tr>
+			<tr><th>生年月日</th><td><%=emp.getBirthDate()%></td></tr>
+			<tr><th>住所</th><td><%=emp.getAddress()%></td></tr>
+			<tr><th>入社日</th><td><%=emp.getJoinDate()%></td></tr>
+			<tr><th>部署ID</th><td><%=emp.getDepartmentId()%></td></tr>
+			<tr><th>役職ID</th><td><%=emp.getPositionId()%></td></tr>
 		</table>
 
 		<div class="btn-section">
-			<!-- Đăng ký hoặc cập nhật -->
-			<form action="<%=request.getContextPath()%>/employeeRegisterPage" method="post" style="display: inline;">
-				<input type="hidden" name="action" value="<%=actionType%>">
-				<button type="submit"><%=buttonLabel%></button>
-			</form>
-
-			<!-- Quay lại form nhập -->
-			<form action="<%=request.getContextPath()%>/employeeRegisterPage" method="post" style="display: inline;">
+			<!-- 戻るボタン -->
+			<form action="<%=request.getContextPath()%>/employeeRegisterPage"
+				method="post" style="display: inline;">
 				<input type="hidden" name="action" value="back">
 				<input type="hidden" name="employeeId" value="<%=emp.getEmployeeId()%>">
 				<input type="hidden" name="fullName" value="<%=emp.getFullName()%>">
@@ -127,7 +96,20 @@ th {
 				<input type="hidden" name="positionId" value="<%=emp.getPositionId()%>">
 				<button type="submit">戻る</button>
 			</form>
+
+			<!-- 確認または更新ボタン -->
+			<form action="<%=request.getContextPath()%>/employeeRegisterPage"
+				method="post" style="display: inline;">
+				<input type="hidden" name="action" value="<%=actionType%>">
+				<button type="submit"><%=buttonLabel%></button>
+			</form>
 		</div>
 	</div>
+
+	<c:if test="${not empty error}">
+		<script>
+			alert("${error}");
+		</script>
+	</c:if>
 </body>
 </html>

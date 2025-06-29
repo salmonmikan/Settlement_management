@@ -1,13 +1,15 @@
 package servlet;
 
-import bean.BusinessTripBean.BusinessTripBean;
-import dao.BusinessTripDAO;
+import java.io.IOException;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.util.List;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import bean.BusinessTripBean;
 
 @WebServlet("/editBusinessTrip")
 public class EditBusinessTripServlet extends HttpServlet {
