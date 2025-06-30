@@ -5,9 +5,12 @@ import java.sql.Timestamp;
 public class Application {
     private int applicationId;         // 申請ID
     private String applicationType;    // 申請種別
-    private Timestamp applicationDate; // 申請時間
+    private Timestamp createdAt;       // 作成日時（旧: applicationDate）
     private int amount;                // 金額
-    private String status;            // ステータス
+    private String status;             // ステータス
+
+    private String staffId;            // 承認者表示用（追加済みなら giữ nguyên）
+    private String staffName;
 
     // --- Getter & Setter ---
     public int getApplicationId() {
@@ -26,12 +29,12 @@ public class Application {
         this.applicationType = applicationType;
     }
 
-    public Timestamp getApplicationDate() {
-        return applicationDate;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setApplicationDate(Timestamp applicationDate) {
-        this.applicationDate = applicationDate;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
     public int getAmount() {
@@ -48,5 +51,21 @@ public class Application {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 }

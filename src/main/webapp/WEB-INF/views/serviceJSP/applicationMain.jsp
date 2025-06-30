@@ -115,7 +115,7 @@
                 <td><input type="checkbox" class="row-check" name="appIds" value="<%= app.getApplicationId() %>"></td>
                 <td><%= app.getApplicationId() %></td>
                 <td><%= app.getApplicationType() %></td>
-                <td><%= app.getApplicationDate().toLocalDateTime().toString().replace('T', ' ') %></td>
+                <td><%= app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ') %></td>
                 <td><%= String.format("%,d円", app.getAmount()) %></td>
                 <td><%= app.getStatus() %></td>
               </tr>
@@ -201,18 +201,19 @@
 	  });
 	
 	  document.querySelectorAll('.clickable-row').forEach(row => {
-		  row.addEventListener('click', function (e) {
-		    const targetCell = e.target.closest('td');
+		    row.addEventListener('click', function (e) {
+		        // Bỏ qua sự kiện nếu người dùng bấm vào ô checkbox đầu tiên
+		        const targetCell = e.target.closest('td');
+		        if (targetCell && targetCell.cellIndex === 0) {
+		            return;
+		        }
 
-		    
-		    if (targetCell && targetCell.cellIndex === 0) {
-		      return;
-		    }
+		        // Lấy ID của đơn từ thuộc tính data-id
+		        const id = this.dataset.id;
 
-		    
-		    const id = this.dataset.id;
-		    window.location.href = 'applicationDetail?id=' + id;
-		  });
+		        // Luôn luôn điều hướng đến ApplicationDetailServlet cho tất cả các loại đơn
+		        window.location.href = 'applicationDetail?id=' + id;
+		    });
 		});
 	
 	  function confirmSubmit() {
