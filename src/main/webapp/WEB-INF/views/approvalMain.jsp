@@ -14,6 +14,8 @@ if (mode == null)
 <title>承認一覧 - ABC株式会社</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body data-mode="<%=mode%>">
@@ -28,15 +30,15 @@ if (mode == null)
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th>all</th>
+								<th ><div>選択</div><input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>社員ID</th>
 								<th>氏名</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
-								<th>金額（含税）</th>
+								<th>金額（税込）</th>
 								<th><select id="statusFilter" class="status-filter-button">
-										<option value="">すべて</option>
+										<option value="">ステータス</option>
 										<option value="未提出">未提出</option>
 										<option value="提出済み">提出済み</option>
 										<option value="差戻し">差戻し</option>
@@ -68,8 +70,6 @@ if (mode == null)
 					</table>
 				</div>
 				<div class="btn-section">
-					<button type="button"
-						onclick="location.href='<%=request.getContextPath()%>/menu'">戻る</button>
 					<button type="submit">提出</button>
 				</div>
 			</form>
@@ -93,6 +93,13 @@ if (mode == null)
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
 	<script>
+	const checkboxes = document.querySelectorAll('.row-check');
+	
+	document.getElementById('selectAll').addEventListener('change', function () {
+	    checkboxes.forEach(cb => cb.checked = this.checked);
+	    updateToolbarState();
+	  });
+	  
     document.getElementById('statusFilter').addEventListener('change', function () {
       const selected = this.value;
       const rows = document.querySelectorAll('#applicationTable tbody tr');
