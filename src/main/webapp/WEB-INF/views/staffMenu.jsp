@@ -38,13 +38,12 @@
 				<div class="panel">
 					<h4>申請状況</h4>
 					<ul>
-
 						<li><a
-							href="${pageContext.request.contextPath}/approvalList?status=not_submitted">未提出:</a></li>
+							href="${pageContext.request.contextPath}/applicationMain?status=not_submitted">未提出:</a></li>
 						<li><a
-							href="${pageContext.request.contextPath}/approvalList?status=submitted">提出済:</a></li>
+							href="${pageContext.request.contextPath}/applicationMain?status=submitted">提出済:</a></li>
 						<li><a
-							href="${pageContext.request.contextPath}/approvalList?status=rejected">差戻:</a></li>
+							href="${pageContext.request.contextPath}/applicationMain?status=rejected">差戻:</a></li>
 					</ul>
 				</div>
 			</div>
