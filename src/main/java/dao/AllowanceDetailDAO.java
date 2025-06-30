@@ -5,8 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import bean.Step2Detail;
 
+
+/**GPT生成
+ * {@code AllowanceDetailDAO} は、日当・宿泊費明細（allowance_detail）テーブルに関する
+ * データベース操作（CRUD処理のうちCreate）を提供するDAOクラスです。
+ *
+ * 主に {@link Step2Detail} オブジェクトを使用して、出張申請に紐づく
+ * 宿泊・日当費用明細を登録する用途で使用されます。
+ */
 public class AllowanceDetailDAO {
 
     /**

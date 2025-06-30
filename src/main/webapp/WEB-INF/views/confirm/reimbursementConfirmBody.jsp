@@ -79,10 +79,17 @@
       <div class="detail-extra-info">
         
         <%-- 2. Hiển thị ghi chú (摘要) nếu có --%>
+        <c:if test="${not empty detail.abstractNote}">
+					<div>
+						<strong>摘要:</strong>
+					</div>
+					<div class="memo-block">${detail.abstractNote}</div>
+				</c:if>
         <c:if test="${not empty detail.report}">
-          <div><strong>摘要:</strong></div>
+          <div><strong>報告書:</strong></div>
           <div class="memo-block">${detail.report}</div>
         </c:if>
+        
 
         <%-- 3. Hiển thị file đính kèm nếu có --%>
         <c:if test="${not empty detail.temporaryFiles}">
