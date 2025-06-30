@@ -29,6 +29,7 @@ if (mode == null)
 			<form action="approverApplications" method="post">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
+					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
 					<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="">差戻</button>
 <!--					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>-->
 					<button type="submit" name="action" value="approval" id="applovalBtn" disabled>承認</button>
@@ -41,12 +42,12 @@ if (mode == null)
 									<input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>社員ID</th>
-								<th>氏名</th>
+								<th>社員名</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
 								<th>金額（税込）</th>
 								<th><select id="statusFilter" class="status-filter-button">
-										<option value="">ステータス</option>
+										<option value="">申請ステータス</option>
 										<!--										<option value="未提出">未提出</option>-->
 										<option value="提出済み">提出済み</option>
 										<option value="差戻し">差戻し</option>
@@ -60,7 +61,7 @@ if (mode == null)
 							for (Application app : applications) {
 							%>
 							<tr class="clickable-row" data-id="<%=app.getApplicationId()%>"
-								data-status="<%=app.getStatus()%>">
+								data-status="<%=app.getStatus()%>" data-staff-id="<%=app.getStaffId()%>">
 								<td><input type="checkbox" class="row-check" name="appIds"
 									value="<%=app.getApplicationId()%>"></td>
 								<td><%=app.getApplicationId()%></td>
@@ -140,6 +141,15 @@ if (mode == null)
       confirmButtonText: 'OK'
     });
     <%}%>
+
+ 	// 社員IDでの検索用
+	document.getElementById('staffSearchInput').addEventListener('input', function () {
+	    const keyword = this.value.trim();
+	    document.querySelectorAll('#applicationTable tbody tr').forEach(row => {
+	      const staffId = row.getAttribute('data-staff-id');
+	      row.style.display = (!keyword || staffId.includes(keyword)) ? '' : 'none';
+	    });
+	  });
   </script>
 </body>
 </html>

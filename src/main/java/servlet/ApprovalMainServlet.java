@@ -78,15 +78,26 @@ public class ApprovalMainServlet extends HttpServlet {
 	                session.setAttribute("submitSuccess", true);
 	                break;
 
-	            case "edit":
-	                // 編集処理（例として最初の申請IDをパラメータに渡してリダイレクト）
-	                response.sendRedirect("editApplication?id=" + appIds[0]);
+	            case "reject":
+	                // 差戻し処理
+	                try {
+//	                    ApplicationDAO dao = new ApplicationDAO();
+	                    for (String idStr : appIds) {
+	                        int appId = Integer.parseInt(idStr);
+	                        dao.rejectApplication(appId); // 差戻し処理メソッドを呼び出し
+	                    }
+	                    session.setAttribute("message", "選択された申請を差戻しました。");
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    session.setAttribute("message", "差戻し中にエラーが発生しました。");
+	                }
+	                response.sendRedirect("approverApplications");
 	                return;
 
 	            case "delete":
 	                for (String idStr : appIds) {
 	                    int appId = Integer.parseInt(idStr);
-	                    dao.deleteApplication(appId); // deleteApplication メソッドが必要
+	                    dao.deleteApplication(appId);
 	                }
 	                session.setAttribute("message", "選択された申請を削除しました。");
 	                break;

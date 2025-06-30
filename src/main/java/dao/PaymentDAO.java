@@ -49,7 +49,7 @@ public class PaymentDAO {
                      "a.application_type, a.created_at, a.updated_at, a.amount, a.status " +
                      "FROM application_header a " +
                      "LEFT JOIN staff s ON a.staff_id = s.staff_id " +
-                     "WHERE a.delete_flag = 0 AND a.status = '承認済み'" +
+                     "WHERE a.delete_flag IN (0, 0) AND a.status IN ('承認済み', '支払済み')" +
                      "ORDER BY a.created_at DESC";
 
         try (Connection conn = DBConnection.getConnection();
