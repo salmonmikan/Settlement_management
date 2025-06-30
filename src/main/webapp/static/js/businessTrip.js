@@ -13,13 +13,18 @@ function initializeStep2(diffDays, positionId) {
 }
 
 function setupAllowanceBlock(block, diffDays, positionId) {
-    // Gán 日数 và thêm ghi chú + kiểm tra tổng ngày
+    // --- BẮT ĐẦU PHẦN SỬA LỖI CHO Ô "日数" ---
     const daysInput = block.querySelector("input[name='days[]']");
     if (daysInput) {
-		const isFirstBlock = block === document.querySelector(".allowance-block");
-		daysInput.value = isFirstBlock ? diffDays : 0;
+        const isFirstBlock = block === document.querySelector(".allowance-block");
 
-        // Thêm ghi chú nếu chưa có
+        // Luôn gán số ngày tính từ Step 1 cho block đầu tiên khi trang tải.
+        // Các block được thêm sau sẽ được xử lý bởi hàm addAllowanceBlock.
+        if (isFirstBlock) {
+            daysInput.value = diffDays;
+        }
+
+        // Gắn ghi chú nếu chưa có
         if (!block.querySelector(".days-note")) {
             const note = document.createElement("small");
             note.textContent = "※実際の日数に合わせて調整してください。";
@@ -28,32 +33,79 @@ function setupAllowanceBlock(block, diffDays, positionId) {
             daysInput.parentNode.appendChild(note);
         }
 
+        // Gắn sự kiện để tính toán lại và kiểm tra tổng ngày
         daysInput.addEventListener('input', () => {
             calculateTotal(block);
             validateTotalDays(diffDays);
         });
     }
+    // --- KẾT THÚC PHẦN SỬA LỖI ---
 
-    // Gán 日当 theo chức vụ
     const dailyAllowanceInput = block.querySelector("input[name='dailyAllowance[]']");
     if (dailyAllowanceInput) {
         const dailyFee = (positionId === 'P0004') ? 2200 : 4000;
+        dailyAllowanceInput.dataset.baseAllowance = dailyFee;
         dailyAllowanceInput.value = dailyFee;
+
+        const options = block.querySelectorAll(".nitto-option");
+        options.forEach(checkbox => {
+            checkbox.addEventListener('change', () => calculateDailyAllowance(block));
+        });
     }
 
-    // Gán sự kiện dropdown tính phí khách sạn
     ['regionType[]', 'tripType[]', 'burden[]'].forEach(name => {
-        const sel = block.querySelector(select[name='${name}']);
+        const sel = block.querySelector(`select[name='${name}']`);
         if (sel) {
             sel.addEventListener('change', () => calculateHotelFee(sel));
         }
     });
 
-    // Gán sự kiện file input
     const fileInput = block.querySelector(".fileInput");
     if (fileInput) {
         fileInput.addEventListener("change", () => handleFileSelection(fileInput));
     }
+    
+    // Gọi hàm tính tổng sau khi đã thiết lập xong
+    calculateTotal(block);
+}
+
+function calculateDailyAllowance(block) {
+    const dailyAllowanceInput = block.querySelector("input[name='dailyAllowance[]']");
+    const baseAllowance = parseInt(dailyAllowanceInput.dataset.baseAllowance || 0);
+
+    // Lấy các checkbox trong block hiện tại
+    const chkHalfDay = block.querySelector(".nitto-option[data-option='half_day']");
+    const chkBonus = block.querySelector(".nitto-option[data-option='bonus']");
+    const chkNone = block.querySelector(".nitto-option[data-option='none']");
+
+    let finalAllowance = baseAllowance;
+
+    // Ưu tiên cao nhất: Nếu chọn "Không có hoạt động nghiệp vụ"
+    if (chkNone.checked) {
+        finalAllowance = 0;
+        // Vô hiệu hóa 2 checkbox kia để tránh logic mâu thuẫn
+        chkHalfDay.disabled = true;
+        chkBonus.disabled = true;
+    } else {
+        // Nếu không, bật lại 2 checkbox kia và tính toán bình thường
+        chkHalfDay.disabled = false;
+        chkBonus.disabled = false;
+        
+        // Điều kiện 1: 1/2 ngày
+        if (chkHalfDay.checked) {
+            finalAllowance = finalAllowance / 2;
+        }
+        // Điều kiện 2: Cộng thêm 1500
+        if (chkBonus.checked) {
+            finalAllowance = finalAllowance + 1500;
+        }
+    }
+    
+    // Cập nhật giá trị vào ô input 日当
+    dailyAllowanceInput.value = Math.round(finalAllowance); // Làm tròn để tránh số lẻ
+
+    // QUAN TRỌNG: Gọi lại hàm tính tổng của block để cập nhật ô "合計"
+    calculateTotal(block);
 }
 
 function calculateHotelFee(elem) {

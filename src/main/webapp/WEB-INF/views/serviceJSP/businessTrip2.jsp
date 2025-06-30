@@ -11,6 +11,7 @@
 <script
 	src="${pageContext.request.contextPath}/static/js/businessTrip.js"></script>
 <style>
+/* --- CSS GỐC CỦA BẠN - ĐƯỢC GIỮ NGUYÊN --- */
 .remove-btn {
 	position: absolute;
 	top: 1px;
@@ -45,6 +46,102 @@
 	background: none;
 	transform: scale(1.2);
 	opacity: 0.8;
+}
+
+/* --- CSS MỚI - CHỈ DÀNH CHO KHỐI 日当の調整 --- */
+.adjustment-group {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 13px;
+    background-color: #f9f9f9;
+   	display: block;
+    margin-bottom: 5px;
+}
+
+.adjustment-group legend {
+	font-weight:600;
+    color: #333;
+    padding: 0 8px;
+    font-size: 12px;
+    margin-left: 8px; /* Thêm để legend không bị dính vào viền */
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    position: relative;
+    
+}
+
+.option-item:hover {
+    background-color: #f0f0f0;
+}
+
+.option-item .nitto-option {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.option-item .custom-checkbox {
+    width: 15px;
+    height: 15px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 12px;
+    transition: all 0.2s ease-in-out;
+    flex-shrink: 0;
+}
+
+.option-item .option-label {
+    color: #444;
+    font-size:10px;
+    font-weight:500;
+}
+
+.option-item .nitto-option:checked + .custom-checkbox {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.option-item .custom-checkbox::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 5px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    position: relative;
+    left: 6px;
+    top: 2px;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.option-item .nitto-option:checked + .custom-checkbox::after {
+    opacity: 1;
+}
+
+.option-item .nitto-option:disabled + .custom-checkbox {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    cursor: not-allowed;
+}
+
+.option-item .nitto-option:disabled ~ .option-label {
+    color: #999;
+    cursor: not-allowed;
+}
+
+.option-item:has(.nitto-option:disabled):hover {
+    background-color: transparent;
 }
 </style>
 </head>
@@ -98,6 +195,28 @@
 								<label>宿泊費</label><input required type="number"
 									name="hotelFee[]" readonly value="${detail.hotelFee}">
 							</div>
+							<fieldset class="adjustment-group">
+							    <legend>日当の調整</legend>
+							
+							    <label for="option_half_day" class="option-item">
+							        <input type="checkbox" id="option_half_day" class="nitto-option" data-option="half_day">
+							        <span class="custom-checkbox"></span>
+							        <span class="option-label">午後の出発・午前の到着 (日当 1/2)</span>
+							    </label>
+							
+							    <label for="option_bonus" class="option-item">
+							        <input type="checkbox" id="option_bonus" class="nitto-option" data-option="bonus">
+							        <span class="custom-checkbox"></span>
+							        <span class="option-label">午前6時前出発・午後9時以降到着 (+1,500円)</span>
+							    </label>
+							
+							    <label for="option_none" class="option-item">
+							        <input type="checkbox" id="option_none" class="nitto-option" data-option="none">
+							        <span class="custom-checkbox"></span>
+							        <span class="option-label">業務活動なし (日当なし)</span>
+							    </label>
+							    
+							</fieldset>
 							<div class="form-group">
 								<label>日当</label><input required type="number"
 									name="dailyAllowance[]" readonly
