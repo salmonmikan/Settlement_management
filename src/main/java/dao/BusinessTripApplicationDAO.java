@@ -64,8 +64,14 @@ public class BusinessTripApplicationDAO {
             if (rs.next()) {
                 tripApplicationId = rs.getInt("trip_application_id");
                 Step1Data step1Data = new Step1Data();
-                step1Data.setStartDate(rs.getDate("start_date").toLocalDate().toString().replace('-', '/'));
-                step1Data.setEndDate(rs.getDate("end_date").toLocalDate().toString().replace('-', '/'));
+                
+                // === SỬA LỖI Ở 2 DÒNG DƯỚI ĐÂY ===
+                // Lấy chuỗi ngày tháng theo định dạng chuẩn YYYY-MM-DD mà input type="date" yêu cầu
+                // bằng cách dùng trực tiếp phương thức .toString() của java.sql.Date
+                step1Data.setStartDate(rs.getDate("start_date").toString());
+                step1Data.setEndDate(rs.getDate("end_date").toString());
+                // === KẾT THÚC SỬA LỖI ===
+
                 step1Data.setProjectCode(rs.getString("project_code"));
                 step1Data.setTripReport(rs.getString("report"));
                 step1Data.setTotalDays(rs.getInt("total_days"));
@@ -167,6 +173,30 @@ public class BusinessTripApplicationDAO {
             if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+    public void update(Step1Data step1Data, Connection conn) throws SQLException {
+        String sql = "UPDATE business_trip_application SET start_date = ?, end_date = ?, project_code = ?, report = ?, total_days = ? WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(step1Data.getStartDate().replace('/', '-')));
+            ps.setDate(2, java.sql.Date.valueOf(step1Data.getEndDate().replace('/', '-')));
+            ps.setString(3, step1Data.getProjectCode());
+            ps.setString(4, step1Data.getTripReport());
+            ps.setInt(5, step1Data.getTotalDays());
+            ps.setInt(6, step1Data.getApplicationId()); 
+            ps.executeUpdate();
+        }
+    }
+    public int getTripApplicationIdByApplicationId(int applicationId, Connection conn) throws SQLException {
+        String sql = "SELECT trip_application_id FROM business_trip_application WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, applicationId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("trip_application_id");
+                }
+                throw new SQLException("Không tìm thấy trip_application_id cho application_id: " + applicationId);
+            }
         }
     }
 }

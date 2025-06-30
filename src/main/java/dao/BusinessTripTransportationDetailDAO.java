@@ -33,4 +33,11 @@ public class BusinessTripTransportationDetailDAO {
             }
         }
     }
+    public void deleteByTripApplicationId(int tripApplicationId, Connection conn) throws SQLException {
+        String sql = "DELETE FROM allowance_detail WHERE trip_application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tripApplicationId);
+            ps.executeUpdate();
+        }
+    }
 }

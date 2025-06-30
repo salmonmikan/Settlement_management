@@ -10,15 +10,11 @@ import java.util.List;
 
 import model.Application;
 import util.DBConnection;
+
 public class ApplicationDAO {
 
-    // =========================================================================
-    // == CÁC HÀM ĐÃ SỬA LỖI TRANSACTION (NHẬN THAM SỐ Connection)
-    // =========================================================================
-
-    /**
-     * Chèn một application header mới như một phần của transaction lớn.
-     */
+    // (Tất cả các phương thức khác của bạn từ insertApplication đến getApplicationsByApprover được giữ nguyên...)
+    
     public int insertApplication(String type, String staffId, int amount, Connection conn) throws SQLException {
         String sql = "INSERT INTO application_header (application_type, staff_id, status, amount, application_date, created_at) " +
                      "VALUES (?, ?, '未提出', ?, NOW(), NOW())";
@@ -34,9 +30,6 @@ public class ApplicationDAO {
         throw new SQLException("application_header の登録に失敗しました。");
     }
 
-    /**
-     * Gán người duyệt đơn như một phần của transaction lớn.
-     */
     public void setApprover(int applicationId, String approverId, Connection conn) throws SQLException {
         String sql = "UPDATE application_header SET approver_id = ? WHERE application_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -46,9 +39,6 @@ public class ApplicationDAO {
         }
     }
 
-    /**
-     * Nộp đơn (đổi status) như một phần của transaction lớn.
-     */
     public void submitApplicationIfNotYet(int applicationId, String staffId, String approverId, Connection conn) throws SQLException {
         String sql = "UPDATE application_header SET status = '提出済み', approver_id = ? " +
                      "WHERE application_id = ? AND staff_id = ? AND status = '未提出'";
@@ -60,10 +50,6 @@ public class ApplicationDAO {
         }
     }
 
-    // =========================================================================
-    // == CÁC HÀM CŨ CỦA BẠN (Đa phần là chỉ đọc, tự quản lý Connection)
-    // =========================================================================
-    
     public List<Application> getAllApplications() throws Exception {
         List<Application> list = new ArrayList<>();
         String sql = "SELECT application_id, application_type, application_date, amount, status FROM application_header ORDER BY application_id DESC";
@@ -189,5 +175,19 @@ public class ApplicationDAO {
             }
         }
         return list;
+    }
+
+    /**
+     * === PHƯƠNG THỨC ĐÃ SỬA LẠI TÊN BẢNG CHO ĐÚNG ===
+     * Cập nhật số tiền và ngày cập nhật cho một đơn trong transaction.
+     */
+    public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
+        // Sửa "applications" thành "application_header"
+        String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, totalAmount);
+            ps.setInt(2, applicationId);
+            ps.executeUpdate();
+        }
     }
 }

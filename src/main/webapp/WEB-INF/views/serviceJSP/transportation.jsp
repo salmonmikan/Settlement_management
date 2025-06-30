@@ -89,7 +89,7 @@
                   <option value="他の" ${'他の' == detail.transport ? 'selected' : ''}>他の</option>
                 </select>
               </div>
-              <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" step="100" value="${detail.fareAmount}"></div>
+              <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" value="${detail.fareAmount}"></div>
               <div class="form-group"><label>区分</label>
                 <select name="transTripType[]">
                   <option value="">選択してください</option>
@@ -174,7 +174,7 @@
                 <option value="他の">他の</option>
             </select>
         </div>
-        <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" step="100"></div>
+        <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]"></div>
         <div class="form-group"><label>区分</label>
             <select name="transTripType[]">
                 <option value="">選択してください</option>

@@ -73,9 +73,10 @@
   </style>
 </head>
 <body>
-  <div class="page-container">
+  <div class="page-container" style="align-items: center">
   	<!-- Sidebar -->
-    <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+   <jsp:include page="/WEB-INF/views/common/sidebar.jsp" /> 
+    
     <div>
     <h2>申請一覧</h2>
 

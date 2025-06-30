@@ -36,7 +36,10 @@ public class ApplicationDetailServlet extends HttpServlet {
             ApplicationDAO appDao = new ApplicationDAO();
             String type = appDao.getApplicationTypeById(applicationId);
 
-            request.setAttribute("application_id", applicationId);
+            // === SỬA LỖI Ở ĐÂY ===
+            // Thống nhất dùng tên "applicationId" (kiểu camelCase)
+            request.setAttribute("applicationId", applicationId); 
+            
             request.setAttribute("application_type", type);
             request.setAttribute("mode", "detail");
             
@@ -44,18 +47,17 @@ public class ApplicationDetailServlet extends HttpServlet {
                 type = type.trim();
             }
 
-            // SỬA LẠI CÁC CHUỖI SO SÁNH CHO ĐÚNG VỚI DATABASE
-            if ("出張費申請".equals(type)) { // Đơn này vẫn giữ nguyên là "出張費申請"
+            if ("出張費申請".equals(type)) {
                 BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
                 request.setAttribute("trip", bean);
 
-            } else if ("交通費".equals(type)) { // <<< SỬA Ở ĐÂY: Bỏ chữ "申請"
+            } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
                 request.setAttribute("transportationApp", bean);
 
-            } else if ("立替金".equals(type)) { // <<< SỬA Ở ĐÂY: Bỏ chữ "申請"
+            } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();
                 ReimbursementApplicationBean bean = dao.loadByApplicationId(applicationId);
                 request.setAttribute("reimbursementApp", bean);
@@ -64,7 +66,7 @@ public class ApplicationDetailServlet extends HttpServlet {
             // Set thuộc tính cho các nút bấm
             request.setAttribute("showSubmitButton", false);
             request.setAttribute("showEditButton", true);
-            request.setAttribute("editActionUrl", "/editApplication?id=" + applicationId);
+            request.setAttribute("editActionUrl", "/editApplication");
             request.setAttribute("showBackButton", true);
             request.setAttribute("backActionUrl", "/applicationMain");
 
@@ -72,7 +74,6 @@ public class ApplicationDetailServlet extends HttpServlet {
             rd.forward(request, response);
 
         } catch (Exception e) {
-            System.err.println("!!! ĐÃ XẢY RA LỖI TRONG SERVLET !!!");
             e.printStackTrace();
             request.setAttribute("message", "Lỗi khi tải chi tiết đơn: " + e.getMessage());
             RequestDispatcher rd_error = request.getRequestDispatcher("/WEB-INF/views/serviceJSP/applicationMain.jsp");

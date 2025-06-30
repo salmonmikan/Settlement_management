@@ -36,4 +36,11 @@ public class ReceiptDAO {
             ps.executeUpdate();
         }
     }
+    public void deleteByApplicationId(int applicationId, Connection conn) throws SQLException {
+        String sql = "DELETE FROM receipt_file WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, applicationId);
+            ps.executeUpdate();
+        }
+    }
 }

@@ -58,13 +58,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             trip.calculateTotalAmount();
 
             int applicationId = appDAO.insertApplication("出張費申請", staffId, trip.getTotalAmount(), conn);
-            
-//            String approverId = appDAO.findManagerId(staffId);
-//            if (approverId == null) {
-//                throw new Exception("Không tìm thấy người duyệt đơn (部長).");
-//            }
-//            // ★★★ Dòng này gọi hàm setApprover với 3 tham số, bao gồm `conn`
-//            appDAO.setApprover(applicationId, approverId, conn);
+           
 
             int tripApplicationId = tripAppDAO.insert(trip.getStep1Data(), applicationId, conn);
 

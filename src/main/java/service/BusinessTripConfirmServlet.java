@@ -1,3 +1,4 @@
+// File: service/BusinessTripConfirmServlet.java (Phiên bản cập nhật)
 package service;
 
 import java.io.IOException;
@@ -9,10 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * 申請内容の確認ページを表示するためのサーブレット。
- * (Servlet để hiển thị trang xác nhận nội dung đơn)
- */
 @WebServlet("/businessTripConfirm")
 public class BusinessTripConfirmServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -25,27 +22,35 @@ public class BusinessTripConfirmServlet extends HttpServlet {
             return;
         }
 
-        // 1. セッションから申請情報を取得 (Lấy thông tin đơn từ session)
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
+        trip.calculateTotalAmount();
+        
+        // Lấy cờ isEditMode từ session
+        Boolean isEditMode = (Boolean) session.getAttribute("isEditMode");
+        if (isEditMode == null) {
+            isEditMode = false;
+        }
 
-        // 2. 表示用のデータを計算・準備 (Tính toán, chuẩn bị dữ liệu để hiển thị)
-        // Ví dụ: tính tổng số tiền. Việc này nên được thực hiện trong Bean hoặc ở đây.
-        trip.calculateTotalAmount(); // Chúng ta sẽ thêm phương thức này vào BusinessTripBean
-
-        // 3. 確認ページの表示モードを設定 (Thiết lập chế độ hiển thị cho trang confirm)
-        // Đây là ví dụ cho trường hợp "tạo đơn mới".
-        request.setAttribute("application_type", "出張費"); // Loại đơn
-        request.setAttribute("showBackButton", true);
-        request.setAttribute("backActionUrl", "/businessTripStep3"); // URL của nút Back
-        request.setAttribute("showSubmitButton", true);
-        request.setAttribute("submitActionUrl", "/businessTripSubmit"); // URL của nút Gửi đơn
-
-        // 4. JSPで表示するために、リクエストスコープに申請情報を設定
-        // (Đặt thông tin đơn vào request scope để JSP hiển thị)
+        request.setAttribute("application_type", "出張費申請");
         request.setAttribute("trip", trip);
-
-        // 5. 共通の確認ページテンプレートにフォワード
-        // (Forward đến template trang confirm chung)
+        
+        // === LOGIC MỚI: Tùy chỉnh nút bấm dựa trên isEditMode ===
+        if (isEditMode) {
+            // Đây là luồng UPDATE
+            request.setAttribute("isEditMode", true); // Gửi cờ này ra JSP để đổi chữ trên nút
+            request.setAttribute("showBackButton", true);
+            request.setAttribute("backActionUrl", "/businessTripStep3");
+            request.setAttribute("showSubmitButton", true);
+            request.setAttribute("submitActionUrl", "/businessTripUpdate"); // Action trỏ đến servlet Update mới
+        } else {
+            // Đây là luồng TẠO MỚI (như cũ)
+            request.setAttribute("isEditMode", false);
+            request.setAttribute("showBackButton", true);
+            request.setAttribute("backActionUrl", "/businessTripStep3");
+            request.setAttribute("showSubmitButton", true);
+            request.setAttribute("submitActionUrl", "/businessTripSubmit");
+        }
+        
         request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp").forward(request, response);
     }
 }
