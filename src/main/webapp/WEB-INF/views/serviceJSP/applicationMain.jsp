@@ -36,14 +36,14 @@
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th><div></div>
+								<th><div>選択</div>
 									<input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
-								<th>金額（含税）</th>
+								<th>金額（税込）</th>
 								<th><select id="statusFilter" class="status-filter-button">
-										<option value="">状況</option>
+										<option value="">申請ステータス</option>
 										<option value="未提出">未提出</option>
 										<option value="提出済み">提出済み</option>
 										<option value="差戻し">差戻し</option>
