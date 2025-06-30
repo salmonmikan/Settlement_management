@@ -75,6 +75,7 @@
 		<% } %>
       <div class="btn-section">
         <%
+
 		  String position = (String) request.getAttribute("position");
 		  String menuPath = "staffMenu";
 		  if ("部長".equals(position)) {
