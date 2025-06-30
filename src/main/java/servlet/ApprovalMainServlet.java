@@ -86,7 +86,7 @@ public class ApprovalMainServlet extends HttpServlet {
 	            case "delete":
 	                for (String idStr : appIds) {
 	                    int appId = Integer.parseInt(idStr);
-	                    dao.deleteApplication(appId); // deleteApplication メソッドが必要
+	                    dao.deleteApplication(appId);
 	                }
 	                session.setAttribute("message", "選択された申請を削除しました。");
 	                break;

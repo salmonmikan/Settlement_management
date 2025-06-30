@@ -45,7 +45,7 @@
 <!--										<option value="提出済み">提出済み</option>-->
 <!--										<option value="差戻し">差戻し</option>-->
 										<option value="承認済み">承認済み</option>
-										<option value="支払い済">支払い済</option>
+										<option value="支払済み">支払済み</option>
 								</select></th>
 							</tr>
 						</thead>
