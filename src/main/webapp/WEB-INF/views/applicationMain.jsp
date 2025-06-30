@@ -4,7 +4,7 @@
 <%
 List<Application> applications = (List<Application>) request.getAttribute("applications");
 %>
-
+<!--使ってない？-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -39,9 +39,9 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 								<th>申請ID</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
-								<th>金額（含税）</th>
+								<th>金額（税込）</th>
 								<th><select id="statusFilter" class="status-filter-button">
-										<option value="">状況</option>
+										<option value="">ステータス</option>
 										<option value="未提出">未提出</option>
 										<option value="提出済み">提出済み</option>
 										<option value="差戻し">差戻し</option>
@@ -91,8 +91,7 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 						menuPath = "manageMenu";
 					}
 					%>
-					<button type="button"
-						onclick="location.href='<%=request.getContextPath()%>/menu'">戻る</button>
+<!--					<button type="button" onclick="location.href='<%=request.getContextPath()%>/menu'">戻る</button>-->
 					<button type="submit" onclick="return confirmSubmit()">提出</button>
 				</div>
 			</form>
