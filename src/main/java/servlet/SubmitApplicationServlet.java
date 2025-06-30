@@ -57,7 +57,7 @@ public class SubmitApplicationServlet extends HttpServlet {
                 case "edit":
                     if (appIds.length == 1) {
                         int appId = Integer.parseInt(appIds[0]);
-                        response.sendRedirect("applicationDetail?id=" + appId);
+                        response.sendRedirect("applicationDetail?id=" + appId + "&action=edit");
                         return;
                     } else {
                         request.setAttribute("message", "編集は1件のみ選択してください。");

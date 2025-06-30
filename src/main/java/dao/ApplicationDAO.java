@@ -382,6 +382,15 @@ public class ApplicationDAO extends DBConnection{
             throw e;
         }
     }
+    
+    public void rejectApplication(int applicationId) throws Exception {
+        String sql = "UPDATE application_header SET status = '差戻し', updated_at = NOW() WHERE application_id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, applicationId);
+            stmt.executeUpdate();
+        }
+    }
+
 //    
 //    public List<Application> getApplicationsByStaffIdAndStatus(String staffId, String status) throws Exception {
 //        List<Application> list = new ArrayList<>();

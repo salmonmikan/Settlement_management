@@ -23,7 +23,7 @@
         <div class="action-toolbar">
           <div class="spacer"></div>
           <button type="submit" name="action" value="post" id="postBtn" disabled onclick="return confirmSubmit()">提出</button>
-          <button type="submit" name="action" value="edit" id="editBtn" disabled>編集</button>
+          <button type="submit" name="action" value="edit" id="editBtn" disabled >編集</button>
           <button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
         </div>
 
