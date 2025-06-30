@@ -143,4 +143,11 @@ public class TransportationDAO {
         
         return appBean;
     }
+    public void deleteByApplicationId(int applicationId, Connection conn) throws SQLException {
+        String sql = "DELETE FROM transportation_request WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, applicationId);
+            ps.executeUpdate();
+        }
+    }
 }

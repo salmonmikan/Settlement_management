@@ -9,7 +9,8 @@ public class ReimbursementApplicationBean implements Serializable {
 
     private List<ReimbursementDetailBean> details = new ArrayList<>();
     private int totalAmount;
-
+    private int applicationId;
+//    private int setApplicationId;
     public void calculateTotalAmount() {
         this.totalAmount = (this.details == null) ? 0 : this.details.stream().mapToInt(ReimbursementDetailBean::getAmount).sum();
     }
@@ -19,4 +20,20 @@ public class ReimbursementApplicationBean implements Serializable {
     public void setDetails(List<ReimbursementDetailBean> details) { this.details = details; }
     public int getTotalAmount() { return totalAmount; }
     public void setTotalAmount(int totalAmount) { this.totalAmount = totalAmount; }
+
+	public int getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(int applicationId) {
+		this.applicationId = applicationId;
+	}
+
+//	public int getSetApplicationId() {
+//		return setApplicationId;
+//	}
+//
+//	public void setSetApplicationId(int setApplicationId) {
+//		this.setApplicationId = setApplicationId;
+//	}
 }

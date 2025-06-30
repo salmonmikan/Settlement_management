@@ -9,6 +9,15 @@ public class PaymentBean {
     private int amount;
     private String status;
 
+    private String createdAt;
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
     public int getApplicationId() {
         return applicationId;
     }

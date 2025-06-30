@@ -18,26 +18,35 @@ public class ReimbursementConfirmServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         
-        // ★★★ SỬA LỖI 1: Nhất quán sử dụng tên session attribute là "reimbursement"
         if (session == null || session.getAttribute("reimbursement") == null) {
             response.sendRedirect(request.getContextPath() + "/reimbursementInit");
             return;
         }
 
         ReimbursementApplicationBean reimbursement = (ReimbursementApplicationBean) session.getAttribute("reimbursement");
-        reimbursement.calculateTotalAmount(); // Tính tổng tiền
+        reimbursement.calculateTotalAmount();
+
+        Boolean isEditMode = (Boolean) session.getAttribute("isEditMode");
+        if (isEditMode == null) {
+            isEditMode = false;
+        }
 
         request.setAttribute("application_type", "立替金");
-        
-        // ★★★ SỬA LỖI 2: Đặt bean vào request với tên là "reimbursementApp" để JSP đọc được
         request.setAttribute("reimbursementApp", reimbursement); 
 
-        // Thiết lập các thuộc tính cho nút bấm
-        request.setAttribute("showBackButton", true);
-        request.setAttribute("showSubmitButton", true);
-        request.setAttribute("showEditButton", false);
-        request.setAttribute("backActionUrl", "/reimbursement"); 
-        request.setAttribute("submitActionUrl", "/reimbursementSubmit"); 
+        if (isEditMode) {
+            request.setAttribute("isEditMode", true);
+            request.setAttribute("showBackButton", true);
+            request.setAttribute("backActionUrl", "/reimbursement");
+            request.setAttribute("showSubmitButton", true);
+            request.setAttribute("submitActionUrl", "/reimbursementUpdate");
+        } else {
+            request.setAttribute("isEditMode", false);
+            request.setAttribute("showBackButton", true);
+            request.setAttribute("backActionUrl", "/reimbursement");
+            request.setAttribute("showSubmitButton", true);
+            request.setAttribute("submitActionUrl", "/reimbursementSubmit");
+        }
 
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp");
         rd.forward(request, response);

@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,7 @@ public class ReimbursementDAO {
      * Chèn một record vào bảng reimbursement_request
      * (Code gốc của bạn, giữ nguyên)
      */
-    public int insert(ReimbursementDetailBean detail, int applicationId, Connection conn) throws SQLException {
+	public int insert(ReimbursementDetailBean detail, int applicationId, Connection conn) throws SQLException {
         String sql = "INSERT INTO reimbursement_request " +
                      "(application_id, project_code, date, destinations, accounting_item, amount, report) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -28,17 +31,33 @@ public class ReimbursementDAO {
             stmt.setInt(1, applicationId);
             stmt.setString(2, detail.getProjectCode());
 
+            // === BẮT ĐẦU KHỐI CODE XỬ LÝ NGÀY THÁNG MỚI ===
             String dateStr = detail.getDate();
             if (dateStr != null && !dateStr.isBlank()) {
                 try {
-                    dateStr = dateStr.replace("/", "-");
-                    stmt.setDate(3, java.sql.Date.valueOf(dateStr));
-                } catch (IllegalArgumentException e) {
-                    throw new SQLException("日付の形式が不正です（形式: Findlay-MM-DD）: " + dateStr, e);
+                    String normalizedDateStr = dateStr.replace('/', '-');
+                    LocalDate localDate;
+                    
+                    try {
+                        // Thử parse với định dạng chuẩn YYYY-MM-DD trước
+                        localDate = LocalDate.parse(normalizedDateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+                    } catch (DateTimeParseException e) {
+                        // Nếu thất bại, thử parse với định dạng yy-MM-dd
+                        DateTimeFormatter twoDigitYearFormatter = DateTimeFormatter.ofPattern("yy-MM-dd");
+                        localDate = LocalDate.parse(normalizedDateStr, twoDigitYearFormatter);
+                    }
+                    
+                    // Chuyển đổi LocalDate thành java.sql.Date để lưu vào DB
+                    stmt.setDate(3, java.sql.Date.valueOf(localDate));
+
+                } catch (DateTimeParseException e) {
+                    // Nếu cả 2 định dạng đều không parse được, ném ra lỗi
+                    throw new SQLException("Định dạng ngày tháng không hợp lệ (cần YYYY-MM-DD hoặc yy-MM-dd): " + dateStr, e);
                 }
             } else {
                 stmt.setNull(3, java.sql.Types.DATE);
             }
+            // === KẾT THÚC KHỐI CODE XỬ LÝ NGÀY THÁNG MỚI ===
 
             stmt.setString(4, detail.getDestinations());
             stmt.setString(5, detail.getAccountingItem());
@@ -56,6 +75,7 @@ public class ReimbursementDAO {
             }
         }
     }
+    
 
     /**
      * === PHƯƠNG THỨC MỚI ĐƯỢC THÊM VÀO ===
@@ -80,11 +100,8 @@ public class ReimbursementDAO {
 
             while (rs.next()) {
                 ReimbursementDetailBean detail = new ReimbursementDetailBean();
-                
-                // Lấy khóa chính của dòng chi tiết này để tìm file đính kèm
                 int reimbursementId = rs.getInt("reimbursement_id");
                 
-                // Nạp dữ liệu từ DB vào bean
                 detail.setProjectCode(rs.getString("project_code"));
                 if (rs.getDate("date") != null) {
                     detail.setDate(rs.getDate("date").toString());
@@ -94,7 +111,6 @@ public class ReimbursementDAO {
                 detail.setAmount(rs.getInt("amount"));
                 detail.setReport(rs.getString("report"));
 
-                // Tải các file đính kèm cho chi tiết này
                 String fileSql = "SELECT original_file_name, stored_file_path FROM receipt_file WHERE block_id = ? AND block_type = 'reimbursement_request'";
                 try (PreparedStatement psFile = conn.prepareStatement(fileSql)) {
                     psFile.setInt(1, reimbursementId);
@@ -103,25 +119,36 @@ public class ReimbursementDAO {
                         while (rsFile.next()) {
                             UploadedFile file = new UploadedFile();
                             file.setOriginalFileName(rsFile.getString("original_file_name"));
-                            file.setTemporaryPath(rsFile.getString("stored_file_path"));
+                            String storedPath = rsFile.getString("stored_file_path");
+                            file.setTemporaryPath(storedPath);
+                            if (storedPath != null && storedPath.contains("/")) {
+                                file.setUniqueStoredName(storedPath.substring(storedPath.lastIndexOf('/') + 1));
+                            }
                             files.add(file);
                         }
                         detail.setTemporaryFiles(files);
                     }
                 }
-                
                 details.add(detail);
             }
-            
             appBean.setDetails(details);
-            appBean.calculateTotalAmount(); // Tính tổng tiền
-
+            appBean.calculateTotalAmount();
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
-        
         return appBean;
+    }
+
+    /**
+     * Xóa tất cả các chi tiết của một đơn 立替金.
+     */
+    public void deleteByApplicationId(int applicationId, Connection conn) throws SQLException {
+        String sql = "DELETE FROM reimbursement_request WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, applicationId);
+            ps.executeUpdate();
+        }
     }
 }

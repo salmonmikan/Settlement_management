@@ -13,11 +13,9 @@ import util.DBConnection;
 
 public class ApplicationDAO {
 
-    // (Tất cả các phương thức khác của bạn từ insertApplication đến getApplicationsByApprover được giữ nguyên...)
-    
     public int insertApplication(String type, String staffId, int amount, Connection conn) throws SQLException {
-        String sql = "INSERT INTO application_header (application_type, staff_id, status, amount, application_date, created_at) " +
-                     "VALUES (?, ?, '未提出', ?, NOW(), NOW())";
+        String sql = "INSERT INTO application_header (application_type, staff_id, status, amount, created_at) " +
+                     "VALUES (?, ?, '未提出', ?, NOW())";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, type);
             ps.setString(2, staffId);
@@ -52,7 +50,7 @@ public class ApplicationDAO {
 
     public List<Application> getAllApplications() throws Exception {
         List<Application> list = new ArrayList<>();
-        String sql = "SELECT application_id, application_type, application_date, amount, status FROM application_header ORDER BY application_id DESC";
+        String sql = "SELECT application_id, application_type, created_at, amount, status FROM application_header ORDER BY application_id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -60,7 +58,7 @@ public class ApplicationDAO {
                 Application a = new Application();
                 a.setApplicationId(rs.getInt("application_id"));
                 a.setApplicationType(rs.getString("application_type"));
-                a.setApplicationDate(rs.getTimestamp("application_date"));
+                a.setCreatedAt(rs.getTimestamp("created_at"));
                 a.setAmount(rs.getInt("amount"));
                 a.setStatus(rs.getString("status"));
                 list.add(a);
@@ -71,7 +69,7 @@ public class ApplicationDAO {
 
     public List<Application> getApplicationsByStaffId(String staffId) throws Exception {
         List<Application> list = new ArrayList<>();
-        String sql = "SELECT application_id, application_type, application_date, amount, status FROM application_header WHERE staff_id = ? ORDER BY application_id DESC";
+        String sql = "SELECT application_id, application_type, created_at, amount, status FROM application_header WHERE staff_id = ? ORDER BY application_id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, staffId);
@@ -80,7 +78,7 @@ public class ApplicationDAO {
                     Application a = new Application();
                     a.setApplicationId(rs.getInt("application_id"));
                     a.setApplicationType(rs.getString("application_type"));
-                    a.setApplicationDate(rs.getTimestamp("application_date"));
+                    a.setCreatedAt(rs.getTimestamp("created_at"));
                     a.setAmount(rs.getInt("amount"));
                     a.setStatus(rs.getString("status"));
                     list.add(a);
@@ -124,7 +122,7 @@ public class ApplicationDAO {
         }
         return null;
     }
-    
+
     public String getApplicationTypeById(int applicationId) throws Exception {
         String sql = "SELECT application_type FROM application_header WHERE application_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -145,17 +143,17 @@ public class ApplicationDAO {
             ps.executeUpdate();
         }
     }
-    
+
     public List<Application> getApplicationsByApprover(String approverId) throws Exception {
         List<Application> list = new ArrayList<>();
         String sql = """
             SELECT 
-                ah.application_id, ah.application_type, ah.application_date,
+                ah.application_id, ah.application_type, ah.created_at,
                 ah.amount, ah.status, s.staff_id, s.name
             FROM application_header ah
             JOIN staff s ON ah.staff_id = s.staff_id
             WHERE ah.approver_id = ? AND ah.delete_flag = 0
-            ORDER BY ah.application_date DESC
+            ORDER BY ah.created_at DESC
             """;
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -165,7 +163,7 @@ public class ApplicationDAO {
                     Application a = new Application();
                     a.setApplicationId(rs.getInt("application_id"));
                     a.setApplicationType(rs.getString("application_type"));
-                    a.setApplicationDate(rs.getTimestamp("application_date"));
+                    a.setCreatedAt(rs.getTimestamp("created_at"));
                     a.setAmount(rs.getInt("amount"));
                     a.setStatus(rs.getString("status"));
                     a.setStaffId(rs.getString("staff_id"));
@@ -177,12 +175,7 @@ public class ApplicationDAO {
         return list;
     }
 
-    /**
-     * === PHƯƠNG THỨC ĐÃ SỬA LẠI TÊN BẢNG CHO ĐÚNG ===
-     * Cập nhật số tiền và ngày cập nhật cho một đơn trong transaction.
-     */
     public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
-        // Sửa "applications" thành "application_header"
         String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, totalAmount);

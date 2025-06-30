@@ -49,6 +49,8 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip2.jsp").forward(request, response);
     }
 
+ // Trong file service/BusinessTripStep2Servlet.java
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -59,109 +61,116 @@ public class BusinessTripStep2Servlet extends HttpServlet {
             return;
         }
 
+        String action = request.getParameter("action");
+        if ("go_back".equals(action)) {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+            return;
+        }
+
+        // === BẮT ĐẦU LOGIC "CẬP NHẬT TẠI CHỖ" MỚI ===
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
 
-        // ★★★ XỬ LÝ FILE CẦN XOÁ (TỪ NÚT × TRÊN GIAO DIỆN) ★★★
+        // 1. Xử lý các file bị người dùng bấm nút xóa (×)
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
             List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
             String realPath = getServletContext().getRealPath("");
-
             for (Step2Detail detail : trip.getStep2Details()) {
+                // Xóa file vật lý
                 detail.getTemporaryFiles().stream()
                     .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
                     .forEach(file -> {
                         try {
                             Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
                         } catch (IOException e) {
-                            System.err.println("Không thể xoá file: " + file.getTemporaryPath());
-                            e.printStackTrace();
+                            System.err.println("Không thể xoá file tạm: " + file.getTemporaryPath() + " - " + e.getMessage());
                         }
                     });
-
+                // Xóa file khỏi bean trong session
                 detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
             }
         }
 
-        // ★ BƯỚC 1: Lưu lại danh sách chi tiết cũ trước khi xử lý
-        List<Step2Detail> oldDetails = new ArrayList<>(trip.getStep2Details());
-
-        // Xóa danh sách hiện tại để xây dựng lại
-        trip.getStep2Details().clear();
-
+        // 2. Lấy dữ liệu từ form
         String[] regionTypes = request.getParameterValues("regionType[]");
+        List<Step2Detail> detailsInSession = trip.getStep2Details();
+        int numSubmittedBlocks = (regionTypes != null) ? regionTypes.length : 0;
+        
+        // 3. Cập nhật hoặc thêm mới các block chi tiết
+        String[] tripTypes = request.getParameterValues("tripType[]");
+        String[] hotels = request.getParameterValues("hotel[]");
+        String[] burdens = request.getParameterValues("burden[]");
+        String[] hotelFees = request.getParameterValues("hotelFee[]");
+        String[] dailyAllowances = request.getParameterValues("dailyAllowance[]");
+        String[] days = request.getParameterValues("days[]");
+        String[] expenseTotals = request.getParameterValues("expenseTotal[]");
+        String[] memos = request.getParameterValues("memo[]");
 
-        if (regionTypes != null) {
-            Collection<Part> allParts = request.getParts();
-            String[] tripTypes = request.getParameterValues("tripType[]");
-            String[] hotels = request.getParameterValues("hotel[]");
-            String[] burdens = request.getParameterValues("burden[]");
-            String[] hotelFees = request.getParameterValues("hotelFee[]");
-            String[] dailyAllowances = request.getParameterValues("dailyAllowance[]");
-            String[] days = request.getParameterValues("days[]");
-            String[] expenseTotals = request.getParameterValues("expenseTotal[]");
-            String[] memos = request.getParameterValues("memo[]");
+        for (int i = 0; i < numSubmittedBlocks; i++) {
+            Step2Detail detail;
+            if (i < detailsInSession.size()) {
+                // Nếu block đã tồn tại trong session -> cập nhật nó
+                detail = detailsInSession.get(i);
+            } else {
+                // Nếu là block mới (do người dùng bấm '+') -> tạo mới và thêm vào session
+                detail = new Step2Detail();
+                detailsInSession.add(detail);
+            }
+            
+            // Cập nhật các thuộc tính văn bản
+            detail.setRegionType(regionTypes[i]);
+            detail.setTripType(tripTypes[i]);
+            detail.setHotel(hotels[i]);
+            detail.setBurden(burdens[i]);
+            detail.setHotelFee(Integer.parseInt(hotelFees[i]));
+            detail.setDailyAllowance(Integer.parseInt(dailyAllowances[i]));
+            detail.setDays(Integer.parseInt(days[i]));
+            detail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
+            detail.setMemo(memos[i]);
+        }
 
-            for (int i = 0; i < regionTypes.length; i++) {
-                Step2Detail newDetail = new Step2Detail();
-                try {
-                    newDetail.setRegionType(regionTypes[i]);
-                    newDetail.setTripType(tripTypes[i]);
-                    newDetail.setHotel(hotels[i]);
-                    newDetail.setBurden(burdens[i]);
-                    newDetail.setHotelFee(Integer.parseInt(hotelFees[i]));
-                    newDetail.setDailyAllowance(Integer.parseInt(dailyAllowances[i]));
-                    newDetail.setDays(Integer.parseInt(days[i]));
-                    newDetail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
-                    newDetail.setMemo(memos[i]);
-                } catch (Exception e) {
-                    System.err.println("Lỗi parse dữ liệu text ở Step 2, index " + i + ": " + e.getMessage());
-                }
+        // 4. Xóa các block chi tiết nếu người dùng đã xóa trên giao diện
+        while (detailsInSession.size() > numSubmittedBlocks) {
+            detailsInSession.remove(detailsInSession.size() - 1);
+        }
 
-                String fileInputName = "receipt_allowance_" + i;
-                List<Part> newFileParts = allParts.stream()
-                    .filter(part -> fileInputName.equals(part.getName()) && part.getSize() > 0)
-                    .collect(Collectors.toList());
+        // 5. Xử lý các file MỚI được tải lên
+        Collection<Part> allParts = request.getParts();
+        for (int i = 0; i < numSubmittedBlocks; i++) {
+            String fileInputName = "receipt_allowance_" + i;
+            List<Part> newFileParts = allParts.stream()
+                .filter(part -> fileInputName.equals(part.getName()) && part.getSize() > 0)
+                .collect(Collectors.toList());
 
-                if (!newFileParts.isEmpty()) {
-                    newDetail.getTemporaryFiles().clear();
-                    for (Part filePart : newFileParts) {
-                        try {
-                            String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                            String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-                            String absoluteUploadPath = getServletContext().getRealPath(TEMP_UPLOAD_DIR);
-                            File uploadDir = new File(absoluteUploadPath);
-                            if (!uploadDir.exists()) uploadDir.mkdirs();
-                            File savedFile = new File(uploadDir, uniqueFileName);
-                            try (InputStream input = filePart.getInputStream()) {
-                                Files.copy(input, savedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            }
-                            UploadedFile uploadedFile = new UploadedFile();
-                            uploadedFile.setOriginalFileName(originalFileName);
-                            uploadedFile.setUniqueStoredName(uniqueFileName);
-                            uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
-                            newDetail.getTemporaryFiles().add(uploadedFile);
-                        } catch (Exception e) {
-                            System.err.println("Lỗi xử lý file upload ở Step 2, index " + i + ": " + e.getMessage());
+            if (!newFileParts.isEmpty()) {
+                Step2Detail detail = detailsInSession.get(i);
+                // Xóa các file cũ trong bean (nếu có) trước khi thêm file mới
+                detail.getTemporaryFiles().clear(); 
+                for (Part filePart : newFileParts) {
+                    // ... (Copy/paste code xử lý upload file của bạn vào đây)
+                    try {
+                        String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                        String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+                        String absoluteUploadPath = getServletContext().getRealPath(TEMP_UPLOAD_DIR);
+                        File uploadDir = new File(absoluteUploadPath);
+                        if (!uploadDir.exists()) uploadDir.mkdirs();
+                        File savedFile = new File(uploadDir, uniqueFileName);
+                        try (InputStream input = filePart.getInputStream()) {
+                            Files.copy(input, savedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         }
-                    }
-                } else {
-                    if (i < oldDetails.size()) {
-                        newDetail.setTemporaryFiles(oldDetails.get(i).getTemporaryFiles());
+                        UploadedFile uploadedFile = new UploadedFile();
+                        uploadedFile.setOriginalFileName(originalFileName);
+                        uploadedFile.setUniqueStoredName(uniqueFileName);
+                        uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
+                        detail.getTemporaryFiles().add(uploadedFile);
+                    } catch (Exception e) {
+                        System.err.println("Lỗi xử lý file upload ở Step 2, index " + i + ": " + e.getMessage());
                     }
                 }
-
-                trip.getStep2Details().add(newDetail);
             }
         }
-
+        
         session.setAttribute("trip", trip);
-
-        String action = request.getParameter("action");
-        if ("go_back".equals(action)) {
-            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/businessTripStep3");
-        }
+        response.sendRedirect(request.getContextPath() + "/businessTripStep3");
     }
 }

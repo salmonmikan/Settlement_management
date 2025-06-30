@@ -1,11 +1,15 @@
-// File: service/EditApplicationServlet.java (Code mới)
 package service;
 
 import java.io.IOException;
 
 import bean.BusinessTripBean;
+import bean.ReimbursementApplicationBean;
+import bean.TransportationApplicationBean;
+import dao.ApplicationDAO;
 import dao.BusinessTripApplicationDAO;
-import jakarta.servlet.RequestDispatcher;
+import dao.ReimbursementDAO;
+import dao.TransportationDAO;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,38 +24,52 @@ public class EditApplicationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         
-        // Dọn dẹp session cũ trước khi bắt đầu
         session.removeAttribute("trip");
+        session.removeAttribute("reimbursement");
+        session.removeAttribute("transportationApp");
         session.removeAttribute("isEditMode");
 
         try {
             int applicationId = Integer.parseInt(request.getParameter("id"));
-
-            // TODO: Trong tương lai, thêm logic để xác định loại đơn và gọi DAO tương ứng
-            BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
-            BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
-
-            if (bean == null) {
-                response.sendRedirect(request.getContextPath() + "/applicationMain?error=not_found");
-                return;
+            
+            ApplicationDAO appDAO = new ApplicationDAO();
+            String type = appDAO.getApplicationTypeById(applicationId);
+            
+            if (type == null) {
+                 response.sendRedirect(request.getContextPath() + "/applicationMain?error=type_not_found");
+                 return;
             }
             
-            // Thêm application_id vào bean để dùng cho việc update sau này
-            bean.getStep1Data().setApplicationId(applicationId); 
-
-            // === BƯỚC QUAN TRỌNG ===
-            // 1. Đặt bean vào SESSION với tên là "trip" để các servlet Step 1, 2, 3 có thể tái sử dụng
-            session.setAttribute("trip", bean);
+            String targetServlet = "";
             
-            // 2. Đặt một cờ "isEditMode" vào session để các servlet khác biết đây là luồng sửa
+            type = type.trim();
+
+            if ("出張費申請".equals(type)) {
+                BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
+                BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
+                bean.getStep1Data().setApplicationId(applicationId);
+                session.setAttribute("trip", bean);
+                targetServlet = "/businessTripStep1";
+                
+            } else if ("交通費".equals(type)) {
+                TransportationDAO dao = new TransportationDAO();
+                TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
+                // Bạn cần thêm trường applicationId và getter/setter vào TransportationApplicationBean
+                // bean.setApplicationId(applicationId); 
+                session.setAttribute("transportationApp", bean);
+                targetServlet = "/transportation"; // Giả định servlet đăng ký là /transportation
+
+            } else if ("立替金".equals(type)) {
+                ReimbursementDAO dao = new ReimbursementDAO();
+                ReimbursementApplicationBean bean = dao.loadByApplicationId(applicationId);
+                // Bạn cần thêm trường applicationId và getter/setter vào ReimbursementApplicationBean
+                bean.setApplicationId(applicationId); 
+                session.setAttribute("reimbursement", bean);
+                targetServlet = "/reimbursement";
+            }
+            
             session.setAttribute("isEditMode", true);
-
-            // 3. Đặt bean vào REQUEST cũng với tên "trip" để trang JSP đầu tiên hiển thị được ngay
-            request.setAttribute("trip", bean);
-            
-            // Chuyển hướng đến servlet của Step 1 bằng REDIRECT
-            // để nó có thể load danh sách project giống như luồng đăng ký mới
-            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+            response.sendRedirect(request.getContextPath() + targetServlet);
 
         } catch (Exception e) {
             e.printStackTrace();
