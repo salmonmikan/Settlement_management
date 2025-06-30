@@ -26,7 +26,7 @@ if (mode == null)
 				<h2><%="approver".equals(mode) ? "承認一覧" : "管理部：承認済み一覧"%></h2>
 
 
-			<form action="#" method="post">
+			<form action="approverApplications" method="post">
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
