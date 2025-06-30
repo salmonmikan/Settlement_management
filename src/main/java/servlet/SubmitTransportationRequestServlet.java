@@ -13,9 +13,28 @@
 //import bean.TransportationRequest;
 //import dao.TransportationRequestDAO;
 //
-//@WebServlet("/submitTransportationRequest")
+/**
+ * SubmitTransportationRequestServletは、交通費申請内容をデータベースに登録するサーブレットです。
+ *
+ * <p>セッションに一時保存された申請データを取り出し、まとめて登録処理を行います。</p>
+ */
+//@WebServlet("/submitTransportationRequest_ano")
 //public class SubmitTransportationRequestServlet extends HttpServlet {
 //
+/**
+ * POSTリクエストを処理し、セッション内の交通費申請リストをデータベースに登録します。
+ *
+ * <p>
+ * ・セッションから申請リストを取得<br>
+ * ・1件ずつ登録処理を実行<br>
+ * ・登録件数を結果画面に渡す
+ * </p>
+ *
+ * @param request  リクエスト情報
+ * @param response レスポンス情報
+ * @throws ServletException サーブレットエラー時にスローされます
+ * @throws IOException 入出力エラー時にスローされます
+ */
 //    @Override
 //    protected void doPost(HttpServletRequest request, HttpServletResponse response)
 //            throws ServletException, IOException {

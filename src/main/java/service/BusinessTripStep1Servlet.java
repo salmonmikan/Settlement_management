@@ -29,6 +29,7 @@ public class BusinessTripStep1Servlet extends HttpServlet {
 
     /**
      * Step 2から「戻る」ボタンが押された場合に呼ばれる。
+     * プロジェクト一覧を取得し、Step1の画面へフォワードする。
      * (Được gọi khi nút "Back" được nhấn từ Step 2)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -61,6 +62,7 @@ public class BusinessTripStep1Servlet extends HttpServlet {
 
     /**
      * Step 1から「次へ」ボタンが押された場合に呼ばれる。
+     * 入力値をBeanに反映し、滞在日数を計算。次のステップへリダイレクト。
      * (Được gọi khi nút "Next" được nhấn từ Step 1)
      */
  // Trong file service/BusinessTripStep1Servlet.java
