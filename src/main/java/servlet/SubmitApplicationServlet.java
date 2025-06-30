@@ -19,7 +19,7 @@
  * 対象：未提出状態の申請のみ
  * 処理：申請ステータスの更新と承認者の設定
  */
-//@WebServlet("/submitApplication")
+//@WebServlet("/submitApplication_ano")
 //public class SubmitApplicationServlet extends HttpServlet {
 /**
  * POSTリクエストを処理し、選択された申請を提出状態に更新します。

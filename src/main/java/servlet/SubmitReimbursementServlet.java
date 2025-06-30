@@ -17,7 +17,7 @@
  *
  * <p>入力された複数の立替金情報を一括でデータベースに登録します。</p>
  */
-//@WebServlet("/submitReimbursement")
+//@WebServlet("/submitReimbursement_ano")
 //public class SubmitReimbursementServlet extends HttpServlet {
 //
  /**

@@ -18,7 +18,7 @@
  *
  * <p>セッションに一時保存された申請データを取り出し、まとめて登録処理を行います。</p>
  */
-//@WebServlet("/submitTransportationRequest")
+//@WebServlet("/submitTransportationRequest_ano")
 //public class SubmitTransportationRequestServlet extends HttpServlet {
 //
 /**
