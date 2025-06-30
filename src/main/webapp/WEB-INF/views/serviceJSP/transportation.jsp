@@ -106,6 +106,7 @@
               </div>
               <div class="form-group"><label>合計</label><input type="number" name="expenseTotal[]" value="${detail.expenseTotal}" readonly></div>
               <div class="form-group"><label>摘要</label><textarea name="transMemo[]" placeholder="メモなど">${detail.transMemo}</textarea></div>
+              <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください">${detail.report}</textarea></div>
               <div class="form-group">
                 <label>領収書添付（交通費）</label>
                 <input type="file" name="receipt_transportation_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
@@ -191,6 +192,7 @@
         </div>
         <div class="form-group"><label>合計</label><input type="number" name="expenseTotal[]" readonly></div>
         <div class="form-group"><label>摘要</label><textarea name="transMemo[]" placeholder="メモなど"></textarea></div>
+        <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください"></textarea></div>
         <div class="form-group">
             <label>領収書添付（交通費）</label>
             <input type="file" name="receipt_transportation_" multiple class="fileInput" onchange="handleFileSelection(this)">

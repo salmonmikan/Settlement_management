@@ -6,9 +6,9 @@ package bean;
  */
 public class TransportationRequest {
     private String transportationRequestId;
-    private String staffId;
     private String projectCode;
     private String date;
+    private String destination;
     private String departureStation;
     private String arrivalStation;
     private int amount;
@@ -17,6 +17,7 @@ public class TransportationRequest {
     private String payer;
     private int totalAmount;
     private String abstractNote;
+    private String report;
 
     /**
      * デフォルトコンストラクタ。
@@ -38,13 +39,13 @@ public class TransportationRequest {
      * @param totalAmount 合計金額
      * @param abstractNote 摘要
      */
-    public TransportationRequest(String transportationRequestId, String staffId, String projectCode, String date,
+    public TransportationRequest(String transportationRequestId, String projectCode, String date,String destination,
                                  String departureStation, String arrivalStation, String category, String transportType,
-                                 String payer, int amount, int totalAmount, String abstractNote) {
+                                 String payer, int amount, int totalAmount, String abstractNote, String report) {
         this.transportationRequestId = transportationRequestId;
-        this.staffId = staffId;
         this.projectCode = projectCode;
         this.date = date;
+        this.destination = destination; 
         this.departureStation = departureStation;
         this.arrivalStation = arrivalStation;
         this.category = category;
@@ -53,6 +54,7 @@ public class TransportationRequest {
         this.amount = amount;
         this.totalAmount = totalAmount;
         this.abstractNote = abstractNote;
+        this.report = report;
     }
 
     /**
@@ -64,16 +66,6 @@ public class TransportationRequest {
      * 申請IDを設定します。
      */
     public void setTransportationRequestId(String transportationRequestId) { this.transportationRequestId = transportationRequestId; }
-
-    /**
-     * 社員IDを取得します。
-     */
-    public String getStaffId() { return staffId; }
-
-    /**
-     * 社員IDを設定します。
-     */
-    public void setStaffId(String staffId) { this.staffId = staffId; }
 
     /**
      * プロジェクトコードを取得します。
@@ -94,7 +86,11 @@ public class TransportationRequest {
      * 日付を設定します。
      */
     public void setDate(String date) { this.date = date; }
-
+    
+    
+    //ソンが追加する
+    public String getDestination() { return destination; }
+    public void setDestination(String destination) { this.destination = destination; }
     /**
      * 出発地を取得します。
      */
@@ -174,4 +170,9 @@ public class TransportationRequest {
      * 摘要（備考）を設定します。
      */
     public void setAbstractNote(String abstractNote) { this.abstractNote = abstractNote; }
+    
+    
+  //ソンが追加する
+    public String getReport() { return report; }
+    public void setReport(String report) { this.report = report; }
 }

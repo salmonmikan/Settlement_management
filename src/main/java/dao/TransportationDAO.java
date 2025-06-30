@@ -22,9 +22,9 @@ public class TransportationDAO {
      */
     public int insert(TransportationDetailBean detail, int applicationId, Connection conn) throws SQLException {
         String sql = "INSERT INTO transportation_request " +
-                     "(application_id, project_code, date, departure_station, arrival_station, " +
-                     "transport_type, amount, category, payer, abstract_note) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "(application_id, project_code, date, destination, departure_station, arrival_station, " +
+                     "transport_type, amount, category, payer, abstract_note, report) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, applicationId);
@@ -44,19 +44,21 @@ public class TransportationDAO {
 
             // Chú ý: trong DB là departure_station và arrival_station
             // nhưng bean của bạn lại là departure và arrival. Ta sẽ map chúng ở phần load.
-            stmt.setString(4, detail.getDeparture());
-            stmt.setString(5, detail.getArrival());
-            stmt.setString(6, detail.getTransport());
+            stmt.setString(4,detail.getDestination());
+            stmt.setString(5, detail.getDeparture());
+            stmt.setString(6, detail.getArrival());
+            stmt.setString(7, detail.getTransport());
             
             // Chú ý: trong DB là amount nhưng bean là fareAmount
-            stmt.setInt(7, detail.getFareAmount());
+            stmt.setInt(8, detail.getFareAmount());
             
             // Chú ý: trong DB là category và payer, nhưng bean là transTripType và burden
-            stmt.setString(8, detail.getTransTripType());
-            stmt.setString(9, detail.getBurden());
+            stmt.setString(9, detail.getTransTripType());
+            stmt.setString(10, detail.getBurden());
             
             // Chú ý: trong DB là abstract_note nhưng bean là transMemo
-            stmt.setString(10, detail.getTransMemo());
+            stmt.setString(11, detail.getTransMemo());
+            stmt.setString(12, detail.getReport());
 
             stmt.executeUpdate();
 
@@ -108,7 +110,8 @@ public class TransportationDAO {
                 detail.setFareAmount(rs.getInt("amount"));              // DB: amount -> Bean: fareAmount
                 detail.setTransTripType(rs.getString("category"));      // DB: category -> Bean: transTripType
                 detail.setBurden(rs.getString("payer"));                // DB: payer -> Bean: burden
-                detail.setTransMemo(rs.getString("abstract_note"));     // DB: abstract_note -> Bean: transMemo
+                detail.setTransMemo(rs.getString("abstract_note")); // DB: abstract_note -> Bean: transMemo
+                detail.setReport(rs.getString("report"));
                 
                 // Tính toán expenseTotal (nếu cần, có thể business logic khác)
                 detail.setExpenseTotal(rs.getInt("amount")); 
