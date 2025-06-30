@@ -57,7 +57,7 @@ public class EditApplicationServlet extends HttpServlet {
                 // Bạn cần thêm trường applicationId và getter/setter vào TransportationApplicationBean
                 // bean.setApplicationId(applicationId); 
                 session.setAttribute("transportationApp", bean);
-                targetServlet = "/transportation"; // Giả định servlet đăng ký là /transportation
+                targetServlet = "/transportationRequest"; // Giả định servlet đăng ký là /transportation
 
             } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();
