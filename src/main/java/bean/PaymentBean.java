@@ -1,5 +1,7 @@
 package bean;
 
+import java.sql.Timestamp;
+
 /**
  * 支払処理に関連する申請情報を保持するBeanクラス。
  * <p>
@@ -11,6 +13,8 @@ public class PaymentBean {
     private String staffName;
     private String applicationType;
     private String applicationDate;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
     private int amount;
     private String status;
 
@@ -19,13 +23,11 @@ public class PaymentBean {
      * @return 申請ID
      */
 
-    private String createdAt;
-
-    public String getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
     
@@ -136,4 +138,12 @@ public class PaymentBean {
     public void setStatus(String status) {
         this.status = status;
     }
+
+	public Timestamp getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Timestamp updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 }

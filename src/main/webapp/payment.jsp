@@ -17,7 +17,7 @@
 	<div class="page-container">
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 		<div class="content-container">
-			<h2>申請一覧</h2>
+			<h2>支払い管理</h2>
 
 			<form action="payment" method="post">
 				<div class="action-toolbar">
@@ -29,22 +29,31 @@
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th><div>All</div> <input type="checkbox" id="selectAll"></th>
+								<th><div>選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
+								<th>更新時間</th>
 								<th>金額（税込）</th>
-								<th>ステータス</th>
+								<th><select id="statusFilter" class="status-filter-button">
+										<option value="">申請ステータス</option>
+<!--										<option value="未提出">未提出</option>-->
+<!--										<option value="提出済み">提出済み</option>-->
+<!--										<option value="差戻し">差戻し</option>-->
+										<option value="承認済み">承認済み</option>
+										<option value="支払い済">支払い済</option>
+								</select></th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:forEach var="p" items="${paymentList}">
-								<tr class="clickable-row" data-id="${p.applicationId}">
+								<tr class="clickable-row" data-id="${p.applicationId}" data-status="${p.status}">
 									<td><input type="checkbox" class="row-check" name="appIds"
 										value="${p.applicationId}"></td>
 									<td>${p.applicationId}</td>
 									<td>${p.applicationType}</td>
-									<td>${p.applicationDate}</td>
+									<td>${p.createdAt}</td>
+									<td>${p.updatedAt}</td>
 									<td><fmt:formatNumber value="${p.amount}" type="number"
 											pattern="#,##0" />円</td>
 									<td>${p.status}</td>
@@ -53,9 +62,9 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="btn-section">
-					<button type="button" onclick="history.back()">戻る</button>
-				</div>
+<!--				<div class="btn-section">-->
+<!--					<button type="button" onclick="history.back()">戻る</button>-->
+<!--				</div>-->
 			</form>
 		</div>
 	</div>
@@ -78,12 +87,29 @@
 		paidBtn.disabled = (checked.length === 0);
 	}
 
+	document.getElementById('statusFilter').addEventListener('change', function () {
+	    const selected = this.value;
+	    const rows = document.querySelectorAll('#applicationTable tbody tr');
+	    rows.forEach(row => {
+	      const status = row.getAttribute('data-status');
+	      row.style.display = (!selected || selected === status) ? '' : 'none';
+	    });
+	  });
+	
 	document.querySelectorAll('.clickable-row').forEach(row => {
-		row.addEventListener('click', function (e) {
-			if (e.target.tagName === 'INPUT') return;
-			const id = this.dataset.id;
-			window.location.href = `applicationDetail?id=${id}`;
-		});
+	    row.addEventListener('click', function (e) {
+	        // Bỏ qua sự kiện nếu người dùng bấm vào ô checkbox đầu tiên
+	        const targetCell = e.target.closest('td');
+	        if (targetCell && targetCell.cellIndex === 0) {
+	            return;
+	        }
+
+	        // Lấy ID của đơn từ thuộc tính data-id
+	        const id = this.dataset.id;
+
+	        // Luôn luôn điều hướng đến ApplicationDetailServlet cho tất cả các loại đơn
+	        window.location.href = 'applicationDetail?id=' + id;
+	    });
 	});
 	</script>
 </body>
