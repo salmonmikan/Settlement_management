@@ -18,7 +18,7 @@
 /**
  * TransportationRequestServlet は、交通費申請画面の表示および申請情報の確認画面への遷移を担当するサーブレットです。
  */
-//@WebServlet("/transportationRequest")
+//@WebServlet("/transportationRequest_ano")
 //public class TransportationRequestServlet extends HttpServlet {
 //
 /**
