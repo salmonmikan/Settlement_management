@@ -120,7 +120,7 @@ public class PositionControlServlet extends HttpServlet {
                     return;
 
                 default:
-                    session.setAttribute("errorMsg", "不正なアクションです。");
+//                    session.setAttribute("errorMsg", "不正なアクションです。");
                     break;
             }
         } catch (Exception e) {
