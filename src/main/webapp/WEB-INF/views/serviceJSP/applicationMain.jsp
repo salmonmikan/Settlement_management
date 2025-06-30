@@ -23,21 +23,19 @@
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 		<div class="content-container">
 			<h2>申請一覧</h2>
-
-			<!-- <div class="action-toolbar">
-      <div class="spacer"></div>
-      <button id="editBtn" disabled>編集</button>
-      <button id="deleteBtn" disabled>削除</button>
-    </div> -->
-			<!-- あとで作成する -->
-
-			<form action="submitApplication" method="post">
+			<form action="submitApplication" method="post" id="submitForm">
+				<div class="action-toolbar">
+					<div class="spacer"></div>
+					<button type="submit" name="action" value="edit" id="editBtn"
+						disabled>編集</button>
+					<button type="submit" name="action" value="delete" id="deleteBtn"
+						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+				</div>
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th><div>選択</div>
-									<input type="checkbox" id="selectAll"></th>
+								<th><div>選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
@@ -68,10 +66,12 @@
 						</tbody>
 					</table>
 				</div>
-				<% Boolean submitted = (Boolean) request.getAttribute("submitSuccess"); %>
-				<% if (submitted != null && submitted) { %>
-				<div style="color: rgb(127, 15, 59); margin: 0 auto;">
-					提出が完了しました。</div>
+				
+				<% if (session.getAttribute("submitSuccess") != null) { %>
+				 <script>
+				    alert('申請を提出しました。');
+				 </script>
+				 <% session.removeAttribute("submitSuccess"); %>
 				<% } %>
 				<div class="btn-section">
 					<%
@@ -194,7 +194,8 @@
 	  }
 	
 	  function submitForm() {
-	    document.querySelector('form').submit();
+<!--		  alert("submitForm() 発火！");-->
+		  document.getElementById('submitForm').submit();
 	  }
 	
 	  window.addEventListener("pageshow", function () {
