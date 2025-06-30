@@ -54,6 +54,7 @@ public class DepartmentServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
+    	session.removeAttribute("errorMsg"); // 念のため。次の遷移先にエラー処理がある
         DepartmentDAO dao = new DepartmentDAO();
 
         String action = request.getParameter("action");

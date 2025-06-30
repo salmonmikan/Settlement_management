@@ -50,22 +50,22 @@ public class HomeServlet extends HttpServlet {
         // --- ĐOẠN SWITCH ĐÃ SỬA LỖI ---
         // Logic phân quyền dựa trên role thực tế của bạn
         switch (role) {
-            case STAFF:
-                // Nhân viên thường sẽ được chuyển đến menu chính của nhân viên
-                req.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(req, res);
-                break;
-
-            case BUCHO:
-                // Trưởng phòng sẽ được chuyển đến menu của trưởng phòng
-                req.getRequestDispatcher("/WEB-INF/views/buchouMain.jsp").forward(req, res);
-                break;
-
-            case MANAGEMENT:
-                // Quản lý (kế toán) sẽ được chuyển đến menu của quản lý
-                req.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(req, res);
-                break;
-
-            case UNKNOWN:
+//            case STAFF:
+//                // Nhân viên thường sẽ được chuyển đến menu chính của nhân viên
+//                req.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(req, res);
+//                break;
+//
+//            case BUCHO:
+//                // Trưởng phòng sẽ được chuyển đến menu của trưởng phòng
+//                req.getRequestDispatcher("/WEB-INF/views/buchouMain.jsp").forward(req, res);
+//                break;
+//
+//            case MANAGEMENT:
+//                // Quản lý (kế toán) sẽ được chuyển đến menu của quản lý
+//                req.getRequestDispatcher("/WEB-INF/views/managerMain.jsp").forward(req, res);
+//                break;
+//
+//            case UNKNOWN:
             default:
                 // Các trường hợp không xác định hoặc vai trò khác,
                 // mặc định sẽ vào trang của nhân viên thường.

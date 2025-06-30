@@ -23,7 +23,8 @@ if (mode == null)
 	<div class="page-container">
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 		<div class="content-container">
-			<h2><%="approver".equals(mode) ? "承認一覧" : "管理部：承認済み一覧"%></h2>
+				<h2><%="approver".equals(mode) ? "承認一覧" : "管理部：承認済み一覧"%></h2>
+
 
 			<form action="#" method="post">
 				<div class="table-area">

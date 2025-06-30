@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import bean.ProjectList;
 import dao.ProjectDAO;
@@ -37,6 +38,8 @@ public class PositionManagementServlet extends HttpServlet {
         try {
             ProjectDAO dao = new ProjectDAO();
             List<ProjectList> projectList_management = dao.getAllProject_management();
+            HttpSession session = req.getSession();
+        	session.removeAttribute("errorMsg"); // 念のため。次の遷移先にエラー処理がある
             req.setAttribute("projectList_management", projectList_management);
             req.getRequestDispatcher("/position.jsp").forward(req, resp);
         } catch (Exception e) {
