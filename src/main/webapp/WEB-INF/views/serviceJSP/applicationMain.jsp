@@ -45,7 +45,7 @@
 											<option value="">ステータス</option>
 											<option value="未提出">未提出</option>
 											<option value="提出済み">提出済み</option>
-											<option value="差戻し">差戻し</option>
+											<option value="差戻し">差戻</option>
 											<option value="承認済">承認済</option>
 											<option value="支払い済">支払い済</option>
 									</select></th>
@@ -60,7 +60,7 @@
 										value="<%= app.getApplicationId() %>"></td>
 									<td><%= app.getApplicationId() %></td>
 									<td><%= app.getApplicationType() %></td>
-									<td><%= app.getApplicationDate().toLocalDateTime().toString().replace('T', ' ') %></td>
+									<td><%= app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ') %></td>
 									<td><%= String.format("%,d円", app.getAmount()) %></td>
 									<td><%= app.getStatus() %></td>
 								</tr>

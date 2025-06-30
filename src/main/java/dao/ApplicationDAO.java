@@ -132,7 +132,7 @@ public class ApplicationDAO {
      */
     public List<Application> getApplicationsByStaffId(String staffId) throws Exception {
         List<Application> list = new ArrayList<>();
-        String sql = "SELECT application_id, application_type, application_date, amount, status FROM application_header WHERE staff_id = ? ORDER BY application_id DESC";
+        String sql = "SELECT application_id, application_type, amount, status, created_at FROM application_header WHERE staff_id = ? ORDER BY application_id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, staffId);
