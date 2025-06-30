@@ -5,38 +5,74 @@
 <head>
 <meta charset="UTF-8">
 <title>立替金精算書</title>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
-<script src="${pageContext.request.contextPath}/static/js/reimbursement.js"></script>
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/static/css/style.css">
+<script
+	src="${pageContext.request.contextPath}/static/js/reimbursement.js"></script>
 <style>
-    /* Các style của bạn có thể giữ nguyên ở đây */
-    .remove-btn { position: absolute; top: 1px; right: 1px; background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; font-weight: bold; }
-    .fileList { list-style-type: none; padding-left: 0; margin-top: 8px; }
-    #reimbursement-template { display: none; }
-    .file-delete-btn{    
-    background: none;
-    padding:4px;
-    color: red;
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background 0.3s;
-    height: 36.8px;}
-    
-    .file-delete-btn:hover {
-      background: none;
-	  transform: scale(1.2);
-	  opacity: 0.8;
-	}
+/* Các style của bạn có thể giữ nguyên ở đây */
+.remove-btn {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	color: #888;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.fileList {
+	list-style-type: none;
+	padding-left: 0;
+	margin-top: 8px;
+}
+
+#reimbursement-template {
+	display: none;
+}
+
+.file-delete-btn {
+	background: none;
+	padding: 4px;
+	color: red;
+	border: none;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: background 0.3s;
+	height: 36.8px;
+}
+
+.file-delete-btn:hover {
+	background: none;
+	transform: scale(1.2);
+	opacity: 0.8;
+}
 </style>
 </head>
 <body>
 
-<div class="page-container">
-    <h2>立替金精算書</h2>
-    <form action="<%=request.getContextPath()%>/reimbursement" method="post" enctype="multipart/form-data">
-        <input type="hidden" id="filesToDelete" name="filesToDelete" value="">
+	<div class="page-container">
+		<div class="content-container">
+			<h2>立替金精算書</h2>
+			<form action="<%=request.getContextPath()%>/reimbursement"
+				method="post" enctype="multipart/form-data">
+				<input type="hidden" id="filesToDelete" name="filesToDelete"
+					value="">
+
+				<div id="reimbursement-container"
+					style="display: flex; flex-direction: column; gap: 10px">
+
+
+					<c:forEach var="detail" items="${reimbursement.details}"
+						varStatus="loop">
+						<div class="form-section reimbursement-block"
+							style="position: relative;">
+							<button type="button" class="remove-btn"
+								onclick="removeReimbursementBlock(this)">×</button>
 
         <div id="reimbursement-container" style="display: flex; flex-direction: column; gap: 10px">
             
@@ -79,22 +115,23 @@
             </c:forEach>
         </div>
 
-        <div style="text-align: center; margin-top: 10px;">
-            <button type="button" class="plus-btn" onclick="addReimbursementBlock()">＋</button>
-        </div>
+				<div style="text-align: center; margin-top: 10px;">
+					<button type="button" class="plus-btn"
+						onclick="addReimbursementBlock()">＋</button>
+				</div>
 
-        <div class="btn-section">
-            <button type="button" class="back-btn" onclick="window.location.href='<%=request.getContextPath()%>/home'">戻る</button>
-            <button type="submit" class="next-btn">確認</button>
-        </div>
-    </form>
-</div>
+				<div class="btn-section">
+					<button type="button" class="back-btn"
+						onclick="window.location.href='<%=request.getContextPath()%>/home'">戻る</button>
+					<button type="submit" class="next-btn">確認</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
-<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
+	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
-<%-- ================================================================== --%>
-<%-- PHẦN 2: TEMPLATE CHO JAVASCRIPT ĐỂ THÊM BLOCK MỚI --%>
-<%-- ================================================================== --%>
+
 <template id="reimbursement-template">
     <div class="form-section reimbursement-block" style="position: relative;">
         <button type="button" class="remove-btn" onclick="removeReimbursementBlock(this)">×</button>

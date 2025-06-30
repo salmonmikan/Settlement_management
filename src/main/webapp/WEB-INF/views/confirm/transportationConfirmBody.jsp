@@ -91,109 +91,112 @@
 
 <div class="page-container"
 	style="display: flex; flex-direction: column; gap: 15px;">
+	<div class="content-container">
 
-	<%-- =================================================================== --%>
-	<%-- BẮT ĐẦU VÒNG LẶP CHO MỖI BLOCK --%>
-	<%-- =================================================================== --%>
-	<c:forEach var="detail" items="${transportationApp.details}"
-		varStatus="loop">
 
-		<%-- Khung bao quanh cho một block duy nhất --%>
-		<div class="confirm-section">
-			<h3>精算明細 ${loop.count}</h3>
-			<%-- Tiêu đề cho block: Chi tiết 1, Chi tiết 2... --%>
+		<%-- =================================================================== --%>
+		<%-- BẮT ĐẦU VÒNG LẶP CHO MỖI BLOCK --%>
+		<%-- =================================================================== --%>
+		<c:forEach var="detail" items="${transportationApp.details}"
+			varStatus="loop">
 
-			<%-- 1. Bảng chứa thông tin chính của block --%>
-			<table class="confirm-table">
-				<tr>
-					<th>PJコード</th>
-					<td>${detail.projectCode}</td>
-				</tr>
-				<tr>
-					<th>訪問月・日</th>
-					<td>${detail.date}</td>
-				</tr>
-				<tr>
-					<th>訪問先</th>
-					<td>${detail.destination}</td>
-				</tr>
-				<tr>
-					<th>出発</th>
-					<td>${detail.departure}</td>
-				</tr>
-				<tr>
-					<th>到着</th>
-					<td>${detail.arrival}</td>
-				</tr>
-				<tr>
-					<th>交通機関</th>
-					<td>${detail.transport}</td>
-				</tr>
-				<tr>
-					<th>金額（税込）</th>
-					<td><fmt:formatNumber value="${detail.fareAmount}"
-							type="number" />円</td>
-				</tr>
-				<tr>
-					<th>区分</th>
-					<td>${detail.transTripType}</td>
-				</tr>
-				<tr>
-					<th>負担者</th>
-					<td>${detail.burden}</td>
-				</tr>
-				<tr>
-					<th>合計</th>
-					<td><fmt:formatNumber value="${detail.expenseTotal}"
-							type="number" />円</td>
-				</tr>
-			</table>
+			<%-- Khung bao quanh cho một block duy nhất --%>
+			<div class="confirm-section">
+				<h3>精算明細 ${loop.count}</h3>
+				<%-- Tiêu đề cho block: Chi tiết 1, Chi tiết 2... --%>
 
-			<%-- Khu vực chứa ghi chú và file của RIÊNG block này --%>
-			<div class="detail-extra-info">
+				<%-- 1. Bảng chứa thông tin chính của block --%>
+				<table class="confirm-table">
+					<tr>
+						<th>PJコード</th>
+						<td>${detail.projectCode}</td>
+					</tr>
+					<tr>
+						<th>訪問月・日</th>
+						<td>${detail.date}</td>
+					</tr>
+					<tr>
+						<th>訪問先</th>
+						<td>${detail.destination}</td>
+					</tr>
+					<tr>
+						<th>出発</th>
+						<td>${detail.departure}</td>
+					</tr>
+					<tr>
+						<th>到着</th>
+						<td>${detail.arrival}</td>
+					</tr>
+					<tr>
+						<th>交通機関</th>
+						<td>${detail.transport}</td>
+					</tr>
+					<tr>
+						<th>金額（税込）</th>
+						<td><fmt:formatNumber value="${detail.fareAmount}"
+								type="number" />円</td>
+					</tr>
+					<tr>
+						<th>区分</th>
+						<td>${detail.transTripType}</td>
+					</tr>
+					<tr>
+						<th>負担者</th>
+						<td>${detail.burden}</td>
+					</tr>
+					<tr>
+						<th>合計</th>
+						<td><fmt:formatNumber value="${detail.expenseTotal}"
+								type="number" />円</td>
+					</tr>
+				</table>
 
-				<%-- 2. Hiển thị ghi chú (摘要) của RIÊNG block này --%>
-				<c:if test="${not empty detail.transMemo}">
-					<div>
-						<strong>摘要:</strong>
-					</div>
-					<div class="memo-block">${detail.transMemo}</div>
-				</c:if>
+				<%-- Khu vực chứa ghi chú và file của RIÊNG block này --%>
+				<div class="detail-extra-info">
 
-				<c:if
-					test="${not empty detail.report and fn:trim(detail.report) ne ''}">
-					<div>
-						<strong>報告書:</strong>
-					</div>
-					<div class="memo-block">${detail.report}</div>
-				</c:if>
+					<%-- 2. Hiển thị ghi chú (摘要) của RIÊNG block này --%>
+					<c:if test="${not empty detail.transMemo}">
+						<div>
+							<strong>摘要:</strong>
+						</div>
+						<div class="memo-block">${detail.transMemo}</div>
+					</c:if>
 
-				<%-- 3. Hiển thị file của RIÊNG block này --%>
-				<c:if test="${not empty detail.temporaryFiles}">
-					<div style="margin-top: 10px;">
-						<strong>領収書ファイル:</strong>
-					</div>
-					<ul class="receipt-list">
-						<c:forEach var="file" items="${detail.temporaryFiles}">
-							<li><a
-								href="${pageContext.request.contextPath}${file.temporaryPath}"
-								target="_blank"> ${file.originalFileName} </a></li>
-						</c:forEach>
-					</ul>
-				</c:if>
+					<c:if
+						test="${not empty detail.report and fn:trim(detail.report) ne ''}">
+						<div>
+							<strong>報告書:</strong>
+						</div>
+						<div class="memo-block">${detail.report}</div>
+					</c:if>
+
+					<%-- 3. Hiển thị file của RIÊNG block này --%>
+					<c:if test="${not empty detail.temporaryFiles}">
+						<div style="margin-top: 10px;">
+							<strong>領収書ファイル:</strong>
+						</div>
+						<ul class="receipt-list">
+							<c:forEach var="file" items="${detail.temporaryFiles}">
+								<li><a
+									href="${pageContext.request.contextPath}${file.temporaryPath}"
+									target="_blank"> ${file.originalFileName} </a></li>
+							</c:forEach>
+						</ul>
+					</c:if>
+				</div>
 			</div>
+			<%-- Kết thúc khung của một block --%>
+
+		</c:forEach>
+		<%-- Kết thúc vòng lặp --%>
+
+		<%-- Hiển thị tổng số tiền của toàn bộ đơn đăng ký (nằm ngoài vòng lặp) --%>
+		<div class="confirm-page-total">
+			総合計金額:
+			<fmt:formatNumber value="${transportationApp.totalAmount}"
+				type="number" />
+			円
 		</div>
-		<%-- Kết thúc khung của một block --%>
-
-	</c:forEach>
-	<%-- Kết thúc vòng lặp --%>
-
-	<%-- Hiển thị tổng số tiền của toàn bộ đơn đăng ký (nằm ngoài vòng lặp) --%>
-	<div class="confirm-page-total">
-		総合計金額:
-		<fmt:formatNumber value="${transportationApp.totalAmount}"
-			type="number" />
-		円
 	</div>
 
 </div>
