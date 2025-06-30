@@ -42,6 +42,7 @@ public class ProjectManagementServlet extends HttpServlet {
 
             // ここから：セッションからメッセージを取得
             HttpSession session = req.getSession();
+        	session.removeAttribute("errorMsg"); // 念のため。次の遷移先にエラー処理がある
             String successMsg = (String) session.getAttribute("successMsg");
             String errorMsg = (String) session.getAttribute("errorMsg");
 

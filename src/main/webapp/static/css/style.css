@@ -42,19 +42,20 @@ nav {
 .page-container {
 /*	display: flex;*/
   	width: 100%;
-  	max-width: 90vw;
+  	max-width: 90vw;  
   	min-width: 400px;
-  	margin: 90px;
+/*  	margin: 0px;*/
   	padding: 2rem 1.5rem;
   	box-sizing: border-box;
 }
 
 .content-container {
 /*	padding-top: 20px;*/
-		padding: 0 0 0 120px;
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
+	overflow-x: auto; 
+	margin-left: 200px;   
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .center-viewport {
@@ -421,9 +422,11 @@ textarea {
 
 /* ==== application_list.css（追加分） ==== */
 table {
-  width: 100%;
+/*	table-layout: auto;*/
   border-collapse: collapse;
   margin-top: 1.5rem;
+  max-width: 100%;
+/*  width: auto;*/
 }
 
 th, td {
@@ -431,6 +434,10 @@ th, td {
   padding: 0.5rem;
   font-size: 0.9rem;
   text-align: center;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 th {
@@ -563,8 +570,8 @@ th {
 }
 
 form {
-	display: flex; 
-	flex-direction: column;
+/*	display: flex; */
+/*	flex-direction: column;*/
 }
 
 .table-area {
