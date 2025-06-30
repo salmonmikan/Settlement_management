@@ -284,15 +284,6 @@ public class ApplicationDAO extends DBConnection{
 		}
 		return list;
 	}
-
-	public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
-		String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
-		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, totalAmount);
-			ps.setInt(2, applicationId);
-			ps.executeUpdate();
-		}
-	}
 	
 	// 承認者のIDを基にその承認者の部署を特定する（精算承認表示用）
 	public String findApproverDepartment(String approverId) throws SQLException {
