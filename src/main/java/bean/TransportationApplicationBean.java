@@ -9,6 +9,7 @@ public class TransportationApplicationBean implements Serializable {
 
     private List<TransportationDetailBean> details = new ArrayList<>();
     private int totalAmount;
+    private int applicationId;
 
     public void calculateTotalAmount() {
         this.totalAmount = (this.details == null) ? 0 : 
@@ -21,4 +22,14 @@ public class TransportationApplicationBean implements Serializable {
 
     public int getTotalAmount() { return totalAmount; }
     public void setTotalAmount(int totalAmount) { this.totalAmount = totalAmount; }
+
+
+	public int getApplicationId() {
+		return applicationId;
+	}
+
+
+	public void setApplicationId(int applicationId) {
+		this.applicationId = applicationId;
+	}
 }

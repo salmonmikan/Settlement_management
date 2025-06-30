@@ -18,6 +18,17 @@ public class PaymentBean {
      * 申請IDを取得します。
      * @return 申請ID
      */
+
+    private String createdAt;
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+    
     public int getApplicationId() {
         return applicationId;
     }

@@ -23,6 +23,9 @@ public class ReimbursementApplicationBean implements Serializable {
      * <p>
      * 各明細の金額を合算して、totalAmountにセットします。
      */
+
+    private int applicationId;
+//    private int setApplicationId;
     public void calculateTotalAmount() {
         this.totalAmount = (this.details == null) ? 0 :
             this.details.stream().mapToInt(ReimbursementDetailBean::getAmount).sum();
@@ -63,4 +66,12 @@ public class ReimbursementApplicationBean implements Serializable {
     public void setTotalAmount(int totalAmount) {
         this.totalAmount = totalAmount;
     }
+    
+	public int getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(int applicationId) {
+		this.applicationId = applicationId;
+	}
 }

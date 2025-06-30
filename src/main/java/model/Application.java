@@ -22,6 +22,15 @@ public class Application implements Serializable {
     private String staffId;
     private String staffName;
     
+    private Timestamp createdAt;
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
     // --- Getters and Setters ---
     public int getApplicationId() { return applicationId; }
     public void setApplicationId(int applicationId) { this.applicationId = applicationId; }

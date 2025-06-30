@@ -27,17 +27,20 @@
 
   <%-- Nút Edit sẽ chỉ hiển thị khi được cho phép --%>
   <c:if test="${showEditButton}">
-    <form action="${pageContext.request.contextPath}${editActionUrl}" method="get" style="display:inline;">
-      <button type="submit">編集</button>
-    </form>
-  </c:if>
+  <form action="${pageContext.request.contextPath}${editActionUrl}" method="get" style="display:inline;">
+    <%-- Thêm trường ẩn này để gửi ID đi một cách chính xác --%>
+    <input type="hidden" name="id" value="${applicationId}">
+    <button type="submit">編集</button>
+  </form>
+</c:if>
 
   
-  <c:if test="${showSubmitButton}">
-	<form action="${pageContext.request.contextPath}${submitActionUrl}" method="post" style="display:inline;">
-	  <button type="submit">送信</button>
-	</form>
-  </c:if>
+<c:if test="${showSubmitButton}">
+    <form action="${pageContext.request.contextPath}${submitActionUrl}" method="post" style="display:inline;">
+      <%-- Dùng biến isEditMode để quyết định chữ trên nút --%>
+      <button type="submit">${isEditMode ? '更新' : '送信'}</button>
+    </form>
+</c:if>
 
 </div>
 
