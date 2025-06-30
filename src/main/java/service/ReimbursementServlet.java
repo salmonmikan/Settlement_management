@@ -138,6 +138,7 @@ public class ReimbursementServlet extends HttpServlet {
             String[] dates = request.getParameterValues("date[]");
             String[] destinations = request.getParameterValues("destinations[]");
             String[] reports = request.getParameterValues("report[]");
+            String[] abstractNotes = request.getParameterValues("abstractNote[]");
             String[] accountingItems = request.getParameterValues("accountingItem[]");
             String[] amounts = request.getParameterValues("amount[]");
 
@@ -149,6 +150,7 @@ public class ReimbursementServlet extends HttpServlet {
                 newDetail.setDestinations(destinations[i]);
                 newDetail.setReport(reports[i]);
                 newDetail.setAccountingItem(accountingItems[i]);
+                newDetail.setAbstractNote(abstractNotes[i]);
                 try {
                     newDetail.setAmount(amounts[i] != null && !amounts[i].isEmpty() ? Integer.parseInt(amounts[i]) : 0);
                 } catch (NumberFormatException e) { newDetail.setAmount(0); }

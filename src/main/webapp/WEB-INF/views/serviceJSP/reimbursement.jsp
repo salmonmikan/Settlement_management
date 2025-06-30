@@ -74,55 +74,46 @@
 							<button type="button" class="remove-btn"
 								onclick="removeReimbursementBlock(this)">×</button>
 
-							<div class="form-group">
-								<label>日付</label><input type="date" name="date[]"
-									value="${detail.date}" required>
-							</div>
-							<div class="form-group">
-								<label>訪問先</label><input type="text" name="destinations[]"
-									value="${detail.destinations}" />
-							</div>
-							<div class="form-group">
-								<label>PJコード</label> <select name="projectCode[]" required>
-									<option value="">選択してください</option>
-									<c:forEach var="p" items="${projectList}">
-										<option value="${p.id}"
-											${p.id == detail.projectCode ? 'selected' : ''}>${p.id}：${p.name}</option>
-									</c:forEach>
-								</select>
-							</div>
-							<div class="form-group">
-								<label>勘定科目</label><input type="text" name="accountingItem[]"
-									value="${detail.accountingItem}" />
-							</div>
-							<div class="form-group">
-								<label>摘要</label>
-								<textarea name="report[]">${detail.report}</textarea>
-							</div>
-							<div class="form-group">
-								<label>金額</label><input type="number" name="amount[]"
-									value="${detail.amount}" required>
-							</div>
-							<div class="form-group">
-								<label>領収書添付</label>
-								<%-- Tên file sẽ được JS đặt lại chính xác ở dưới --%>
-								<input type="file" name="receipt_reimbursement_${loop.index}"
-									multiple class="fileInput" onchange="handleFileSelection(this)">
-								<ul class="fileList">
-									<%-- Hiển thị các file đã được tải lên trước đó --%>
-									<c:forEach var="file" items="${detail.temporaryFiles}">
-										<li data-file-type="existing"
-											data-unique-name="${file.uniqueStoredName}"><a
-											href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}"
-											target="_blank">${file.originalFileName}</a> <%-- Nút xóa file cũ cần hàm JS riêng --%>
-											<button type="button" class="file-delete-btn"
-												onclick="deleteExistingFile(this)">×</button></li>
-									</c:forEach>
-								</ul>
-							</div>
-						</div>
-					</c:forEach>
-				</div>
+        <div id="reimbursement-container" style="display: flex; flex-direction: column; gap: 10px">
+            
+          
+            <c:forEach var="detail" items="${reimbursement.details}" varStatus="loop">
+                <div class="form-section reimbursement-block" style="position: relative;">
+                    <button type="button" class="remove-btn" onclick="removeReimbursementBlock(this)">×</button>
+                    
+                    <div class="form-group"><label>日付</label><input type="date" name="date[]" value="${detail.date}" required></div>
+                    <div class="form-group"><label>訪問先</label><input type="text" name="destinations[]" value="${detail.destinations}" /></div>
+                    <div class="form-group">
+                        <label>PJコード</label>
+                        <select name="projectCode[]" required>
+                            <option value="">選択してください</option>
+                            <c:forEach var="p" items="${projectList}">
+                                <option value="${p.id}" ${p.id == detail.projectCode ? 'selected' : ''}>${p.id}：${p.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>報告書</label><textarea name="report[]">${detail.report}</textarea></div>
+                    <div class="form-group"><label>勘定科目</label><input type="text" name="accountingItem[]" value="${detail.accountingItem}" /></div>
+                    <div class="form-group"><label>摘要</label><textarea name="abstractNote[]">${detail.abstractNote}</textarea></div>
+                    <div class="form-group"><label>金額</label><input type="number" name="amount[]" value="${detail.amount}" required></div>
+                    <div class="form-group">
+                        <label>領収書添付</label>
+                        <%-- Tên file sẽ được JS đặt lại chính xác ở dưới --%>
+                        <input type="file" name="receipt_reimbursement_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
+                        <ul class="fileList">
+                            <%-- Hiển thị các file đã được tải lên trước đó --%>
+                            <c:forEach var="file" items="${detail.temporaryFiles}">
+                                <li data-file-type="existing" data-unique-name="${file.uniqueStoredName}">
+                                    <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">${file.originalFileName}</a>
+                                    <%-- Nút xóa file cũ cần hàm JS riêng --%>
+                                    <button type="button" class="file-delete-btn" onclick="deleteExistingFile(this)">×</button>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
 
 				<div style="text-align: center; margin-top: 10px;">
 					<button type="button" class="plus-btn"
@@ -140,48 +131,32 @@
 
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
-	<%-- ================================================================== --%>
-	<%-- PHẦN 2: TEMPLATE CHO JAVASCRIPT ĐỂ THÊM BLOCK MỚI --%>
-	<%-- ================================================================== --%>
-	<template id="reimbursement-template">
-		<div class="form-section reimbursement-block"
-			style="position: relative;">
-			<button type="button" class="remove-btn"
-				onclick="removeReimbursementBlock(this)">×</button>
-			<div class="form-group">
-				<label>日付</label><input type="date" name="date[]" required>
-			</div>
-			<div class="form-group">
-				<label>訪問先</label><input type="text" name="destinations[]"
-					placeholder="例: ABC株式会社" />
-			</div>
-			<div class="form-group">
-				<label>PJコード</label> <select name="projectCode[]" required>
-					<option value="">選択してください</option>
-					<c:forEach var="p" items="${projectList}">
-						<option value="${p.id}">${p.id}：${p.name}</option>
-					</c:forEach>
-				</select>
-			</div>
-			<div class="form-group">
-				<label>勘定科目</label><input type="text" name="accountingItem[]"
-					placeholder="例: 交通費" />
-			</div>
-			<div class="form-group">
-				<label>摘要</label>
-				<textarea name="report[]" placeholder="内容や目的を入力してください"></textarea>
-			</div>
-			<div class="form-group">
-				<label>金額</label><input type="number" name="amount[]" required>
-			</div>
-			<div class="form-group">
-				<label>領収書添付</label> <input type="file"
-					name="receipt_reimbursement_" multiple class="fileInput"
-					onchange="handleFileSelection(this)">
-				<ul class="fileList"></ul>
-			</div>
-		</div>
-	</template>
+
+<template id="reimbursement-template">
+    <div class="form-section reimbursement-block" style="position: relative;">
+        <button type="button" class="remove-btn" onclick="removeReimbursementBlock(this)">×</button>
+        <div class="form-group"><label>日付</label><input type="date" name="date[]" required></div>
+        <div class="form-group"><label>訪問先</label><input type="text" name="destinations[]" placeholder="例: ABC株式会社" /></div>
+        <div class="form-group">
+            <label>PJコード</label>
+            <select name="projectCode[]" required>
+                <option value="">選択してください</option>
+                <c:forEach var="p" items="${projectList}">
+                    <option value="${p.id}">${p.id}：${p.name}</option>
+                </c:forEach>
+            </select>
+        </div>
+        <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を入力してください"></textarea></div>
+        <div class="form-group"><label>勘定科目</label><input type="text" name="accountingItem[]" placeholder="例: 交通費" /></div>
+        <div class="form-group"><label>摘要</label><textarea name="abstractNote[]" placeholder="内容や目的を入力してください"></textarea></div>
+        <div class="form-group"><label>金額</label><input type="number" name="amount[]" required></div>
+        <div class="form-group">
+            <label>領収書添付</label>
+            <input type="file" name="receipt_reimbursement_" multiple class="fileInput" onchange="handleFileSelection(this)">
+            <ul class="fileList"></ul>
+        </div>
+    </div>
+</template>
 
 </body>
 </html>
