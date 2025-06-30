@@ -38,7 +38,10 @@ public class ApprovalMainServlet extends HttpServlet {
 
         try {
             ApplicationDAO dao = new ApplicationDAO();
-            List<Application> applications = dao.getApplicationsByApprover(approverId);
+            
+            String approver_depId = dao.findApproverDepartment(approverId);
+            List<Application> applications = dao.getApplicationsByDepartment(approver_depId);
+//            List<Application> applications = dao.getApplicationsByApprover(approverId);
             request.setAttribute("applications", applications);
         } catch (Exception e) {
             e.printStackTrace();
