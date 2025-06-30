@@ -59,7 +59,7 @@ if (mode == null)
 								<td><%=app.getStaffId()%></td>
 								<td><%=app.getStaffName()%></td>
 								<td><%=app.getApplicationType()%></td>
-								<td><%=app.getApplicationDate().toLocalDateTime().toString().replace('T', ' ')%></td>
+								<td><%=app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ')%></td>
 								<td><%=String.format("%,d円", app.getAmount())%></td>
 								<td><%=app.getStatus()%></td>
 							</tr>

@@ -1,6 +1,5 @@
 package service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +9,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import bean.TransportationApplicationBean;
 import bean.TransportationDetailBean;
 import bean.UploadedFile;
@@ -17,13 +23,6 @@ import dao.ApplicationDAO;
 import dao.ReceiptDAO;
 import dao.TransportationDAO; // Sử dụng DAO mới
 import util.DBConnection;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/transportationSubmit")
 public class TransportationSubmitServlet extends HttpServlet {

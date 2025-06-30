@@ -12,12 +12,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import bean.Project;
-import bean.TransportationApplicationBean;
-import bean.TransportationDetailBean;
-import bean.UploadedFile;
-import dao.ProjectDAO;
-import dao.ProjectListDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,6 +20,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+
+import bean.Project;
+import bean.TransportationApplicationBean;
+import bean.TransportationDetailBean;
+import bean.UploadedFile;
+import dao.ProjectListDAO;
 
 @WebServlet("/transportationRequest")
 @MultipartConfig
@@ -122,6 +122,7 @@ public class TransportationServlet extends HttpServlet {
             String[] burdens = request.getParameterValues("burden[]");
             String[] expenseTotals = request.getParameterValues("expenseTotal[]");
             String[] transMemos = request.getParameterValues("transMemo[]");
+            String[] reports = request.getParameterValues("report[]");
             Collection<Part> allParts = request.getParts();
 
             for (int i = 0; i < projectCodes.length; i++) {
@@ -136,6 +137,7 @@ public class TransportationServlet extends HttpServlet {
                 newDetail.setTransTripType(transTripTypes[i]);
                 newDetail.setBurden(burdens[i]);
                 newDetail.setTransMemo(transMemos[i]);
+                newDetail.setReport(reports[i]);
 
                 try {
                     newDetail.setFareAmount(fareAmounts[i] != null && !fareAmounts[i].isEmpty() ? Integer.parseInt(fareAmounts[i]) : 0);

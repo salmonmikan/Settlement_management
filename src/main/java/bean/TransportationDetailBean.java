@@ -22,6 +22,7 @@ public class TransportationDetailBean implements Serializable {
     private String burden;
     private int expenseTotal; // Trường được tính toán, không có trong DB
     private String transMemo;
+    private String report;
    
     
     // Danh sách file đính kèm cho block này
@@ -73,4 +74,8 @@ public class TransportationDetailBean implements Serializable {
 	public void setDestination(String destination) {
 		this.destination = destination;
 	}
+	
+	//ソンが追加する
+    public String getReport() { return report; }
+    public void setReport(String report) { this.report = report; }
 }
