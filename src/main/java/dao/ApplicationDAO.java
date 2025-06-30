@@ -352,4 +352,18 @@ public class ApplicationDAO extends DBConnection{
 	    return list;
 	}
 
+	/*
+	 * 選択された精算申請の申請ステータスを、「承認済み」に変更する
+	 */
+	public void updateStatus(int applicationId, String approverId) throws Exception {
+	    String sql = "UPDATE application_header SET status = '承認済み', approver_id = ?, updated_at = NOW() WHERE application_id = ?";
+
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, "");
+	        stmt.setInt(2, applicationId);
+	        stmt.executeUpdate();
+	    }
+	}
+
 }
