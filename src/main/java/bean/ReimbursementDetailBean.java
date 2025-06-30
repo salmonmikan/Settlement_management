@@ -17,6 +17,7 @@ public class ReimbursementDetailBean implements Serializable {
     private String destinations;
     private String accountingItem;
     private int amount;
+    private String abstractNote;
     private String report;
     private List<UploadedFile> temporaryFiles = new ArrayList<>();
 
@@ -92,6 +93,13 @@ public class ReimbursementDetailBean implements Serializable {
         this.amount = amount;
     }
 
+    
+    public String getAbstractNote() {
+        return abstractNote;
+    }
+    public void setAbstractNote(String abstractNote) {
+        this.abstractNote = abstractNote;
+    }
     /**
      * 摘要（報告）を取得します。
      */

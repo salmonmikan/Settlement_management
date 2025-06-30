@@ -36,8 +36,8 @@ public class ReimbursementDAO {
      */
     public int insert(ReimbursementDetailBean detail, int applicationId, Connection conn) throws SQLException {
         String sql = "INSERT INTO reimbursement_request " +
-                     "(application_id, project_code, date, destinations, accounting_item, amount, report) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                     "(application_id, project_code, date, destinations, accounting_item, amount, abstract_note, report) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, applicationId);
@@ -58,7 +58,8 @@ public class ReimbursementDAO {
             stmt.setString(4, detail.getDestinations());
             stmt.setString(5, detail.getAccountingItem());
             stmt.setInt(6, detail.getAmount());
-            stmt.setString(7, detail.getReport());
+            stmt.setString(7, detail.getAbstractNote());
+            stmt.setString(8, detail.getReport());
 
             stmt.executeUpdate();
 
@@ -107,6 +108,7 @@ public class ReimbursementDAO {
                 detail.setDestinations(rs.getString("destinations"));
                 detail.setAccountingItem(rs.getString("accounting_item"));
                 detail.setAmount(rs.getInt("amount"));
+                detail.setAbstractNote(rs.getString("abstractNote"));
                 detail.setReport(rs.getString("report"));
 
                 // Tải các file đính kèm cho chi tiết này
