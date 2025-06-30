@@ -14,6 +14,9 @@ public class Step1Data implements Serializable {
     private int totalDays;
     private String projectCode;
     private String tripReport;
+    
+    // === TRƯỜNG MỚI ĐƯỢC THÊM VÀO ĐỂ HỖ TRỢ CHỨC NĂNG UPDATE ===
+    private int applicationId;
 
     // --- Getters and Setters ---
 
@@ -95,5 +98,12 @@ public class Step1Data implements Serializable {
      */
     public void setTripReport(String tripReport) {
         this.tripReport = tripReport;
+    }
+    
+    public int getApplicationId() {
+        return applicationId;
+    }
+    public void setApplicationId(int applicationId) {
+        this.applicationId = applicationId;
     }
 }

@@ -1,8 +1,15 @@
 
 function initializeStep2(diffDays, positionId) {
-    const firstBlock = document.querySelector(".allowance-block");
-    if (!firstBlock) return;
-    setupAllowanceBlock(firstBlock, diffDays, positionId);
+    // Dùng querySelectorAll để lấy TẤT CẢ các block đã có sẵn khi tải trang
+    const allBlocks = document.querySelectorAll(".allowance-block");
+    
+    // Duyệt qua từng block và gán sự kiện cho nó
+    allBlocks.forEach(block => {
+        setupAllowanceBlock(block, diffDays, positionId);
+    });
+
+    // Sau khi gán sự kiện xong, chạy kiểm tra một lần để đảm bảo trạng thái đúng ngay từ đầu
+    validateTotalDays(diffDays);
 }
 
 function setupAllowanceBlock(block, diffDays, positionId) {
@@ -94,36 +101,64 @@ function handleFileSelection(fileInput) {
     });
 }
 
-function validateTotalDays(maxDays) {
+function initializeStep2(diffDays, positionId) {
+    // Dùng querySelectorAll để lấy TẤT CẢ các block đã có sẵn khi tải trang
     const allBlocks = document.querySelectorAll(".allowance-block");
-    let total = 0;
-
+    
+    // Duyệt qua từng block và gán sự kiện cho nó
     allBlocks.forEach(block => {
-        const daysInput = block.querySelector("input[name='days[]']");
-        total += parseInt((daysInput && daysInput.value) || 0);
+        setupAllowanceBlock(block, diffDays, positionId);
     });
 
+    // Sau khi gán sự kiện xong, chạy kiểm tra một lần để đảm bảo trạng thái đúng ngay từ đầu
+    validateTotalDays(diffDays);
+}
+
+
+/**
+ * HÀM KIỂM TRA TỔNG SỐ NGÀY (PHIÊN BẢN CẢI TIẾN)
+ */
+function validateTotalDays(maxDays) {
+    let totalDays = 0;
+    const allBlocks = document.querySelectorAll(".allowance-block");
+
+    // 1. Tính tổng số ngày từ tất cả các block
+    allBlocks.forEach(block => {
+        const daysInput = block.querySelector("input[name='days[]']");
+        if (daysInput) {
+            totalDays += parseInt(daysInput.value || 0);
+        }
+    });
+
+    // 2. Dựa vào tổng số ngày, quyết định hiển thị hoặc xóa lỗi cho TẤT CẢ các block
     allBlocks.forEach(block => {
         const daysInput = block.querySelector("input[name='days[]']");
         if (!daysInput) return;
+        
+        let errorDiv = block.querySelector(".days-error");
 
-        let error = block.querySelector(".days-error");
-        if (total > maxDays) {
-            if (!error) {
-                error = document.createElement("div");
-                error.className = "days-error";
-                error.style.color = "red";
-                error.style.fontSize = "0.85rem";
-                daysInput.parentNode.appendChild(error);
-            }
-            error.textContent = `※合計日数が出張期間を超えています（最大 ${maxDays} 日）`;
+        if (totalDays > maxDays) {
+            // Nếu tổng số ngày KHÔNG HỢP LỆ -> Hiển thị lỗi
             daysInput.style.borderColor = "red";
+            if (!errorDiv) {
+                errorDiv = document.createElement("div");
+                errorDiv.className = "days-error";
+                errorDiv.style.color = "red";
+                errorDiv.style.fontSize = "0.85rem";
+                // Đặt thông báo lỗi ngay dưới thẻ input
+                daysInput.parentNode.insertBefore(errorDiv, daysInput.nextSibling);
+            }
+            errorDiv.textContent = `※合計日数が出張期間を超えています（最大 ${maxDays} 日）`;
         } else {
-            if (error) error.remove();
-            daysInput.style.borderColor = "";
+            // Nếu tổng số ngày HỢP LỆ -> Xóa lỗi
+            daysInput.style.borderColor = ""; // Xóa viền đỏ
+            if (errorDiv) {
+                errorDiv.remove(); // Xóa thông báo lỗi nếu có
+            }
         }
     });
 }
+
 
 function addAllowanceBlock() {
     const container = document.getElementById("allowance-container");

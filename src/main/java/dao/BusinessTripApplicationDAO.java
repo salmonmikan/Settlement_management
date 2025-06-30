@@ -76,17 +76,17 @@ public class BusinessTripApplicationDAO {
         try {
             conn = DBConnection.getConnection(); 
 
-            // === BƯỚC 1: LẤY THÔNG TIN STEP 1 VÀ TÌM RA "trip_application_id" ===
+            // === Tải Step 1 ===
             String step1Sql = "SELECT * FROM business_trip_application WHERE application_id = ?";
             ps = conn.prepareStatement(step1Sql);
             ps.setInt(1, applicationId);
             rs = ps.executeQuery();
-
             if (rs.next()) {
                 tripApplicationId = rs.getInt("trip_application_id");
                 Step1Data step1Data = new Step1Data();
-                step1Data.setStartDate(rs.getDate("start_date").toLocalDate().toString().replace('-', '/'));
-                step1Data.setEndDate(rs.getDate("end_date").toLocalDate().toString().replace('-', '/'));
+                step1Data.setApplicationId(applicationId);
+                step1Data.setStartDate(rs.getDate("start_date").toString());
+                step1Data.setEndDate(rs.getDate("end_date").toString());
                 step1Data.setProjectCode(rs.getString("project_code"));
                 step1Data.setTripReport(rs.getString("report"));
                 step1Data.setTotalDays(rs.getInt("total_days"));
@@ -97,7 +97,7 @@ public class BusinessTripApplicationDAO {
             rs.close();
             ps.close();
 
-            // === BƯỚC 2: TẢI DỮ LIỆU STEP 2 VÀ CÁC FILE LIÊN QUAN ===
+            // === Tải Step 2 và File ===
             String step2Sql = "SELECT * FROM allowance_detail WHERE trip_application_id = ?";
             ps = conn.prepareStatement(step2Sql);
             ps.setInt(1, tripApplicationId);
@@ -106,10 +106,8 @@ public class BusinessTripApplicationDAO {
             List<Step2Detail> step2Details = new ArrayList<>();
             while (rs.next()) {
                 Step2Detail detail = new Step2Detail();
-                // Lấy khóa chính của dòng chi tiết này
                 int allowanceDetailId = rs.getInt("detail_id");
-                
-                // Nạp các thông tin khác của chi tiết
+                //... (set các thuộc tính khác cho detail)
                 detail.setRegionType(rs.getString("region_type"));
                 detail.setTripType(rs.getString("trip_type"));
                 detail.setHotel(rs.getString("hotel"));
@@ -119,8 +117,7 @@ public class BusinessTripApplicationDAO {
                 detail.setDays(rs.getInt("days"));
                 detail.setExpenseTotal(rs.getInt("expense_total"));
                 detail.setMemo(rs.getString("memo"));
-                
-                // Tải các file liên quan đến chi tiết này từ bảng receipt_file
+
                 String fileSql = "SELECT original_file_name, stored_file_path FROM receipt_file WHERE block_id = ? AND block_type = 'allowance_detail'";
                 try (PreparedStatement psFile = conn.prepareStatement(fileSql)) {
                     psFile.setInt(1, allowanceDetailId);
@@ -129,10 +126,17 @@ public class BusinessTripApplicationDAO {
                         while (rsFile.next()) {
                             UploadedFile file = new UploadedFile();
                             file.setOriginalFileName(rsFile.getString("original_file_name"));
-                            file.setTemporaryPath(rsFile.getString("stored_file_path")); // Dùng đúng tên cột
+                            String storedPath = rsFile.getString("stored_file_path");
+                            file.setTemporaryPath(storedPath);
+                            
+                            // === SỬA LỖI Ở ĐÂY: Gán giá trị cho uniqueStoredName ===
+                            if (storedPath != null && storedPath.contains("/")) {
+                                file.setUniqueStoredName(storedPath.substring(storedPath.lastIndexOf('/') + 1));
+                            }
+                            
                             files.add(file);
                         }
-                        detail.setTemporaryFiles(files); // Gán danh sách file vào chi tiết
+                        detail.setTemporaryFiles(files);
                     }
                 }
                 step2Details.add(detail);
@@ -141,7 +145,7 @@ public class BusinessTripApplicationDAO {
             rs.close();
             ps.close();
 
-            // === BƯỚC 3: TẢI DỮ LIỆU STEP 3 VÀ CÁC FILE LIÊN QUAN ===
+            // === Tải Step 3 và File ===
             String step3Sql = "SELECT * FROM business_trip_transportation_detail WHERE trip_application_id = ?";
             ps = conn.prepareStatement(step3Sql);
             ps.setInt(1, tripApplicationId);
@@ -151,7 +155,7 @@ public class BusinessTripApplicationDAO {
             while (rs.next()) {
                  Step3Detail detail = new Step3Detail();
                  int transportDetailId = rs.getInt("detail_id");
-                 
+                 //... (set các thuộc tính khác cho detail)
                  detail.setTransProject(rs.getString("trans_project"));
                  detail.setDeparture(rs.getString("departure"));
                  detail.setArrival(rs.getString("arrival"));
@@ -162,7 +166,6 @@ public class BusinessTripApplicationDAO {
                  detail.setTransExpenseTotal(rs.getInt("trans_expense_total"));
                  detail.setTransMemo(rs.getString("trans_memo"));
 
-                 // Tải các file liên quan
                  String fileSql = "SELECT original_file_name, stored_file_path FROM receipt_file WHERE block_id = ? AND block_type = 'business_trip_transportation_detail'";
                  try (PreparedStatement psFile = conn.prepareStatement(fileSql)) {
                     psFile.setInt(1, transportDetailId);
@@ -171,7 +174,14 @@ public class BusinessTripApplicationDAO {
                         while (rsFile.next()) {
                             UploadedFile file = new UploadedFile();
                             file.setOriginalFileName(rsFile.getString("original_file_name"));
-                            file.setTemporaryPath(rsFile.getString("stored_file_path")); // Dùng đúng tên cột
+                            String storedPath = rsFile.getString("stored_file_path");
+                            file.setTemporaryPath(storedPath);
+
+                            // === SỬA LỖI Ở ĐÂY: Gán giá trị cho uniqueStoredName ===
+                            if (storedPath != null && storedPath.contains("/")) {
+                                file.setUniqueStoredName(storedPath.substring(storedPath.lastIndexOf('/') + 1));
+                            }
+                            
                             files.add(file);
                         }
                         detail.setTemporaryFiles(files);
@@ -188,6 +198,30 @@ public class BusinessTripApplicationDAO {
             if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+    public void update(Step1Data step1Data, Connection conn) throws SQLException {
+        String sql = "UPDATE business_trip_application SET start_date = ?, end_date = ?, project_code = ?, report = ?, total_days = ? WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(step1Data.getStartDate().replace('/', '-')));
+            ps.setDate(2, java.sql.Date.valueOf(step1Data.getEndDate().replace('/', '-')));
+            ps.setString(3, step1Data.getProjectCode());
+            ps.setString(4, step1Data.getTripReport());
+            ps.setInt(5, step1Data.getTotalDays());
+            ps.setInt(6, step1Data.getApplicationId()); 
+            ps.executeUpdate();
+        }
+    }
+    public int getTripApplicationIdByApplicationId(int applicationId, Connection conn) throws SQLException {
+        String sql = "SELECT trip_application_id FROM business_trip_application WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, applicationId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("trip_application_id");
+                }
+                throw new SQLException("Không tìm thấy trip_application_id cho application_id: " + applicationId);
+            }
         }
     }
 }
