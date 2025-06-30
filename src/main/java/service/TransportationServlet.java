@@ -31,7 +31,8 @@ import dao.ProjectListDAO;
 @MultipartConfig
 public class TransportationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final String TEMP_UPLOAD_DIR = "/uploads";
+    // SỬA LỖI: Sử dụng thư mục temp_uploads nhất quán với code mẫu
+    private static final String TEMP_UPLOAD_DIR = "/temp_uploads"; 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -39,37 +40,21 @@ public class TransportationServlet extends HttpServlet {
         TransportationApplicationBean transportationApp = (TransportationApplicationBean) session.getAttribute("transportationApp");
 
         if (transportationApp == null) {
-            // Nếu người dùng vào thẳng URL này mà không qua Init, tạo mới để tránh lỗi
             transportationApp = new TransportationApplicationBean();
             session.setAttribute("transportationApp", transportationApp);
         }
         
         try {
-            // Bước 1: Gọi DAO như bình thường.
-            // Biến daoProjectList sẽ có kiểu List<ProjectListDAO.Project>
             ProjectListDAO projectDAO = new ProjectListDAO();
             List<ProjectListDAO.Project> daoProjectList = projectDAO.getAllProjects();
-
-            // Bước 2: Tạo một danh sách mới, trống, với kiểu dữ liệu mà JSP cần (List<bean.Project>)
-            // Đảm bảo bạn đã import bean.Project ở đầu file.
             List<Project> projectListForJsp = new ArrayList<>();
-
-            // Bước 3: Dùng vòng lặp để chuyển đổi từng đối tượng.
             for (ProjectListDAO.Project daoProject : daoProjectList) {
-                // Tạo một đối tượng bean.Project mới
                 Project jspProject = new Project(daoProject.getId(), daoProject.getName());
-                
-                // Thêm đối tượng đã chuyển đổi vào danh sách mới
                 projectListForJsp.add(jspProject);
             }
-
-            // Bước 4: Đặt danh sách ĐÃ CHUYỂN ĐỔI vào request.
-            // JSP sẽ nhận được đúng kiểu dữ liệu nó cần.
             request.setAttribute("projectList", projectListForJsp);
-            
         } catch (Exception e) {
             e.printStackTrace();
-            // Nếu có lỗi, đặt một danh sách trống để tránh lỗi trên JSP
             request.setAttribute("projectList", new ArrayList<Project>());
         }
 
@@ -89,72 +74,86 @@ public class TransportationServlet extends HttpServlet {
 
         TransportationApplicationBean transportationApp = (TransportationApplicationBean) session.getAttribute("transportationApp");
 
+        // --- BẮT ĐẦU PHẦN SỬA LỖI LOGIC ---
+        // Áp dụng hoàn toàn logic từ code ReimbursementServlet mẫu
+
+        // 1. Xử lý các file được đánh dấu xóa
         String filesToDeleteParam = request.getParameter("filesToDelete");
-        if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
+        if (filesToDeleteParam != null && !filesToDeleteParam.trim().isEmpty()) {
             List<String> filesToDeleteList = Arrays.asList(filesToDeleteParam.split(","));
             String realPath = getServletContext().getRealPath("");
             for (TransportationDetailBean detail : transportationApp.getDetails()) {
                 detail.getTemporaryFiles().removeIf(file -> {
                     boolean toDelete = filesToDeleteList.contains(file.getUniqueStoredName());
-                    if (toDelete) {
+                    if (toDelete && file.getTemporaryPath() != null) {
                         try { Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath())); } catch (IOException e) { e.printStackTrace(); }
                     }
                     return toDelete;
                 });
             }
         }
-        
-        List<TransportationDetailBean> oldDetails = new ArrayList<>(transportationApp.getDetails());
-        transportationApp.getDetails().clear();
 
+        // 2. Logic "Cập nhật tại chỗ"
         String[] projectCodes = request.getParameterValues("projectCode[]");
-        
-        if (projectCodes != null && projectCodes.length > 0) {
+        List<TransportationDetailBean> detailsInSession = transportationApp.getDetails();
+        int numSubmittedBlocks = (projectCodes != null) ? projectCodes.length : 0;
+        List<TransportationDetailBean> updatedDetails = new ArrayList<>();
 
+        // Lấy tất cả các mảng dữ liệu từ form
+        String[] dates = request.getParameterValues("date[]");
+        String[] destinations = request.getParameterValues("destination[]");
+        String[] departures = request.getParameterValues("departure[]");
+        String[] arrivals = request.getParameterValues("arrival[]");
+        String[] transports = request.getParameterValues("transport[]");
+        String[] fareAmounts = request.getParameterValues("fareAmount[]");
+        String[] transTripTypes = request.getParameterValues("transTripType[]");
+        String[] burdens = request.getParameterValues("burden[]");
+        String[] expenseTotals = request.getParameterValues("expenseTotal[]");
+        String[] transMemos = request.getParameterValues("transMemo[]");
+
+        for (int i = 0; i < numSubmittedBlocks; i++) {
+            TransportationDetailBean detail;
+            if (i < detailsInSession.size()) {
+                detail = detailsInSession.get(i); // Dùng lại bean cũ
+            } else {
+                detail = new TransportationDetailBean(); // Tạo bean mới
+            }
+
+            // Cập nhật tất cả các trường
+            detail.setProjectCode(projectCodes[i]);
+            detail.setDate(dates[i]);
+            detail.setDestination(destinations[i]);
+            detail.setDeparture(departures[i]);
+            detail.setArrival(arrivals[i]);
+            detail.setTransport(transports[i]);
+            detail.setTransTripType(transTripTypes[i]);
+            detail.setBurden(burdens[i]);
+            detail.setTransMemo(transMemos[i]);
             
-            String[] dates = request.getParameterValues("date[]");
-            String[] destinations = request.getParameterValues("destination[]");
-            String[] departures = request.getParameterValues("departure[]");
-            String[] arrivals = request.getParameterValues("arrival[]");
-            String[] transports = request.getParameterValues("transport[]");
-            String[] fareAmounts = request.getParameterValues("fareAmount[]");
-            String[] transTripTypes = request.getParameterValues("transTripType[]");
-            String[] burdens = request.getParameterValues("burden[]");
-            String[] expenseTotals = request.getParameterValues("expenseTotal[]");
-            String[] transMemos = request.getParameterValues("transMemo[]");
-            String[] reports = request.getParameterValues("report[]");
-            Collection<Part> allParts = request.getParts();
+            try {
+                detail.setFareAmount(fareAmounts[i] != null && !fareAmounts[i].isEmpty() ? Integer.parseInt(fareAmounts[i]) : 0);
+                detail.setExpenseTotal(expenseTotals[i] != null && !expenseTotals[i].isEmpty() ? Integer.parseInt(expenseTotals[i]) : 0);
+            } catch (NumberFormatException e) {
+                detail.setFareAmount(0);
+                detail.setExpenseTotal(0);
+            }
+            updatedDetails.add(detail);
+        }
+        transportationApp.setDetails(updatedDetails);
 
-            for (int i = 0; i < projectCodes.length; i++) {
-                TransportationDetailBean newDetail = new TransportationDetailBean();
+        // 3. Xử lý file upload
+        Collection<Part> allParts = request.getParts();
+        for (int i = 0; i < numSubmittedBlocks; i++) {
+            String fileInputName = "receipt_transportation_" + i;
+            List<Part> newFileParts = allParts.stream()
+                .filter(part -> fileInputName.equals(part.getName()) && part.getSize() > 0)
+                .collect(Collectors.toList());
+
+            if (!newFileParts.isEmpty()) {
+                TransportationDetailBean detail = transportationApp.getDetails().get(i);
+                // Xóa file cũ trong bean trước khi thêm file mới (quan trọng!)
+                detail.getTemporaryFiles().clear(); 
                 
-                newDetail.setProjectCode(projectCodes[i]);
-                newDetail.setDestination(destinations[i]);
-                newDetail.setDate(dates[i]);
-                newDetail.setDeparture(departures[i]);
-                newDetail.setArrival(arrivals[i]);
-                newDetail.setTransport(transports[i]);
-                newDetail.setTransTripType(transTripTypes[i]);
-                newDetail.setBurden(burdens[i]);
-                newDetail.setTransMemo(transMemos[i]);
-                newDetail.setReport(reports[i]);
-
-                try {
-                    newDetail.setFareAmount(fareAmounts[i] != null && !fareAmounts[i].isEmpty() ? Integer.parseInt(fareAmounts[i]) : 0);
-                    newDetail.setExpenseTotal(expenseTotals[i] != null && !expenseTotals[i].isEmpty() ? Integer.parseInt(expenseTotals[i]) : 0);
-                } catch (NumberFormatException e) {
-                    newDetail.setFareAmount(0); newDetail.setExpenseTotal(0);
-                }
-                
-                String fileInputName = "receipt_transportation_" + i;
-                List<Part> newFileParts = allParts.stream()
-                    .filter(part -> fileInputName.equals(part.getName()) && part.getSize() > 0)
-                    .collect(Collectors.toList());
-
-                if (i < oldDetails.size()) {
-                    newDetail.setTemporaryFiles(oldDetails.get(i).getTemporaryFiles());
-                }
-
                 for (Part filePart : newFileParts) {
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -164,20 +163,21 @@ public class TransportationServlet extends HttpServlet {
                         String tempPath = getServletContext().getRealPath(TEMP_UPLOAD_DIR);
                         File uploadDir = new File(tempPath);
                         if (!uploadDir.exists()) uploadDir.mkdirs();
+                        
                         Files.copy(filePart.getInputStream(), new File(uploadDir, uniqueFileName).toPath(), StandardCopyOption.REPLACE_EXISTING);
                         
                         UploadedFile uf = new UploadedFile();
                         uf.setOriginalFileName(originalFileName);
                         uf.setUniqueStoredName(uniqueFileName);
                         uf.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
-                        newDetail.getTemporaryFiles().add(uf);
+                        detail.getTemporaryFiles().add(uf);
                     } catch (Exception e) { e.printStackTrace(); }
                 }
-
-                transportationApp.getDetails().add(newDetail);
             }
         }
         
+        // --- KẾT THÚC PHẦN SỬA LỖI LOGIC ---
+
         session.setAttribute("transportationApp", transportationApp);
         response.sendRedirect(request.getContextPath() + "/transportationConfirm");
     }
