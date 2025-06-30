@@ -56,8 +56,9 @@
                             </c:forEach>
                         </select>
                     </div>
+                    <div class="form-group"><label>報告書</label><textarea name="report[]">${detail.report}</textarea></div>
                     <div class="form-group"><label>勘定科目</label><input type="text" name="accountingItem[]" value="${detail.accountingItem}" /></div>
-                    <div class="form-group"><label>摘要</label><textarea name="report[]">${detail.report}</textarea></div>
+                    <div class="form-group"><label>摘要</label><textarea name="abstractNote[]">${detail.abstractNote}</textarea></div>
                     <div class="form-group"><label>金額</label><input type="number" name="amount[]" value="${detail.amount}" required></div>
                     <div class="form-group">
                         <label>領収書添付</label>
@@ -108,8 +109,9 @@
                 </c:forEach>
             </select>
         </div>
+        <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を入力してください"></textarea></div>
         <div class="form-group"><label>勘定科目</label><input type="text" name="accountingItem[]" placeholder="例: 交通費" /></div>
-        <div class="form-group"><label>摘要</label><textarea name="report[]" placeholder="内容や目的を入力してください"></textarea></div>
+        <div class="form-group"><label>摘要</label><textarea name="abstractNote[]" placeholder="内容や目的を入力してください"></textarea></div>
         <div class="form-group"><label>金額</label><input type="number" name="amount[]" required></div>
         <div class="form-group">
             <label>領収書添付</label>
