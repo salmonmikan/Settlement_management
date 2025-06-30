@@ -108,7 +108,7 @@ public class ReimbursementDAO {
                 detail.setDestinations(rs.getString("destinations"));
                 detail.setAccountingItem(rs.getString("accounting_item"));
                 detail.setAmount(rs.getInt("amount"));
-                detail.setAbstractNote(rs.getString("abstractNote"));
+                detail.setAbstractNote(rs.getString("abstract_note"));
                 detail.setReport(rs.getString("report"));
 
                 // Tải các file đính kèm cho chi tiết này
