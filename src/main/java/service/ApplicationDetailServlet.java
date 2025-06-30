@@ -2,14 +2,6 @@ package service;
 
 import java.io.IOException;
 
-import bean.BusinessTripBean;
-import bean.ReimbursementApplicationBean;
-import bean.TransportationApplicationBean;
-import dao.ApplicationDAO;
-import dao.BusinessTripApplicationDAO;
-import dao.ReimbursementDAO;
-import dao.TransportationDAO;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,6 +9,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import bean.BusinessTripBean;
+import bean.ReimbursementApplicationBean;
+import bean.TransportationApplicationBean;
+import dao.ApplicationDAO;
+import dao.BusinessTripApplicationDAO;
+import dao.ReimbursementDAO;
+import dao.TransportationDAO;
 
 @WebServlet("/applicationDetail")
 public class ApplicationDetailServlet extends HttpServlet {
@@ -27,7 +27,7 @@ public class ApplicationDetailServlet extends HttpServlet {
         String idParam = request.getParameter("id");
         if (idParam == null || idParam.trim().isEmpty()) {
             HttpSession session = request.getSession();
-            session.setAttribute("message", "ID đơn không hợp lệ.");
+            session.setAttribute("message", "無効な申請IDです");
             response.sendRedirect(request.getContextPath() + "/applicationMain");
             return;
         }

@@ -46,10 +46,10 @@ public class PaymentDAO {
         ArrayList<PaymentBean> list = new ArrayList<>();
 
         String sql = "SELECT a.application_id, a.staff_id, s.name AS staff_name, " +
-                     "a.application_type, a.created_at, a.amount, a.status " +
+                     "a.application_type, a.created_at, a.updated_at, a.amount, a.status " +
                      "FROM application_header a " +
                      "LEFT JOIN staff s ON a.staff_id = s.staff_id " +
-                     "WHERE a.delete_flag = 0 " +
+                     "WHERE a.delete_flag = 0 AND a.status = '承認済み'" +
                      "ORDER BY a.created_at DESC";
 
         try (Connection conn = DBConnection.getConnection();
@@ -62,7 +62,8 @@ public class PaymentDAO {
                 bean.setStaffId(rs.getString("staff_id"));
                 bean.setStaffName(rs.getString("staff_name"));
                 bean.setApplicationType(rs.getString("application_type"));
-                bean.setCreatedAt(rs.getString("created_at")); // ← Sửa tên hàm & cột ở đây
+                bean.setCreatedAt(rs.getTimestamp("created_at")); // ← Sửa tên hàm & cột ở đây
+                bean.setUpdatedAt(rs.getTimestamp("updated_at"));
                 bean.setAmount(rs.getInt("amount"));
                 bean.setStatus(rs.getString("status"));
                 list.add(bean);

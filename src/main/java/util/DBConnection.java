@@ -10,6 +10,10 @@ public class DBConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/abc_system";
     private static final String USER = "root";
     private static final String PASSWORD = "";
+    // AWSのRDS接続用
+//    private static final String URL = "jdbc:mysql://abc-db.c7yye40qgcj3.ap-northeast-3.rds.amazonaws.com :3306/abc_system";
+//    private static final String USER = "admin";
+//    private static final String PASSWORD = "pass1234";
 
     /**
      * データベースとの接続を取得します。

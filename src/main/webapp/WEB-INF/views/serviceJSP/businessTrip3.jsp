@@ -100,7 +100,7 @@
 							</div>
 							<div class="form-group">
 								<label>金額（税込）</label><input required type="number"
-									name="fareAmount[]" step="10"
+									name="fareAmount[]"
 									oninput="updateTransBlockCalculations(this.closest('.trans-block'))"
 									value="${detail.fareAmount}">
 							</div>
