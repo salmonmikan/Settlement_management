@@ -114,7 +114,7 @@
                 <td><input type="checkbox" class="row-check" name="appIds" value="<%= app.getApplicationId() %>"></td>
                 <td><%= app.getApplicationId() %></td>
                 <td><%= app.getApplicationType() %></td>
-                <td><%= app.getApplicationDate().toLocalDateTime().toString().replace('T', ' ') %></td>
+                <td><%= app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ') %></td>
                 <td><%= String.format("%,d円", app.getAmount()) %></td>
                 <td><%= app.getStatus() %></td>
               </tr>

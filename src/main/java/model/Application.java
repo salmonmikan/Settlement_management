@@ -16,11 +16,9 @@ public class Application implements Serializable {
 
     private int applicationId;
     private String applicationType;
-    private Timestamp applicationDate;
+    private Timestamp createdAt; //appicationdateのコラムが削除したため
     private int amount;
     private String status;
-    
-    // ★★★ THÊM 2 THUỘC TÍNH NÀY VÀO ★★★
     private String staffId;
     private String staffName;
     
@@ -31,8 +29,6 @@ public class Application implements Serializable {
     public String getApplicationType() { return applicationType; }
     public void setApplicationType(String applicationType) { this.applicationType = applicationType; }
     
-    public Timestamp getApplicationDate() { return applicationDate; }
-    public void setApplicationDate(Timestamp applicationDate) { this.applicationDate = applicationDate; }
     
     public int getAmount() { return amount; }
     public void setAmount(int amount) { this.amount = amount; }
@@ -46,4 +42,7 @@ public class Application implements Serializable {
 
     public String getStaffName() { return staffName; }
     public void setStaffName(String staffName) { this.staffName = staffName; }
+    
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }
