@@ -26,7 +26,7 @@ if (mode == null)
 				<h2><%="approver".equals(mode) ? "承認一覧" : "管理部：承認済み一覧"%></h2>
 
 
-			<form action="#" method="post">
+			<form action="approverApplications" method="post">
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
@@ -40,7 +40,7 @@ if (mode == null)
 								<th>金額（税込）</th>
 								<th><select id="statusFilter" class="status-filter-button">
 										<option value="">ステータス</option>
-										<option value="未提出">未提出</option>
+<!--										<option value="未提出">未提出</option>-->
 										<option value="提出済み">提出済み</option>
 										<option value="差戻し">差戻し</option>
 										<option value="承認済み">承認済み</option>
@@ -71,7 +71,7 @@ if (mode == null)
 					</table>
 				</div>
 				<div class="btn-section">
-					<button type="submit">提出</button>
+					<button type="submit">承認</button>
 				</div>
 			</form>
 

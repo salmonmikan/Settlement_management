@@ -36,7 +36,7 @@
             </h2>
             <p class="result-message">${message}</p>
             <div class="btn-section">
-                <button type="button" class="next-btn" onclick="window.location.href='${pageContext.request.contextPath}/applicationMain'">リストに戻る</button>
+                <button type="button" class="next-btn" onclick="window.location.href='${pageContext.request.contextPath}/applicationMain'">リストに</button>
             </div>
         </div>
     </div>
