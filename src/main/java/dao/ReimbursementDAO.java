@@ -125,7 +125,7 @@ public class ReimbursementDAO {
                 detail.setDestinations(rs.getString("destinations"));
                 detail.setAccountingItem(rs.getString("accounting_item"));
                 detail.setAmount(rs.getInt("amount"));
-                detail.setAbstractNote(rs.getString("abstractNote"));
+                detail.setAbstractNote(rs.getString("abstract_note"));
                 detail.setReport(rs.getString("report"));
 
                 String fileSql = "SELECT original_file_name, stored_file_path FROM receipt_file WHERE block_id = ? AND block_type = 'reimbursement_request'";

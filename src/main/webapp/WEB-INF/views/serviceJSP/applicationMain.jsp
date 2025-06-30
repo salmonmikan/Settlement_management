@@ -31,7 +31,6 @@
     </div> -->
 				<!-- あとで作成する -->
 
-<<<<<<< HEAD
     <form action="submitApplication" method="post">
       <div class="table-area">
         <table id="applicationTable">
