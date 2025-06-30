@@ -121,13 +121,7 @@
 									class="fileInput" onchange="handleFileSelection(this)">
 
 								<ul class="fileList">
-									<%-- <c:forEach var="file" items="${detail.temporaryFiles}">
-<li>
-<a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
-${file.originalFileName}
-</a>
-</li>
-</c:forEach> --%>
+									
 									<c:forEach var="file" items="${detail.temporaryFiles}">
 										<li data-file-type="existing"
 											data-unique-name="${file.uniqueStoredName}"><a

@@ -57,6 +57,7 @@ public class Application {
     public void setStatus(String status) {
         this.status = status;
     }
+  
     public String getStaffId() {
         return staffId;
     }
@@ -73,4 +74,4 @@ public class Application {
         this.staffName = staffName;
     }
 }
-}
+
