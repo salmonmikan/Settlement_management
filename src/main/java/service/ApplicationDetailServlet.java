@@ -26,6 +26,9 @@ public class ApplicationDetailServlet extends HttpServlet {
         
         String idParam = request.getParameter("id");
         String action = request.getParameter("action");
+        if (action == null) {
+            action = ""; // default処理に分岐させる
+        }
         if (idParam == null || idParam.trim().isEmpty()) {
             HttpSession session = request.getSession();
             session.setAttribute("message", "無効な申請IDです");
@@ -74,6 +77,8 @@ public class ApplicationDetailServlet extends HttpServlet {
                 request.setAttribute("showBackButton", true);
                 request.setAttribute("backActionUrl", "/applicationMain");
 
+                request.setAttribute("view_mode", "view");
+                
                 rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp");
                 rd.forward(request, response);
                 break;
