@@ -29,17 +29,19 @@ if (mode == null)
 			<form action="approverApplications" method="post">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
-					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-					<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="">差戻</button>
-<!--					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>-->
-					<button type="submit" name="action" value="approval" id="applovalBtn" disabled>承認</button>
+					<input type="text" id="staffSearchInput" placeholder="社員IDで検索"
+						style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+					<button type="submit" name="action" value="reject" id="rejectBtn"
+						disabled onclick="">差戻</button>
+					<!--					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>-->
+					<button type="submit" name="action" value="approval"
+						id="applovalBtn" disabled>承認</button>
 				</div>
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th><div>選択</div>
-									<input type="checkbox" id="selectAll"></th>
+								<th><div>選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>社員ID</th>
 								<th>社員名</th>
@@ -61,7 +63,8 @@ if (mode == null)
 							for (Application app : applications) {
 							%>
 							<tr class="clickable-row" data-id="<%=app.getApplicationId()%>"
-								data-status="<%=app.getStatus()%>" data-staff-id="<%=app.getStaffId()%>">
+								data-status="<%=app.getStatus()%>"
+								data-staff-id="<%=app.getStaffId()%>">
 								<td><input type="checkbox" class="row-check" name="appIds"
 									value="<%=app.getApplicationId()%>"></td>
 								<td><%=app.getApplicationId()%></td>
@@ -81,16 +84,28 @@ if (mode == null)
 			</form>
 
 			<%
-			String msg = (String) session.getAttribute("message");
-			if (msg != null) {
+			String errorMsg = (String) session.getAttribute("errorMsg");
+			if (errorMsg != null) {
 			%>
 			<div class="custom-message error">
-				<%=msg%>
+				<%=errorMsg%>
 			</div>
 			<%
-			session.removeAttribute("message");
+			session.removeAttribute("errorMsg");
 			%>
 			<%
+			}
+			%>
+
+			<%
+			String success = (String) session.getAttribute("success");
+			if (success != null) {
+			%>
+			<script>
+    alert(<%="\"" + success.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\""%>);
+</script>
+			<%
+			session.removeAttribute("success");
 			}
 			%>
 		</div>

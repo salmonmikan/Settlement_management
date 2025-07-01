@@ -8,89 +8,111 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>申請一覧 - ABC株式会社</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<meta charset="UTF-8">
+<title>申請一覧 - ABC株式会社</title>
+<link rel="stylesheet"
+	href="<%= request.getContextPath() %>/static/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 </head>
 <body>
-  <jsp:include page="/WEB-INF/views/common/header.jsp" />
-  <div class="page-container">
-    <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-    <div class="content-container">
-      <h2>申請一覧</h2>
-      <form action="submitApplication" method="post" id="submitForm">
-        <div class="action-toolbar">
-          <div class="spacer"></div>
-          <button type="submit" name="action" value="post" id="postBtn" disabled onclick="return confirmSubmit()">提出</button>
-          <button type="submit" name="action" value="edit" id="editBtn" disabled >編集</button>
-          <button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
-        </div>
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
+	<div class="page-container">
+		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+		<div class="content-container">
+			<h2>申請一覧</h2>
+			<form action="submitApplication" method="post" id="submitForm">
+				<div class="action-toolbar">
+					<div class="spacer"></div>
+					<button type="submit" name="action" value="post" id="postBtn"
+						disabled onclick="return confirmSubmit()">提出</button>
+					<button type="submit" name="action" value="edit" id="editBtn"
+						disabled>編集</button>
+					<button type="submit" name="action" value="delete" id="deleteBtn"
+						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+				</div>
 
-        <div class="table-area">
-          <table id="applicationTable">
-            <thead>
-              <tr>
-                <th><div>選択</div><input type="checkbox" id="selectAll"></th>
-                <th>申請ID</th>
-                <th>申請種別</th>
-                <th>申請時間</th>
-                <th>金額（税込）</th>
-                <th>
-                  <select id="statusFilter" class="status-filter-button">
-                    <option value="">申請ステータス</option>
-                    <option value="未提出">未提出</option>
-                    <option value="提出済み">提出済み</option>
-                    <option value="差戻し">差戻し</option>
-                    <option value="承認済み">承認済み</option>
-                    <option value="支払い済">支払い済</option>
-                  </select>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <% for (Application app : applications) { %>
-                <tr class="clickable-row" data-id="<%= app.getApplicationId() %>" data-status="<%= app.getStatus() %>">
-                  <td><input type="checkbox" class="row-check" name="appIds" value="<%= app.getApplicationId() %>"></td>
-                  <td><%= app.getApplicationId() %></td>
-                  <td><%= app.getApplicationType() %></td>
-                  <td><%= app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ') %></td>
-                  <td><%= String.format("%,d円", app.getAmount()) %></td>
-                  <td><%= app.getStatus() %></td>
-                </tr>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </form>
-    </div>
-  </div>
+				<div class="table-area">
+					<table id="applicationTable">
+						<thead>
+							<tr>
+								<th><div>選択</div>
+									<input type="checkbox" id="selectAll"></th>
+								<th>申請ID</th>
+								<th>申請種別</th>
+								<th>申請時間</th>
+								<th>金額（税込）</th>
+								<th><select id="statusFilter" class="status-filter-button">
+										<option value="">申請ステータス</option>
+										<option value="未提出">未提出</option>
+										<option value="提出済み">提出済み</option>
+										<option value="差戻し">差戻し</option>
+										<option value="承認済み">承認済み</option>
+										<option value="支払い済">支払い済</option>
+								</select></th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for (Application app : applications) { %>
+							<tr class="clickable-row" data-id="<%= app.getApplicationId() %>"
+								data-status="<%= app.getStatus() %>">
+								<td><input type="checkbox" class="row-check" name="appIds"
+									value="<%= app.getApplicationId() %>"></td>
+								<td><%= app.getApplicationId() %></td>
+								<td><%= app.getApplicationType() %></td>
+								<td><%= app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ') %></td>
+								<td><%= String.format("%,d円", app.getAmount()) %></td>
+								<td><%= app.getStatus() %></td>
+							</tr>
+							<% } %>
+						</tbody>
+					</table>
+				</div>
+			</form>
+		</div>
+	</div>
 
-  <% if (session.getAttribute("submitSuccess") != null) { %>
-    <script>alert('申請を提出しました。');</script>
-    <% session.removeAttribute("submitSuccess"); %>
-  <% } %>
+	<% if (session.getAttribute("success") != null) { %>
+	<script>alert('申請を提出しました。');</script>
+	<% session.removeAttribute("success"); %>
+	<% } %>
 
-  <% String msg = (String) session.getAttribute("message"); %>
-  <% if (msg != null) { %>
-    <div class="custom-message error"><%= msg %></div>
-    <% session.removeAttribute("message"); %>
-  <% } %>
+	<% String msg = (String) session.getAttribute("message"); %>
+	<% String errorMsg = (String) session.getAttribute("errorMsg"); %>
+	<% if (msg != null || errorMsg != null) { %>
+	<script>
+        alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
+    </script>
+	<% session.removeAttribute("message"); %>
+	<% } %>
 
-  <!-- 提出確認モーダル -->
-  <div id="submitModal" class="modal hidden">
-    <div class="modal-content">
-      <p>選択された申請を提出しますか？</p>
-      <div class="modal-buttons">
-        <button type="button" onclick="closeModal()">キャンセル</button>
-        <button type="button" onclick="submitForm()">提出</button>
-      </div>
-    </div>
-  </div>
+	<%
+String error = request.getParameter("error");
+if ("type_not_found".equals(error)) {
+%>
+	<script>
+    alert('申請タイプが見つかりません。');
+</script>
+	<%
+}
+%>
 
-  <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
-  <script>
+
+	<!-- 提出確認モーダル -->
+	<div id="submitModal" class="modal hidden">
+		<div class="modal-content">
+			<p>選択された申請を提出しますか？</p>
+			<div class="modal-buttons">
+				<button type="button" onclick="closeModal()">キャンセル</button>
+				<button type="button" onclick="submitForm()">提出</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
+
+	<script>
     const checkboxes = document.querySelectorAll('.row-check');
     const postBtn = document.getElementById('postBtn');
     const editBtn = document.getElementById('editBtn');
@@ -171,5 +193,6 @@
       }
     });
   </script>
+
 </body>
 </html>
