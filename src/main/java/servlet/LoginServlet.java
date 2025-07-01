@@ -15,7 +15,6 @@ import dao.EmployeeDAO;
 import dao.ProjectDAO;
 import util.RoleUtil;
 
-
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -52,17 +51,15 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("countSashimodoshi", statusCount.getOrDefault("差戻し", 0));
 
 
-            // Xác định role và lưu vào session, cái này rất hữu ích
             RoleUtil.UserRole role = RoleUtil.detectRole(staff.getPositionId(), staff.getDepartmentId());
             session.setAttribute("userRole", role);
             
-            // Ghi chú: Nên dùng Logger thay cho System.out trong dự án thực tế
             System.out.println("Login success for staffId: " + staff.getEmployeeId() + ", Role: " + role);
 
             request.getRequestDispatcher("/WEB-INF/views/staffMenu.jsp").forward(request, response);
         } else {
             System.out.println("Login failed - user not found or wrong password");
-            request.setAttribute("error", "社員IDまたはパスワードが違います"); // ID hoặc mật khẩu không đúng
+            request.setAttribute("error", "社員IDまたはパスワードが違います"); 
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }
     }

@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <title>出張費申請 - 日当・宿泊費明細</title>
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/static/css/style.css">
+	href="${pageContext.request.contextPath}/static/css/style2.css">
 <script
 	src="${pageContext.request.contextPath}/static/js/businessTrip.js"></script>
 <style>
