@@ -58,7 +58,7 @@ session.removeAttribute("errorMsg");
 									<c:if test="${dep.delete_flag == 9}">disabled style="cursor:not-allowed;"</c:if>>
 								</td>
 								<td>${dep.department_id}</td>
-								<td>${dep.department_name} <c:if
+								<td>${dep.department_name}<c:if
 										test="${dep.delete_flag == 9}">
 										<span style="color: gray;">（削除不可）</span>
 									</c:if>
@@ -84,11 +84,13 @@ session.removeAttribute("errorMsg");
         });
     });
 
-    <%if (successMsg != null) {%>
-        alert("<%=successMsg%>");
-    <%} else if (errorMsg != null) {%>
-        alert("<%=errorMsg%>");
-    <%}%>
     </script>
+	<script>
+<% if (successMsg != null) { %>
+    alert("<%= successMsg.replaceAll("\"", "\\\\\"") %>");
+<% } else if (errorMsg != null) { %>
+    alert("<%= errorMsg.replaceAll("\"", "\\\\\"") %>");
+<% } %>
+</script>
 </body>
 </html>
