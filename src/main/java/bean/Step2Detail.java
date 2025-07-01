@@ -21,7 +21,34 @@ public class Step2Detail implements Serializable {
     private int expenseTotal;
     private String memo;
     private List<UploadedFile> temporaryFiles = new ArrayList<>();
+    private boolean adjustmentHalfDay;
+    private boolean adjustmentBonus;
+    private boolean adjustmentNone;
 
+    // THÊM GETTERS VÀ SETTERS CHO 3 TRƯỜNG MỚI
+    public boolean isAdjustmentHalfDay() {
+        return adjustmentHalfDay;
+    }
+
+    public void setAdjustmentHalfDay(boolean adjustmentHalfDay) {
+        this.adjustmentHalfDay = adjustmentHalfDay;
+    }
+
+    public boolean isAdjustmentBonus() {
+        return adjustmentBonus;
+    }
+
+    public void setAdjustmentBonus(boolean adjustmentBonus) {
+        this.adjustmentBonus = adjustmentBonus;
+    }
+
+    public boolean isAdjustmentNone() {
+        return adjustmentNone;
+    }
+
+    public void setAdjustmentNone(boolean adjustmentNone) {
+        this.adjustmentNone = adjustmentNone;
+    }
     // --- Getters and Setters ---
 
     /**

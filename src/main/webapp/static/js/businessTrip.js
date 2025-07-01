@@ -13,33 +13,37 @@ function initializeStep2(diffDays, positionId) {
 }
 
 function setupAllowanceBlock(block, diffDays, positionId) {
-    // --- BẮT ĐẦU PHẦN SỬA LỖI CHO Ô "日数" ---
-    const daysInput = block.querySelector("input[name='days[]']");
-    if (daysInput) {
-        const isFirstBlock = block === document.querySelector(".allowance-block");
+	const daysInput = block.querySelector("input[name='days[]']");
+	    
+	    // ★★★ LOGIC ĐƯỢC CẬP NHẬT TẠI ĐÂY ★★★
+	    if (daysInput) {
+	        const isFirstBlock = block === document.querySelector(".allowance-block");
 
-        // Luôn gán số ngày tính từ Step 1 cho block đầu tiên khi trang tải.
-        // Các block được thêm sau sẽ được xử lý bởi hàm addAllowanceBlock.
-        if (isFirstBlock) {
-            daysInput.value = diffDays;
-        }
+	        // Chỉ điền tự động số ngày TỔNG (diffDays) vào block đầu tiên
+	        // KHI VÀ CHỈ KHI block đó chưa có giá trị ngày nào được lưu từ trước.
+	        // Điều này ngăn việc ghi đè dữ liệu khi người dùng bấm "Back".
+	        const hasExistingValue = daysInput.value && parseInt(daysInput.value) > 0;
 
-        // Gắn ghi chú nếu chưa có
-        if (!block.querySelector(".days-note")) {
-            const note = document.createElement("small");
-            note.textContent = "※実際の日数に合わせて調整してください。";
-            note.className = "days-note";
-            note.style.color = "gray";
-            daysInput.parentNode.appendChild(note);
-        }
+	        if (isFirstBlock && !hasExistingValue) {
+	            daysInput.value = diffDays;
+	        }
+	        // ★★★ KẾT THÚC CẬP NHẬT ★★★
 
-        // Gắn sự kiện để tính toán lại và kiểm tra tổng ngày
-        daysInput.addEventListener('input', () => {
-            calculateTotal(block);
-            validateTotalDays(diffDays);
-        });
-    }
-    // --- KẾT THÚC PHẦN SỬA LỖI ---
+	        // Gắn ghi chú nếu chưa có
+	        if (!block.querySelector(".days-note")) {
+	            const note = document.createElement("small");
+	            note.textContent = "※実際の日数に合わせて調整してください。";
+	            note.className = "days-note";
+	            note.style.color = "gray";
+	            daysInput.parentNode.appendChild(note);
+	        }
+
+	        // Gắn sự kiện để tính toán lại và kiểm tra tổng ngày
+	        daysInput.addEventListener('input', () => {
+	            calculateTotal(block);
+	            validateTotalDays(diffDays);
+	        });
+	    }	
 
     const dailyAllowanceInput = block.querySelector("input[name='dailyAllowance[]']");
     if (dailyAllowanceInput) {
@@ -211,7 +215,6 @@ function validateTotalDays(maxDays) {
     });
 }
 
-
 function addAllowanceBlock() {
     const container = document.getElementById("allowance-container");
     const template = container.querySelector(".allowance-block");
@@ -220,14 +223,42 @@ function addAllowanceBlock() {
     const clone = template.cloneNode(true);
     const newIndex = container.children.length;
 
-    // Reset nội dung input
+    // Reset nội dung input, select, textarea
     clone.querySelectorAll("input[type='text'], input[type='number'], textarea").forEach(el => el.value = "");
     clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
+    
+    // ★ SỬA LỖI 1: Reset tất cả checkbox trong block mới về trạng thái chưa chọn
+    clone.querySelectorAll("input[type='checkbox']").forEach(chk => {
+        chk.checked = false;
+        chk.disabled = false; // Bật lại nếu nó bị disabled từ block gốc
+    });
 
+    // ★ SỬA LỖI 2: Cập nhật ID và NAME để chúng là duy nhất cho block mới
+    // Việc này cực kỳ quan trọng để label và logic hoạt động đúng
+    const adjustmentCheckboxes = clone.querySelectorAll('.nitto-option');
+    adjustmentCheckboxes.forEach(checkbox => {
+        const option = checkbox.dataset.option; // 'half_day', 'bonus', 'none'
+        const newId = `option_${option}_${newIndex}`;
+        
+        checkbox.id = newId;
+        checkbox.name = `adjustment${option.charAt(0).toUpperCase() + option.slice(1)}_${newIndex}`; // Ví dụ: adjustmentHalfDay_1
+        
+        // Tìm label tương ứng và cập nhật thuộc tính 'for'
+        const label = checkbox.closest('.option-item');
+        if (label) {
+            label.setAttribute('for', newId);
+        }
+    });
+
+    // Xử lý file input
     const fileInput = clone.querySelector(".fileInput");
     if (fileInput) {
         fileInput.name = "receipt_allowance_" + newIndex;
-        fileInput.value = "";
+        fileInput.value = ""; // Quan trọng để reset file đã chọn
+        // Xóa bộ đệm file tạm của JS (nếu có)
+        if (fileInput._customFiles) {
+             fileInput._customFiles = [];
+        }
     }
 
     const fileList = clone.querySelector(".fileList");
@@ -237,8 +268,10 @@ function addAllowanceBlock() {
     if (removeBtn) removeBtn.style.display = 'block';
 
     container.appendChild(clone);
+    // Gán lại tất cả sự kiện cho block mới, bao gồm cả việc tính toán
     setupAllowanceBlock(clone, diffDays, positionId);
 }
+
 
 function removeAllowanceBlock(btn) {
     btn.closest(".allowance-block").remove();
