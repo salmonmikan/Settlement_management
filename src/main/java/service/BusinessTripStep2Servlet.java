@@ -50,7 +50,7 @@ public class BusinessTripStep2Servlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
+    	HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("trip") == null) {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
@@ -82,7 +82,8 @@ public class BusinessTripStep2Servlet extends HttpServlet {
  // Trong file service/BusinessTripStep2Servlet.java
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+    	request.getParts();
+    	request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("trip") == null) {
