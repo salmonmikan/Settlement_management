@@ -30,7 +30,7 @@ public class TransportationRequestDAO {
      */
     // Thêm mới đơn xin phương tiện
 	public int insertRequest(TransportationRequest req) {
-	    String sql = "INSERT INTO transportation_request (project_code, date, destination, departure_station, arrival_station, amount, category, transport_type, payer, total_amount, abstract_note, report) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	    String sql = "INSERT INTO transportation_request (project_code, date, destination, departure_station, arrival_station, category, transport_type, payer, amount, abstract_note, report) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	    int count = 0;
 	    try (Connection conn = getConnection();
@@ -41,13 +41,12 @@ public class TransportationRequestDAO {
 	        ps.setString(3, req.getDestination());
 	        ps.setString(4, req.getDepartureStation());
 	        ps.setString(5, req.getArrivalStation());
-	        ps.setInt(6, req.getAmount());
-	        ps.setString(7, req.getCategory());
-	        ps.setString(8, req.getTransportType());
-	        ps.setString(9, req.getPayer());
-	        ps.setInt(10, req.getTotalAmount());
-	        ps.setString(11, req.getAbstractNote());
-	        ps.setString(12, req.getReport());
+	        ps.setString(6, req.getCategory());
+	        ps.setString(7, req.getTransportType());
+	        ps.setString(8, req.getPayer());
+	        ps.setInt(9, req.getTotalAmount());
+	        ps.setString(10, req.getAbstractNote());
+	        ps.setString(11, req.getReport());
 
 	        count = ps.executeUpdate();
 
@@ -74,11 +73,10 @@ public class TransportationRequestDAO {
                 req.setDestination(rs.getString("destination"));
                 req.setDepartureStation(rs.getString("departure_station"));
                 req.setArrivalStation(rs.getString("arrival_station"));
-                req.setAmount(rs.getInt("amount"));
+                req.setTotalAmount(rs.getInt("amount"));
                 req.setCategory(rs.getString("category"));
                 req.setTransportType(rs.getString("transport_type"));
                 req.setPayer(rs.getString("payer"));
-                req.setTotalAmount(rs.getInt("totalAmount"));
                 req.setAbstractNote(rs.getString("abstract_note"));
                 req.setReport(rs.getString("report"));
                 list.add(req);
@@ -107,10 +105,9 @@ public class TransportationRequestDAO {
                     req.setDestination(rs.getString("destination"));
                     req.setDepartureStation(rs.getString("departure_station"));
                     req.setArrivalStation(rs.getString("arrival_station"));
-                    req.setAmount(rs.getInt("amount"));
+                    req.setTotalAmount(rs.getInt("amount"));
                     req.setCategory(rs.getString("category"));
                     req.setTransportType(rs.getString("transport_type"));
-                    req.setTotalAmount(rs.getInt("totalAmount"));
                     req.setAbstractNote(rs.getString("abstract_note"));
                     req.setReport(rs.getString("report"));
                 }

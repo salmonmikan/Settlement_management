@@ -1,5 +1,6 @@
 package servlet;
 import java.io.IOException;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,6 +8,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import dao.ProjectDAO;
 
 /**
  * ログインユーザーの役職と部署に基づき、適切なメニュー画面（JSP）へ遷移させるルーティングサーブレット。
@@ -30,10 +33,24 @@ public class MenuRouterServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = req.getSession();
+        String staffId = (String) session.getAttribute("staffId");
         String position = (String) session.getAttribute("position");
         String department = (String) session.getAttribute("department");
 
         String jspPath = "/WEB-INF/views/staffMenu.jsp"; // default
+        try {
+            ProjectDAO dao = new ProjectDAO();
+            Map<String, Integer> statusCount = dao.countApplicationByStatusByStaff(staffId);
+
+            req.setAttribute("countMiteishutsu", statusCount.getOrDefault("未提出", 0));
+            req.setAttribute("countTeishutsu", statusCount.getOrDefault("提出済み", 0));
+            req.setAttribute("countSashimodoshi", statusCount.getOrDefault("差戻し", 0));
+
+            // Các xử lý khác...
+            req.getRequestDispatcher("/WEB-INF/views/projectList.jsp").forward(req, res);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if ("部長".equals(position) && "営業部".equals(department)) {
             jspPath = "/WEB-INF/views/buchouMain.jsp";

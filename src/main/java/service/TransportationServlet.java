@@ -113,6 +113,7 @@ public class TransportationServlet extends HttpServlet {
         String[] transTripTypes = request.getParameterValues("transTripType[]");
         String[] burdens = request.getParameterValues("burden[]");
         String[] expenseTotals = request.getParameterValues("expenseTotal[]");
+        String[] reports = request.getParameterValues("report[]");
         String[] transMemos = request.getParameterValues("transMemo[]");
 
         for (int i = 0; i < numSubmittedBlocks; i++) {
@@ -132,6 +133,7 @@ public class TransportationServlet extends HttpServlet {
             detail.setTransport(transports[i]);
             detail.setTransTripType(transTripTypes[i]);
             detail.setBurden(burdens[i]);
+            detail.setReport(reports[i]);
             detail.setTransMemo(transMemos[i]);
             
             try {
