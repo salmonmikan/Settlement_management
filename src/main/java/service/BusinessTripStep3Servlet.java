@@ -53,21 +53,6 @@ public class BusinessTripStep3Servlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip3.jsp").forward(request, response);
     }
 
-    /**
-     * Step3の入力フォーム送信時の処理。
-     * <p>
-     * 入力値とアップロードされたファイルを受け取り、`Step3Detail` のリストとして
-     * `BusinessTripBean` に格納する。
-     * <p>
-     * ファイルはUUID付きの一意名で保存。<br>
-     * actionパラメータにより Step2 への戻り or 確認画面への進行を分岐。
-     *
-     * @param request  リクエスト
-     * @param response レスポンス
-     * @throws ServletException サーブレット例外
-     * @throws IOException 入出力例外
-     */
- // Trong file service/BusinessTripStep3Servlet.java
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -83,11 +68,9 @@ public class BusinessTripStep3Servlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/businessTripStep2");
             return;
         }
-        
-        // === BẮT ĐẦU LOGIC "CẬP NHẬT TẠI CHỖ" MỚI ===
+
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
 
-        // 1. Xử lý file cần xóa
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
             List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
@@ -97,12 +80,10 @@ public class BusinessTripStep3Servlet extends HttpServlet {
             }
         }
 
-        // 2. Lấy dữ liệu từ form và danh sách trong session
         String[] transProjects = request.getParameterValues("transProject[]");
         List<Step3Detail> detailsInSession = trip.getStep3Details();
         int numSubmittedBlocks = (transProjects != null) ? transProjects.length : 0;
         
-        // 3. Cập nhật/thêm mới các block chi tiết
         String[] departures = request.getParameterValues("departure[]");
         String[] arrivals = request.getParameterValues("arrival[]");
         String[] transports = request.getParameterValues("transport[]");
@@ -132,12 +113,10 @@ public class BusinessTripStep3Servlet extends HttpServlet {
             detail.setTransMemo(transMemos[i]);
         }
 
-        // 4. Xóa các block bị người dùng xóa trên giao diện
         while (detailsInSession.size() > numSubmittedBlocks) {
             detailsInSession.remove(detailsInSession.size() - 1);
         }
 
-        // 5. Xử lý các file MỚI được tải lên
         Collection<Part> allParts = request.getParts();
         for (int i = 0; i < numSubmittedBlocks; i++) {
             String fileInputName = "receipt_transport_" + i;
@@ -149,7 +128,6 @@ public class BusinessTripStep3Servlet extends HttpServlet {
                 Step3Detail detail = detailsInSession.get(i);
                 detail.getTemporaryFiles().clear();
                 for (Part filePart : newFileParts) {
-                    // ... (Copy/paste code xử lý upload file của bạn vào đây)
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                         String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
@@ -166,7 +144,7 @@ public class BusinessTripStep3Servlet extends HttpServlet {
                         uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
                         detail.getTemporaryFiles().add(uploadedFile);
                     } catch (Exception e) {
-                        System.err.println("Lỗi xử lý file upload ở Step 3, index " + i + ": " + e.getMessage());
+                        System.err.println("Step 3のミス, index " + i + ": " + e.getMessage());
                     }
                 }
             }

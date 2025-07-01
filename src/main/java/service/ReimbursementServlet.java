@@ -63,7 +63,7 @@ public class ReimbursementServlet extends HttpServlet {
             return;
         }
         ReimbursementApplicationBean reimbursement = (ReimbursementApplicationBean) session.getAttribute("reimbursement");
-        // Xử lý các file được đánh dấu xóa
+        
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.trim().isEmpty()) {
             List<String> filesToDeleteList = Arrays.asList(filesToDeleteParam.split(","));
@@ -78,7 +78,7 @@ public class ReimbursementServlet extends HttpServlet {
                 });
             }
         }
-        // Logic "Cập nhật tại chỗ"
+
         String[] projectCodes = request.getParameterValues("projectCode[]");
         List<ReimbursementDetailBean> detailsInSession = reimbursement.getDetails();
         int numSubmittedBlocks = (projectCodes != null) ? projectCodes.length : 0;
@@ -116,7 +116,7 @@ public class ReimbursementServlet extends HttpServlet {
                 .collect(Collectors.toList());
             if (!newFileParts.isEmpty()) {
                 ReimbursementDetailBean detail = reimbursement.getDetails().get(i);
-                // Nếu là luồng tạo mới hoặc có file mới, ta sẽ xóa file cũ (nếu có) trong bean và thêm file mới
+                
                 detail.getTemporaryFiles().clear();
                 for (Part filePart : newFileParts) {
                     try {

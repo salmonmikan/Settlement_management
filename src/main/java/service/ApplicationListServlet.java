@@ -27,21 +27,19 @@ public class ApplicationListServlet extends HttpServlet {
             return;
         }
 
-        // --- Set thuộc tính để dùng trong JSP ---
         request.setAttribute("position", session.getAttribute("position"));
 
-        // --- Xử lý thông báo thành công ---
-        Boolean submitSuccess = (Boolean) session.getAttribute("submitSuccess");
-        if (Boolean.TRUE.equals(submitSuccess)) {
-            request.setAttribute("submitSuccess", true);
-            session.removeAttribute("submitSuccess");
+        Boolean success = (Boolean) session.getAttribute("submitSuccess");
+        if (Boolean.TRUE.equals(success)) {
+            request.setAttribute("success", true);
+            session.removeAttribute("success");
         }
 
         // --- Xử lý thông báo lỗi (nếu có) ---
-        String message = (String) session.getAttribute("message");
-        if (message != null) {
-            request.setAttribute("message", message);
-            session.removeAttribute("message");
+        String errorMsg = (String) session.getAttribute("errorMsg");
+        if (errorMsg != null) {
+            request.setAttribute("errorMsg", errorMsg);
+            session.removeAttribute("errorMsg");
         }
 
         // --- Lấy danh sách đơn đăng ký ---
@@ -53,7 +51,7 @@ public class ApplicationListServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("applications", List.of()); // Trả về list rỗng nếu lỗi
-            request.setAttribute("message", "申請一覧の取得中にエラーが発生しました。");
+            request.setAttribute("errorMsg", "申請一覧の取得中にエラーが発生しました。");
         }
 
         // --- Chuyển đến trang hiển thị ---

@@ -1,8 +1,6 @@
 package service;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,7 +8,13 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import bean.TransportationApplicationBean;
 import bean.TransportationDetailBean;
@@ -19,13 +23,6 @@ import dao.ApplicationDAO;
 import dao.ReceiptDAO;
 import dao.TransportationDAO;
 import util.DBConnection;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/transportationUpdate")
 public class TransportationUpdateServlet extends HttpServlet {
@@ -72,25 +69,26 @@ public class TransportationUpdateServlet extends HttpServlet {
             conn.commit();
             session.removeAttribute("transportationApp");
             session.removeAttribute("isEditMode");
-            
-            request.setAttribute("message", "出張費申請（ID: " + applicationId + "）を正常に更新しました。");
-            request.setAttribute("status", "success");
-            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
+
+            session.setAttribute("success", "交通費申請を正常に更新しました。");
+            response.sendRedirect(request.getContextPath() + "/applicationMain");
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
+
             request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
             request.setAttribute("status", "error");
             request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
+
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }
     }
-    
+
     private void moveFileToFinalLocation(UploadedFile tempFile, HttpServletRequest request) throws IOException {
         String realPath = request.getServletContext().getRealPath("");
-        Path source = Paths.get(realPath + tempFile.getTemporaryPath());
+        Path source = Paths.get(realPath, tempFile.getTemporaryPath());
         
         if (Files.exists(source)) {
             Path destinationDir = Paths.get(realPath, PERMANENT_UPLOAD_DIR);

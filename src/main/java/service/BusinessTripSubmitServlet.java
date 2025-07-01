@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -63,7 +62,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
 
             int tripApplicationId = tripAppDAO.insert(trip.getStep1Data(), applicationId, conn);
 
-            // Xử lý Step 2
+            // Step 2
             for (Step2Detail detail : trip.getStep2Details()) {
                 int blockId = allowanceDAO.insert(detail, tripApplicationId, conn);
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
@@ -74,7 +73,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
                 }
             }
             
-            // Xử lý Step 3
+            // Step 3
             for (Step3Detail detail : trip.getStep3Details()) {
                 int blockId = transportDAO.insert(detail, tripApplicationId, conn);
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
@@ -90,15 +89,18 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             session.removeAttribute("trip");
 
             request.setAttribute("applicationId", applicationId);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp");
-            dispatcher.forward(request, response);
+            session.setAttribute("success", "出張費申請が正常に送信されました。");
+            response.sendRedirect(request.getContextPath() + "/applicationMain");
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
             
-            request.setAttribute("errorMessage", "Lỗi nghiêm trọng khi nộp đơn: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+//            request.setAttribute("errorMessage", "ミス: " + e.getMessage());
+//            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+            session.setAttribute("errorMsg", "エラーが発生しました。再度ご確認ください。");
+            response.sendRedirect(request.getContextPath() + "/businessTripSubmit");
+
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }

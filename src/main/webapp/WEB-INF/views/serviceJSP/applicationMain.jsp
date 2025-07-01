@@ -11,7 +11,9 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 <meta charset="UTF-8">
 <title>申請一覧 - ABC株式会社</title>
 <link rel="stylesheet"
+
 	href="<%=request.getContextPath()%>/static/css/style.css">
+
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 </head>
@@ -24,11 +26,12 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 			<form action="submitApplication" method="post" id="submitForm">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
-					<!--          <input type="hidden" name="action" id="modalActionInput" value="">-->
+
 					<button type="submit" name="action" value="post" id="postBtn"
 						disabled onclick="return confirmSubmit()">提出</button>
 					<button type="submit" name="action" value="edit" id="editBtn"
-						disabled onclick="goToEditPage()">編集</button>
+						disabled>編集</button>
+
 					<button type="submit" name="action" value="delete" id="deleteBtn"
 						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
 				</div>
@@ -86,7 +89,6 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 			</form>
 		</div>
 	</div>
-
 	<%
 	if (session.getAttribute("submitSuccess") != null) {
 	%>
@@ -111,8 +113,6 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 	<%
 	}
 	%>
-
-
 
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
@@ -205,5 +205,6 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
         window.location.href = 'applicationDetail?id=' + appId + '&action=edit';
       }
   </script>
+
 </body>
 </html>

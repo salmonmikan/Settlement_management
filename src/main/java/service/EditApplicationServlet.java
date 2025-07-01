@@ -2,6 +2,13 @@ package service;
 
 import java.io.IOException;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import bean.BusinessTripBean;
 import bean.ReimbursementApplicationBean;
 import bean.TransportationApplicationBean;
@@ -9,13 +16,6 @@ import dao.ApplicationDAO;
 import dao.BusinessTripApplicationDAO;
 import dao.ReimbursementDAO;
 import dao.TransportationDAO;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/editApplication")
 public class EditApplicationServlet extends HttpServlet {
@@ -36,7 +36,7 @@ public class EditApplicationServlet extends HttpServlet {
             String type = appDAO.getApplicationTypeById(applicationId);
             
             if (type == null) {
-                 response.sendRedirect(request.getContextPath() + "/applicationMain?error=type_not_found");
+                 response.sendRedirect(request.getContextPath() + "/applicationMain?error=type_not_found") ; 
                  return;
             }
             
@@ -54,15 +54,13 @@ public class EditApplicationServlet extends HttpServlet {
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
-                // Bạn cần thêm trường applicationId và getter/setter vào TransportationApplicationBean
-                // bean.setApplicationId(applicationId); 
+
                 session.setAttribute("transportationApp", bean);
-                targetServlet = "/transportationRequest"; // Giả định servlet đăng ký là /transportation
+                targetServlet = "/transportationRequest"; 
 
             } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();
                 ReimbursementApplicationBean bean = dao.loadByApplicationId(applicationId);
-                // Bạn cần thêm trường applicationId và getter/setter vào ReimbursementApplicationBean
                 bean.setApplicationId(applicationId); 
                 session.setAttribute("reimbursement", bean);
                 targetServlet = "/reimbursement";
