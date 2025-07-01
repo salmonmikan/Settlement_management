@@ -366,15 +366,15 @@ public class ApplicationDAO extends DBConnection{
 	    }
 	}
 
-    public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
-        String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, totalAmount);
-            ps.setInt(2, applicationId);
-            ps.executeUpdate();
-        }
-    }
-//    
+//    public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
+//        String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
+//        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//            ps.setInt(1, totalAmount);
+//            ps.setInt(2, applicationId);
+//            ps.executeUpdate();
+//        }
+//    }
+////    
 //    public List<Application> getApplicationsByStaffIdAndStatus(String staffId, String status) throws Exception {
 //        List<Application> list = new ArrayList<>();
 //        String sql = "SELECT application_id, application_type, created_at, amount, status " +
