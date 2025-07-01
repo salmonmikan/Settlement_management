@@ -84,6 +84,8 @@ request.setAttribute("positionList", positionList); // JSTLで使うため
 	String method = request.getMethod();
 	String successMsg = (String) request.getAttribute("successMsg");
 	String errorMsg = (String) request.getAttribute("errorMsg");
+	session.removeAttribute("successMsg");
+	session.removeAttribute("errorMsg");
 
 	if ("POST".equalsIgnoreCase(method)) {
 		if (successMsg != null) {
