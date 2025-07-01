@@ -1,0 +1,3 @@
+<Context>
+    <Parameter name="maxPartCount" value="500" override="true"/>
+</Context>

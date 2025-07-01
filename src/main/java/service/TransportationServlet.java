@@ -28,7 +28,11 @@ import bean.UploadedFile;
 import dao.ProjectListDAO;
 
 @WebServlet("/transportationRequest")
-@MultipartConfig
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024,
+	    maxFileSize = 10 * 1024 * 1024,
+	    maxRequestSize = 50 * 1024 * 1024
+	)
 public class TransportationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // SỬA LỖI: Sử dụng thư mục temp_uploads nhất quán với code mẫu
@@ -109,6 +113,7 @@ public class TransportationServlet extends HttpServlet {
         String[] transTripTypes = request.getParameterValues("transTripType[]");
         String[] burdens = request.getParameterValues("burden[]");
         String[] expenseTotals = request.getParameterValues("expenseTotal[]");
+        String[] reports = request.getParameterValues("report[]");
         String[] transMemos = request.getParameterValues("transMemo[]");
 
         for (int i = 0; i < numSubmittedBlocks; i++) {
@@ -128,6 +133,7 @@ public class TransportationServlet extends HttpServlet {
             detail.setTransport(transports[i]);
             detail.setTransTripType(transTripTypes[i]);
             detail.setBurden(burdens[i]);
+            detail.setReport(reports[i]);
             detail.setTransMemo(transMemos[i]);
             
             try {
@@ -148,7 +154,6 @@ public class TransportationServlet extends HttpServlet {
         transportationApp.setDetails(updatedDetails);
 
         Collection<Part> allParts = request.getParts();
-        
         long fileCount = allParts.stream()
         	    .filter(part -> part.getSubmittedFileName() != null && !part.getSubmittedFileName().isBlank())
         	    .count();
