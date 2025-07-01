@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>社員登録</title>
 <link rel="stylesheet"
-	href="<%= request.getContextPath() %>/static/css/style.css">
+	href="<%=request.getContextPath()%>/static/css/style.css">
 <style>
 .form-group input, .form-group select {
 	width: 100%;
@@ -40,7 +40,7 @@ h2 {
 
 		<%-- Hiển thị lỗi nếu có --%>
 
-		<form action="<%= request.getContextPath() %>/employeeRegisterPage"
+		<form action="<%=request.getContextPath()%>/employeeRegisterPage"
 			method="post">
 			<input type="hidden" name="action" value="confirm">
 
@@ -100,21 +100,24 @@ h2 {
     if (confirm('本当に戻りますか？')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '<%= request.getContextPath() %>/employeeRegisterPage';
+        form.action = '<%=request.getContextPath()%>
+		/employeeRegisterPage';
 
-        const hidden = document.createElement('input');
-        hidden.type = 'hidden';
-        hidden.name = 'action';
-        hidden.value = 'cancel';
+				const hidden = document.createElement('input');
+				hidden.type = 'hidden';
+				hidden.name = 'action';
+				hidden.value = 'cancel';
 
-        form.appendChild(hidden);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
+				form.appendChild(hidden);
+				document.body.appendChild(form);
+				form.submit();
+			}
+		}
 	</script>
 	<c:if test="${not empty error}">
-		<script>alert("${error}");</script>
+		<script>
+			alert("${error}");
+		</script>
 	</c:if>
 </body>
 </html>
