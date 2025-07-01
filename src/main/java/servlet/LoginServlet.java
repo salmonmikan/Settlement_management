@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 import bean.Employee;
 import dao.EmployeeDAO;
+import dao.ProjectDAO;
 import util.RoleUtil;
 
 /**
@@ -67,6 +69,14 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("staffName", staff.getFullName());
             session.setAttribute("position_id", staff.getPositionId());
             session.setAttribute("department_id", staff.getDepartmentId());
+            
+            ProjectDAO proDao = new ProjectDAO();
+            Map<String, Integer> statusCount = proDao.countApplicationByStatusByStaff(staffId);
+
+            request.setAttribute("countMiteishutsu", statusCount.getOrDefault("未提出", 0));
+            request.setAttribute("countTeishutsu", statusCount.getOrDefault("提出済み", 0));
+            request.setAttribute("countSashimodoshi", statusCount.getOrDefault("差戻し", 0));
+
 
             // Xác định role và lưu vào session, cái này rất hữu ích
             RoleUtil.UserRole role = RoleUtil.detectRole(staff.getPositionId(), staff.getDepartmentId());

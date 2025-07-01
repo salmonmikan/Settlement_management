@@ -60,6 +60,7 @@ public class changepassServlet extends HttpServlet {
 
         // ログイン中のユーザー情報をセッションから取得
         HttpSession session = request.getSession();
+        session.removeAttribute("errorMsg");
         String staffId = (String) session.getAttribute("staffId");
 
         if (staffId == null) {
