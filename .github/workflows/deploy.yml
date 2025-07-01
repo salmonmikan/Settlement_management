@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - develop  # ← developブランチにpushされたときに実行
-  pull_request:
-     branches:
-      - develop  # develop に対する PR の merge 時にも動作
+#  pull_request:
+#     branches:
+#      - develop  # develop に対する PR の merge 時にも動作
 
 jobs:
   deploy:
@@ -31,7 +31,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "ROOT.war"
+          source: "target/ROOT.war"
           target: "/opt/tomcat/webapps/"
 
       - name: Restart Tomcat via SSH

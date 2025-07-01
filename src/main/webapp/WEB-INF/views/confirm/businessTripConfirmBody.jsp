@@ -110,7 +110,7 @@
         </div>
 
         <%-- Hiển thị tổng số tiền của toàn bộ đơn đăng ký --%>
-        <div class="<c:forEach var="detail"">
+        <div class="confirm-page-total">
             総合計金額: <fmt:formatNumber value="${trip.totalAmount}" type="number" />円
         </div>
     </div>
