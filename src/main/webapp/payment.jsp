@@ -22,7 +22,7 @@
 			<form action="payment" method="post">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
-					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
 					<button id="paidBtn" type="submit" disabled>支払済</button>
 				</div>
 

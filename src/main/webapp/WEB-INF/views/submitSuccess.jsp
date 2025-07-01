@@ -52,7 +52,6 @@
 </head>
 <body>
   <div class="result-container">
-    <div class="icon"><i class="fas fa-check-circle"></i></div>
     <h2>申請が完了しました</h2>
     <p>申請内容は正常に送信されました。状況は申請一覧ページで確認できます。</p>
     <div class="btn-section">
