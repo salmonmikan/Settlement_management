@@ -397,7 +397,6 @@ public class ApplicationDAO extends DBConnection{
         }
     }
 
-//    
 //    public List<Application> getApplicationsByStaffIdAndStatus(String staffId, String status) throws Exception {
 //        List<Application> list = new ArrayList<>();
 //        String sql = "SELECT application_id, application_type, created_at, amount, status " +

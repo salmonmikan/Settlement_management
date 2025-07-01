@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 
 import bean.ReimbursementApplicationBean;
 
-
 @WebServlet("/reimbursementConfirm")
 public class ReimbursementConfirmServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

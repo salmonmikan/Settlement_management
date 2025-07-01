@@ -40,6 +40,7 @@
         <c:forEach var="detail" items="${transportationApp.details}" varStatus="loop">
           <div class="form-section transportation-block" style="position: relative;">
             <button type="button" class="remove-btn" onclick="removeTransportationBlock(this)">×</button>
+            <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" value="${detail.date}" required></div>
             <div class="form-group"><label>PJコード</label>
               <select name="projectCode[]" required>
                 <option value="">選択してください</option>
@@ -48,7 +49,7 @@
                 </c:forEach>
               </select>
             </div>
-            <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" value="${detail.date}" required></div>
+            <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！">${detail.report}</textarea></div>
             <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" value="${detail.destination}" required></div>
             <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅" value="${detail.departure}"></div>
             <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅" value="${detail.arrival}"></div>
@@ -117,6 +118,7 @@
 <template id="transportation-template">
   <div class="form-section transportation-block" style="position: relative;">
     <button type="button" class="remove-btn" onclick="removeTransportationBlock(this)">×</button>
+    <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" required></div>
     <div class="form-group"><label>PJコード</label>
       <select name="projectCode[]" required>
         <option value="">選択してください</option>
@@ -125,7 +127,7 @@
         </c:forEach>
       </select>
     </div>
-    <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" required></div>
+    <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！"></textarea></div>
     <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" required></div>
     <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅"></div>
     <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅"></div>

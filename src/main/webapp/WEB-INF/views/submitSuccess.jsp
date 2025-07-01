@@ -52,7 +52,7 @@
 </head>
 <body>
   <div class="result-container">
-    <h2>編集が完了しました</h2>
+    <h2>申請が完了しました</h2>
     <p>申請内容は正常に送信されました。状況は申請一覧ページで確認できます。</p>
     <div class="btn-section">
       <a href="${pageContext.request.contextPath}/applicationMain" class="btn btn-primary">申請一覧へ</a>
