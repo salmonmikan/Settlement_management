@@ -33,6 +33,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "target/ROOT.war"
           target: "/opt/tomcat/webapps/"
+		  strip_components: 1
 
       - name: Restart Tomcat via SSH
         uses: appleboy/ssh-action@v1.0.0
