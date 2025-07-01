@@ -25,6 +25,10 @@ public class ApplicationDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         String idParam = request.getParameter("id");
+        String action = request.getParameter("action");
+        if (action == null) {
+            action = ""; // default処理に分岐させる
+        }
         if (idParam == null || idParam.trim().isEmpty()) {
             HttpSession session = request.getSession();
             session.setAttribute("message", "無効な申請IDです");
@@ -59,22 +63,30 @@ public class ApplicationDetailServlet extends HttpServlet {
                 request.setAttribute("reimbursementApp", bean);
             }
             
-            request.setAttribute("showSubmitButton", false);
-            request.setAttribute("showEditButton", true);
-            request.setAttribute("editActionUrl", "/editApplication");
-            request.setAttribute("showBackButton", true);
-            request.setAttribute("backActionUrl", "/applicationMain");
+            RequestDispatcher rd = null;
+            switch (action) {
+            case "edit":
+            	// 申請一覧画面で直接編集ボタンが押された時には、詳細表示画面を飛ばして編集画面へ遷移する
+            	rd = request.getRequestDispatcher("editApplication");
+            	rd.forward(request, response);
+            	return;
+            default: // 通常はここで詳細表示画面へ遷移する
+            	request.setAttribute("showSubmitButton", false);
+                request.setAttribute("showEditButton", true);
+                request.setAttribute("editActionUrl", "/editApplication");
+                request.setAttribute("showBackButton", true);
+                request.setAttribute("backActionUrl", "/applicationMain");
 
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp");
-            rd.forward(request, response);
-
+                request.setAttribute("view_mode", "view");
+                
+                rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp");
+                rd.forward(request, response);
+                break;
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        
             HttpSession session = request.getSession();
             session.setAttribute("message", "Lỗi khi tải chi tiết đơn: " + e.getMessage());
-            
-           
             response.sendRedirect(request.getContextPath() + "/applicationMain");
         }
     }

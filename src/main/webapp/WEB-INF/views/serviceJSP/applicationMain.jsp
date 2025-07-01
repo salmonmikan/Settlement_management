@@ -22,7 +22,8 @@
       <form action="submitApplication" method="post" id="submitForm">
         <div class="action-toolbar">
           <div class="spacer"></div>
-          <button type="submit" name="action" value="edit" id="editBtn" disabled>編集</button>
+          <button type="submit" name="action" value="post" id="postBtn" disabled onclick="return confirmSubmit()">提出</button>
+          <button type="submit" name="action" value="edit" id="editBtn" disabled >編集</button>
           <button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
         </div>
 
@@ -41,7 +42,7 @@
                     <option value="未提出">未提出</option>
                     <option value="提出済み">提出済み</option>
                     <option value="差戻し">差戻し</option>
-                    <option value="承認済">承認済</option>
+                    <option value="承認済み">承認済み</option>
                     <option value="支払い済">支払い済</option>
                   </select>
                 </th>
@@ -60,10 +61,6 @@
               <% } %>
             </tbody>
           </table>
-        </div>
-
-        <div class="btn-section">
-          <button type="submit" onclick="return confirmSubmit()">提出</button>
         </div>
       </form>
     </div>
@@ -95,6 +92,7 @@
 
   <script>
     const checkboxes = document.querySelectorAll('.row-check');
+    const postBtn = document.getElementById('postBtn');
     const editBtn = document.getElementById('editBtn');
     const deleteBtn = document.getElementById('deleteBtn');
     const modal = document.getElementById('submitModal');
@@ -108,6 +106,7 @@
 
     function updateToolbarState() {
       const checked = document.querySelectorAll('.row-check:checked');
+      postBtn.disabled = (checked.length !== 1);
       editBtn.disabled = (checked.length !== 1);
       deleteBtn.disabled = (checked.length === 0);
     }

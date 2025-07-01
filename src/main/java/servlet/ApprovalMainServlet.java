@@ -52,31 +52,69 @@ public class ApprovalMainServlet extends HttpServlet {
 	}
 
 	@Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        String approverId = (String) session.getAttribute("staffId");
-        String[] appIds = request.getParameterValues("appIds");  // formでチェックされた申請ID
+	    HttpSession session = request.getSession();
+	    String approverId = (String) session.getAttribute("staffId");
+	    String[] appIds = request.getParameterValues("appIds");  // チェックされた申請ID
+	    String action = request.getParameter("action");
 
-        if (approverId == null || appIds == null || appIds.length == 0) {
-            request.setAttribute("message", "申請が選択されていません。");
-            request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
-            return;
-        }
+	    if (approverId == null || appIds == null || appIds.length == 0 || action == null) {
+	        request.setAttribute("message", "申請が選択されていません。");
+	        request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
+	        return;
+	    }
 
-        try {
-            ApplicationDAO dao = new ApplicationDAO();
-            for (String idStr : appIds) {
-                int appId = Integer.parseInt(idStr);
-                // ステータスを「承認済」へ更新
-                dao.updateStatus(appId, approverId);
-            }
-        }catch (Exception e) {
-        	e.printStackTrace();
-			// TODO: handle exception
-		}
-        response.sendRedirect("approverApplications");
-        // getで情報を再取得する
-    }
+	    try {
+	        ApplicationDAO dao = new ApplicationDAO();
+
+	        switch (action) {
+	            case "submit":
+	                for (String idStr : appIds) {
+	                    int appId = Integer.parseInt(idStr);
+	                    dao.updateStatus(appId, approverId); // 例: ステータスを「承認済」に更新
+	                }
+	                session.setAttribute("submitSuccess", true);
+	                break;
+
+	            case "reject":
+	                // 差戻し処理
+	                try {
+//	                    ApplicationDAO dao = new ApplicationDAO();
+	                    for (String idStr : appIds) {
+	                        int appId = Integer.parseInt(idStr);
+	                        dao.rejectApplication(appId); // 差戻し処理メソッドを呼び出し
+	                    }
+	                    session.setAttribute("message", "選択された申請を差戻しました。");
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    session.setAttribute("message", "差戻し中にエラーが発生しました。");
+	                }
+	                response.sendRedirect("approverApplications");
+	                return;
+
+	            case "delete":
+	                for (String idStr : appIds) {
+	                    int appId = Integer.parseInt(idStr);
+	                    dao.deleteApplication(appId);
+	                }
+	                session.setAttribute("message", "選択された申請を削除しました。");
+	                break;
+
+	            default:
+	                request.setAttribute("message", "不明な操作が指定されました。");
+	                request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
+	                return;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        request.setAttribute("message", "操作中にエラーが発生しました。");
+	        request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
+	        return;
+	    }
+
+	    // 正常終了 → 一覧ページへリダイレクト
+	    response.sendRedirect("approverApplications");
+	}
 }

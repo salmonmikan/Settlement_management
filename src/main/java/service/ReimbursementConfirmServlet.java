@@ -12,25 +12,10 @@ import jakarta.servlet.http.HttpSession;
 
 import bean.ReimbursementApplicationBean;
 
-/**
- * 立替金申請の確認画面を表示するためのサーブレット。
- * セッションに保持された申請情報を使用し、確認ページに必要な情報をリクエストスコープに設定する。
- */
 @WebServlet("/reimbursementConfirm")
 public class ReimbursementConfirmServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 立替金申請の確認画面を表示する。
-     * セッションに格納された ReimbursementApplicationBean をもとに、
-     * 申請内容を確認ページに渡す。セッションが無効、または申請情報が存在しない場合は、
-     * 初期化処理（`/reimbursementInit`）へリダイレクトする。
-     *
-     * @param request  HTTPリクエスト（セッションからの申請情報取得用）
-     * @param response HTTPレスポンス（確認画面または初期化画面へ遷移）
-     * @throws ServletException サーブレットの処理エラー
-     * @throws IOException 入出力エラー
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);

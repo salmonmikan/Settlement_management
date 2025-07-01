@@ -133,7 +133,7 @@ public class ApplicationDAO extends DBConnection{
 	 */
 	public List<Application> getApplicationsByStaffId(String staffId) throws Exception {
 		List<Application> list = new ArrayList<>();
-		String sql = "SELECT application_id, application_type, created_at, amount, status FROM application_header WHERE staff_id = ? ORDER BY application_id DESC";
+		String sql = "SELECT application_id, application_type, created_at, amount, status FROM application_header WHERE staff_id = ? AND delete_flag IN (0,9) ORDER BY application_id DESC";
 		try (Connection conn = DBConnection.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, staffId);
@@ -284,15 +284,6 @@ public class ApplicationDAO extends DBConnection{
 		}
 		return list;
 	}
-
-	public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
-		String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
-		try (PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, totalAmount);
-			ps.setInt(2, applicationId);
-			ps.executeUpdate();
-		}
-	}
 	
 	// 承認者のIDを基にその承認者の部署を特定する（精算承認表示用）
 	public String findApproverDepartment(String approverId) throws SQLException {
@@ -366,15 +357,40 @@ public class ApplicationDAO extends DBConnection{
 	    }
 	}
 
-//    public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
-//        String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
-//        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-//            ps.setInt(1, totalAmount);
-//            ps.setInt(2, applicationId);
-//            ps.executeUpdate();
-//        }
-//    }
-////    
+    public void updateApplication(int applicationId, int totalAmount, Connection conn) throws SQLException {
+        String sql = "UPDATE application_header SET amount = ?, updated_at = NOW() WHERE application_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, totalAmount);
+            ps.setInt(2, applicationId);
+            ps.executeUpdate();
+        }
+    }
+    
+    /*
+     * 申請ID論理削除
+     */
+    public void deleteApplication(int applicationId) throws Exception {
+        String sql = "UPDATE application_header SET delete_flag = 1, updated_at = CURRENT_TIMESTAMP WHERE application_id = ?";
+
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+
+            stmt.setInt(1, applicationId);
+            stmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    public void rejectApplication(int applicationId) throws Exception {
+        String sql = "UPDATE application_header SET status = '差戻し', updated_at = NOW() WHERE application_id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, applicationId);
+            stmt.executeUpdate();
+        }
+    }
+
 //    public List<Application> getApplicationsByStaffIdAndStatus(String staffId, String status) throws Exception {
 //        List<Application> list = new ArrayList<>();
 //        String sql = "SELECT application_id, application_type, created_at, amount, status " +

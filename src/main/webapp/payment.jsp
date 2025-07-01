@@ -22,6 +22,7 @@
 			<form action="payment" method="post">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
+					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
 					<button id="paidBtn" type="submit" disabled>支払済</button>
 				</div>
 
@@ -29,33 +30,39 @@
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th><div>選択</div> <input type="checkbox" id="selectAll"></th>
+								<th><div>すべて選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
+								<th>社員ID</th>
+								<th>社員名</th>								
 								<th>申請種別</th>
 								<th>申請時間</th>
-								<th>更新時間</th>
+<!--								<th>更新時間</th>-->
 								<th>金額（税込）</th>
+								<th>領収書</th>
 								<th><select id="statusFilter" class="status-filter-button">
 										<option value="">申請ステータス</option>
 <!--										<option value="未提出">未提出</option>-->
 <!--										<option value="提出済み">提出済み</option>-->
 <!--										<option value="差戻し">差戻し</option>-->
 										<option value="承認済み">承認済み</option>
-										<option value="支払い済">支払い済</option>
+										<option value="支払済み">支払済み</option>
 								</select></th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:forEach var="p" items="${paymentList}">
-								<tr class="clickable-row" data-id="${p.applicationId}" data-status="${p.status}">
+								<tr class="clickable-row" data-id="${p.applicationId}" data-status="${p.status}" data-staff-id="${p.staffId}">
 									<td><input type="checkbox" class="row-check" name="appIds"
 										value="${p.applicationId}"></td>
 									<td>${p.applicationId}</td>
+									<td>${p.staffId}</td>
+									<td>${p.staffName}</td>
 									<td>${p.applicationType}</td>
 									<td>${p.createdAt}</td>
-									<td>${p.updatedAt}</td>
+<!--									<td>${p.updatedAt}</td>-->
 									<td><fmt:formatNumber value="${p.amount}" type="number"
 											pattern="#,##0" />円</td>
+									<td>領収書</td>
 									<td>${p.status}</td>
 								</tr>
 							</c:forEach>
@@ -111,6 +118,15 @@
 	        window.location.href = 'applicationDetail?id=' + id;
 	    });
 	});
+
+	// 社員IDでの検索用
+	document.getElementById('staffSearchInput').addEventListener('input', function () {
+	    const keyword = this.value.trim();
+	    document.querySelectorAll('#applicationTable tbody tr').forEach(row => {
+	      const staffId = row.getAttribute('data-staff-id');
+	      row.style.display = (!keyword || staffId.includes(keyword)) ? '' : 'none';
+	    });
+	  });
 	</script>
 </body>
 </html>

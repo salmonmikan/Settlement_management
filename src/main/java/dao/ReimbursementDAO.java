@@ -20,8 +20,8 @@ public class ReimbursementDAO {
 
     public int insert(ReimbursementDetailBean detail, int applicationId, Connection conn) throws SQLException {
         String sql = "INSERT INTO reimbursement_request " +
-                     "(application_id, project_code, date, destinations, accounting_item, amount, report) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                     "(application_id, project_code, date, destinations, accounting_item, amount, abstract_note, report) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, applicationId);
@@ -40,7 +40,7 @@ public class ReimbursementDAO {
                     }
                     stmt.setDate(3, java.sql.Date.valueOf(localDate));
                 } catch (DateTimeParseException e) {
-                    throw new SQLException("Định dạng ngày tháng không hợp lệ (cần yyyy-MM-dd hoặc yy-MM-dd): " + dateStr, e);
+                    throw new SQLException("日付形式が無効です (yyyy-MM-dd または yy-MM-dd が必要です): " + dateStr, e);
                 }
             } else {
                 stmt.setNull(3, java.sql.Types.DATE);
@@ -49,7 +49,8 @@ public class ReimbursementDAO {
             stmt.setString(4, detail.getDestinations());
             stmt.setString(5, detail.getAccountingItem());
             stmt.setInt(6, detail.getAmount());
-            stmt.setString(7, detail.getReport());
+            stmt.setString(7, detail.getAbstractNote());
+            stmt.setString(8, detail.getReport());
 
             stmt.executeUpdate();
 
@@ -57,7 +58,7 @@ public class ReimbursementDAO {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);
                 } else {
-                    throw new SQLException("Creating reimbursement detail failed, no ID obtained.");
+                    throw new SQLException("払い戻しの詳細の作成に失敗しました。ID が取得されませんでした。");
                 }
             }
         }
