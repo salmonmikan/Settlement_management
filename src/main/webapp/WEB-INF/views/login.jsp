@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
   <script src="${pageContext.request.contextPath}/static/js/script.js"></script>
   <script>
+  	console.log("250701_19:31_war");
     function togglePassword() {
       const input = document.getElementById("password");
       const toggle = document.getElementById("toggleLabel");

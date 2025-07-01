@@ -67,8 +67,10 @@ public class TransportationSubmitServlet extends HttpServlet {
             conn.commit();
             session.removeAttribute("transportationApp");
 
-            session.setAttribute("success", "交通費申請が正常に送信されました。");
-            response.sendRedirect(request.getContextPath() + "/applicationMain");
+
+            request.setAttribute("message", "交通費申請が正常に送信されました。 (申請ID: " + applicationId + ")");
+            request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
+
 
         } catch (Exception e) {
             e.printStackTrace();

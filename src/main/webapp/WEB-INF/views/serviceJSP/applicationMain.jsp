@@ -2,7 +2,7 @@
 <%@ page import="model.Application"%>
 <%@ page import="java.util.List"%>
 <%
-  List<Application> applications = (List<Application>) request.getAttribute("applications");
+List<Application> applications = (List<Application>) request.getAttribute("applications");
 %>
 
 <!DOCTYPE html>
@@ -11,7 +11,9 @@
 <meta charset="UTF-8">
 <title>申請一覧 - ABC株式会社</title>
 <link rel="stylesheet"
-	href="<%= request.getContextPath() %>/static/css/style.css">
+
+	href="<%=request.getContextPath()%>/static/css/style.css">
+
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 </head>
@@ -24,10 +26,12 @@
 			<form action="submitApplication" method="post" id="submitForm">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
+
 					<button type="submit" name="action" value="post" id="postBtn"
 						disabled onclick="return confirmSubmit()">提出</button>
 					<button type="submit" name="action" value="edit" id="editBtn"
 						disabled>編集</button>
+
 					<button type="submit" name="action" value="delete" id="deleteBtn"
 						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
 				</div>
@@ -53,62 +57,62 @@
 							</tr>
 						</thead>
 						<tbody>
-							<% for (Application app : applications) { %>
-							<tr class="clickable-row" data-id="<%= app.getApplicationId() %>"
-								data-status="<%= app.getStatus() %>">
+							<%
+							for (Application app : applications) {
+							%>
+							<tr class="clickable-row" data-id="<%=app.getApplicationId()%>"
+								data-status="<%=app.getStatus()%>">
 								<td><input type="checkbox" class="row-check" name="appIds"
-									value="<%= app.getApplicationId() %>"></td>
-								<td><%= app.getApplicationId() %></td>
-								<td><%= app.getApplicationType() %></td>
-								<td><%= app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ') %></td>
-								<td><%= String.format("%,d円", app.getAmount()) %></td>
-								<td><%= app.getStatus() %></td>
+									value="<%=app.getApplicationId()%>"></td>
+								<td><%=app.getApplicationId()%></td>
+								<td><%=app.getApplicationType()%></td>
+								<td><%=app.getCreatedAt().toLocalDateTime().toString().replace('T', ' ')%></td>
+								<td><%=String.format("%,d円", app.getAmount())%></td>
+								<td><%=app.getStatus()%></td>
 							</tr>
-							<% } %>
+							<%
+							}
+							%>
 						</tbody>
 					</table>
+				</div>
+				<!-- 提出確認モーダル -->
+				<div id="submitModal" class="modal hidden">
+					<div class="modal-content">
+						<p>選択された申請を提出しますか？</p>
+						<div class="modal-buttons">
+							<button type="button" onclick="closeModal()">キャンセル</button>
+							<button type="submit" name="action" value="post">提出</button>
+						</div>
+					</div>
 				</div>
 			</form>
 		</div>
 	</div>
-
-	<% if (session.getAttribute("success") != null) { %>
+	<%
+	if (session.getAttribute("submitSuccess") != null) {
+	%>
 	<script>alert('申請を提出しました。');</script>
-	<% session.removeAttribute("success"); %>
-	<% } %>
-
-	<% String msg = (String) session.getAttribute("message"); %>
-	<% String errorMsg = (String) session.getAttribute("errorMsg"); %>
-	<% if (msg != null || errorMsg != null) { %>
-	<script>
-        alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
-    </script>
-	<% session.removeAttribute("message"); %>
-	<% } %>
+	<%
+	session.removeAttribute("submitSuccess");
+	%>
+	<%
+	}
+	%>
 
 	<%
-String error = request.getParameter("error");
-if ("type_not_found".equals(error)) {
-%>
-	<script>
-    alert('申請タイプが見つかりません。');
-</script>
+	String msg = (String) session.getAttribute("message");
+	%>
 	<%
-}
-%>
-
-
-
-	<!-- 提出確認モーダル -->
-	<div id="submitModal" class="modal hidden">
-		<div class="modal-content">
-			<p>選択された申請を提出しますか？</p>
-			<div class="modal-buttons">
-				<button type="button" onclick="closeModal()">キャンセル</button>
-				<button type="button" onclick="submitForm()">提出</button>
-			</div>
-		</div>
-	</div>
+	if (msg != null) {
+	%>
+	<div class="custom-message error"><%=msg%></div>
+	<%
+	session.removeAttribute("message");
+	%>
+	<%
+	}
+	%>
 
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
@@ -124,7 +128,8 @@ if ("type_not_found".equals(error)) {
       updateToolbarState();
     });
 
-    checkboxes.forEach(cb => cb.addEventListener('change', updateToolbarState));
+    checkboxes.forEach(cb => cb.addEventListener('change', updateToolbarState)); 
+    
 
     function updateToolbarState() {
       const checked = document.querySelectorAll('.row-check:checked');
@@ -157,8 +162,8 @@ if ("type_not_found".equals(error)) {
 
       for (const cb of checked) {
         const status = cb.closest('tr').getAttribute('data-status');
-        if (status !== '未提出') {
-          alert('未提出の申請のみ提出可能です。');
+        if (status !== '未提出' && status !== '差戻し') {
+          alert('未提出または差戻しの申請のみ提出可能です。');
           return false;
         }
       }
@@ -171,7 +176,8 @@ if ("type_not_found".equals(error)) {
       modal.classList.add('hidden');
     }
 
-    function submitForm() {
+    function submitForm(action) {
+      document.getElementById('modalActionInput').value = action;
       document.getElementById('submitForm').submit();
     }
 
@@ -192,6 +198,12 @@ if ("type_not_found".equals(error)) {
         statusSelect.dispatchEvent(new Event('change'));
       }
     });
+
+    function goToEditPage() {
+        const checked = document.querySelectorAll('.row-check:checked');
+        const appId = checked[0].value;
+        window.location.href = 'applicationDetail?id=' + appId + '&action=edit';
+      }
   </script>
 
 </body>

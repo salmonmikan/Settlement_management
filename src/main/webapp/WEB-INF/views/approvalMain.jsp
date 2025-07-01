@@ -29,13 +29,12 @@ if (mode == null)
 			<form action="approverApplications" method="post">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
-					<input type="text" id="staffSearchInput" placeholder="社員IDで検索"
-						style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-					<button type="submit" name="action" value="reject" id="rejectBtn"
-						disabled onclick="">差戻</button>
-					<!--					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>-->
-					<button type="submit" name="action" value="approval"
-						id="applovalBtn" disabled>承認</button>
+
+					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+					<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="">差戻</button>
+<!--					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>-->
+					<button type="submit" name="action" value="approval" id="applovalBtn" disabled>承認</button>
+
 				</div>
 				<div class="table-area">
 					<table id="applicationTable">

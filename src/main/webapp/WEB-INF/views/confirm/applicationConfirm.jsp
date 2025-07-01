@@ -21,7 +21,7 @@
   <jsp:include page="/WEB-INF/views/confirm/reimbursementConfirmBody.jsp" />
   
 <% } else { %>
-  <p style="color: red;">不明な申請タイプです。(Loại đơn nhận được: <%= request.getAttribute("application_type") %>)</p>
+  <p style="color: red;">不明な申請タイプです: <%= request.getAttribute("application_type") %>)</p>
 <% } %>
 
 <input type="hidden" name="editMode" value="${editMode}">

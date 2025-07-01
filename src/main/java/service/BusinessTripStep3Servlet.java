@@ -25,7 +25,11 @@ import bean.Step3Detail;
 import bean.UploadedFile;
 
 @WebServlet("/businessTripStep3")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 15)
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024,
+	    maxFileSize = 10 * 1024 * 1024,
+	    maxRequestSize = 50 * 1024 * 1024
+	)
 public class BusinessTripStep3Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

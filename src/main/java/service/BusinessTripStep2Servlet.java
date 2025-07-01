@@ -26,7 +26,11 @@ import bean.UploadedFile;
 
 
 @WebServlet("/businessTripStep2")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 15)
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024,
+	    maxFileSize = 10 * 1024 * 1024,
+	    maxRequestSize = 50 * 1024 * 1024
+	)
 public class BusinessTripStep2Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String TEMP_UPLOAD_DIR = "/temp_uploads";
@@ -34,7 +38,7 @@ public class BusinessTripStep2Servlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
+    	HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("trip") == null) {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
@@ -53,7 +57,8 @@ public class BusinessTripStep2Servlet extends HttpServlet {
  
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+    	request.getParts();
+    	request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("trip") == null) {
