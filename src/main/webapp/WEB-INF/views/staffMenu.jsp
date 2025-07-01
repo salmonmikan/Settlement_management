@@ -1,66 +1,55 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%
-		String staffName = (String) session.getAttribute("staffName");
-		if (staffName == null) {
-			response.sendRedirect(request.getContextPath() + "/views/login.jsp");
-			return;
-		};
-%>
+
+<%@ page contentType="text/html; charset=UTF-8"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:if test="${empty sessionScope.staffName}">
+	<c:redirect url="/LoginServlet" />
+</c:if>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>スタッフダッシュボード - ABC株式会社システム</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
-<!--  cdn link-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-  <script src="<%= request.getContextPath() %>/static/js/script.js"></script>
+<meta charset="UTF-8">
+<title>スタッフダッシュボード - ABC株式会社システム</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/static/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<script src="${pageContext.request.contextPath}/static/js/script.js"></script>
 </head>
 <body>
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-	<nav>
-		精算管理システム
-		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
-    	<button type="submit"  title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
-		</form>
-	</nav>
+	<div class="page-container">
+		<div class="content-container">
+			<p style="text-align: right;">ようこそ、${sessionScope.staffName} さん！</p>
+			<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+			<div class="staff-main-content">
+				<div class="panel">
+					<h4>申請する</h4>
+					<div class="btn-section">
+						<a href="${pageContext.request.contextPath}/transportationInit">交通費申請</a>
+						<a href="${pageContext.request.contextPath}/businessTripInit">出張費申請</a>
+						<a href="${pageContext.request.contextPath}/reimbursementInit">立替金申請</a>
+					</div>
+				</div>
 
-  <div class="page-container">
-    <p style="text-align: right;">ようこそ、<%= staffName %> さん！</p>
+				<div class="panel">
+					<h4>申請状況</h4>
+					<ul>
+						<li><a
+							href="${pageContext.request.contextPath}/applicationMain?status=not_submitted">未提出:</a></li>
+						<li><a
+							href="${pageContext.request.contextPath}/applicationMain?status=submitted">提出済:</a></li>
+						<li><a
+							href="${pageContext.request.contextPath}/applicationMain?status=rejected">差戻:</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="staff-dashboard-wrapper">
-
-      <!-- Sidebar -->
-      <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-
-      <!-- Main content -->
-      <div class="staff-main-content">
-        <div class="panel">
-          <h4>申請する</h4>
-          <div class="btn-section">
-            <a href="<%= request.getContextPath() %>/transportationRequest">交通費申請</a>
-            <a href="<%= request.getContextPath() %>/createApplication?type=出張費">出張費申請</a>
-            <a href="<%= request.getContextPath() %>/reimbursement">立替金申請</a>
-
-          </div>
-        </div>
-
-        <div class="panel">
-          <h4>申請状況</h4>
-          <ul>
-            <li><a href="<%= request.getContextPath() %>/applicationMain?status=pending">未提出</a></li>
-            <li><a href="<%= request.getContextPath() %>/applicationMain?status=">提出済</a></li>
-            <li><a href="<%= request.getContextPath() %>/applicationMain?status=approved">差戻</a></li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="footer">
-    &copy; 2025 ABC株式会社 - All rights reserved.
-  </div>
-
+	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 </body>
 </html>

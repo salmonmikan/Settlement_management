@@ -1,11 +1,13 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="bean.PositionBean" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="bean.PositionBean"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%
-    ArrayList<PositionBean> positionList = (ArrayList<PositionBean>) session.getAttribute("position_list");
-    if (positionList == null) positionList = new ArrayList<>();
+ArrayList<PositionBean> positionList = (ArrayList<PositionBean>) session.getAttribute("position_list");
+if (positionList == null)
+	positionList = new ArrayList<>();
+request.setAttribute("positionList", positionList); // JSTLで使うため
 %>
 
 <!DOCTYPE html>
@@ -13,54 +15,28 @@
 <head>
 <meta charset="UTF-8">
 <title>役職一覧 - 管理画面</title>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<style>
-.page-container {
-	max-width: 80%;
-	margin: 30px auto;
-	display: flex;
-	gap: 50px;
-	align-items: flex-start;
-}
-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 20px;
-	font-size: 0.95rem;
-}
-th, td {
-	padding: 10px;
-	border: 1px solid #ccc;
-	text-align: center;
-}
-th {
-	background-color: #e6f0fa;
-}
-h2 {
-	text-align: center;
-	margin-bottom: 20px;
-}
-</style>
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/static/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-	<nav>
-		精算管理システム
-		<form class="logoutForm" action="<%= request.getContextPath() %>/logOutServlet" method="post">
-			<button type="submit" title="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
-		</form>
-	</nav>
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 	<div class="page-container">
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-		<div>
+		<div class="content-container">
 			<h2>役職一覧</h2>
 			<form action="positionControl" method="post">
 				<div class="action-toolbar">
 					<div class="spacer"></div>
-					<button type="button" onclick="location.href='positionControl?action=add'">＋ 新規追加</button>
-					<button type="submit" name="action" value="edit" id="editBtn" disabled>編集</button>
-					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+					<button type="button"
+						onclick="location.href='positionControl?action=add'">＋
+						新規追加</button>
+					<button type="submit" name="action" value="edit" id="editBtn"
+						disabled>編集</button>
+					<button type="submit" name="action" value="delete" id="deleteBtn"
+						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
 				</div>
 				<table>
 					<thead>
@@ -71,17 +47,19 @@ h2 {
 						</tr>
 					</thead>
 					<tbody>
-						<%
-						for (PositionBean bean : positionList) {
-						%>
-						<tr>
-							<td><input type="checkbox" name="position_id" value="<%=bean.getPosition_id()%>" class="row-check"></td>
-							<td><%=bean.getPosition_id()%></td>
-							<td><%=bean.getPosition_name()%></td>
-						</tr>
-						<%
-						}
-						%>
+						<c:forEach var="pos" items="${positionList}">
+							<tr>
+								<td><input type="checkbox" name="position_id"
+									value="${pos.position_id}" class="row-check"
+									<c:if test="${pos.delete_flag == 9}">disabled</c:if>></td>
+								<td>${pos.position_id}</td>
+								<td>${pos.position_name} <c:if
+										test="${pos.delete_flag == 9}">
+										<span style="color: gray;">（削除不可）</span>
+									</c:if>
+								</td>
+							</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</form>
@@ -112,11 +90,11 @@ h2 {
 	%>
 	<script>alert("<%=successMsg%>");</script>
 	<%
-		} else if (errorMsg != null) {
+	} else if (errorMsg != null) {
 	%>
 	<script>alert("<%=errorMsg%>");</script>
 	<%
-		}
+	}
 	}
 	%>
 </body>

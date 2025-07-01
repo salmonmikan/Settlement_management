@@ -11,106 +11,56 @@
 	href="<%=request.getContextPath()%>/static/css/style.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-<style>
-.page-container {
-	max-width: 80%;
-	margin: 30px auto;
-	background-color: white;
-	border-radius: 10px;
-	padding: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 20px;
-	font-size: 0.95rem;
-}
-
-th, td {
-	padding: 10px;
-	border: 1px solid #ccc;
-	text-align: center;
-}
-
-th {
-	background-color: #e6f0fa;
-}
-
-h2 {
-	color: var;
-	margin-bottom: 20px;
-	text-align: center;
-}
-
-.center-link {
-	display: block;
-	text-align: center;
-	margin-top: 30px;
-	font-size: 1rem;
-	color: #2c7be5;
-	text-decoration: none;
-}
-
-.center-link:hover {
-	text-decoration: underline;
-}
-</style>
 </head>
 <body>
-	<nav>
-		精算管理システム
-		<form class="logoutForm"
-			action="<%=request.getContextPath()%>/logOutServlet" method="post">
-			<button type="submit" title="Log out">
-				<i class="fa-solid fa-right-from-bracket"></i>
-			</button>
-		</form>
-	</nav>
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<div class="page-container">
-		<h2>社員一覧</h2>
-		<form method="post" action="employeeControl">
-			<div class="action-toolbar">
-				<div class="spacer"></div>
-				<button type="button" onclick="goToRegister()">＋ 新規追加</button>
-				<button type="submit" name="action" value="edit" id="editBtn"
-					disabled>編集</button>
-				<button type="submit" name="action" value="delete" id="deleteBtn"
-					disabled onclick="return confirm('本当に削除しますか？')">削除</button>
-			</div>
-			<table>
-				<thead>
-					<tr>
-						<th>選択</th>
-						<th>社員ID</th>
-						<th>氏名</th>
-						<th>ふりがな</th>
-						<th>生年月日</th>
-						<th>住所</th>
-						<th>入社日</th>
-						<th>部署</th>
-						<th>役職</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="emp" items="${employeeList}">
+		<!-- Sidebar -->
+		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+		<div class="content-container">
+			<h2>社員一覧</h2>
+			<form method="post" action="employeeControl">
+				<div class="action-toolbar">
+					<div class="spacer"></div>
+					<button type="button" onclick="goToRegister()">＋ 新規追加</button>
+					<button type="submit" name="action" value="edit" id="editBtn"
+						disabled>編集</button>
+					<button type="submit" name="action" value="delete" id="deleteBtn"
+						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+				</div>
+				<table>
+					<thead>
 						<tr>
-							<td><input type="checkbox" name="employeeID"
-								value="${emp.employeeId}" class="row-check"></td>
-							<td>${emp.employeeId}</td>
-							<td>${emp.fullName}</td>
-							<td>${emp.furigana}</td>
-							<td>${emp.birthDate}</td>
-							<td>${emp.address}</td>
-							<td>${emp.joinDate}</td>
-							<td>${emp.departmentName}</td>
-							<td>${emp.positionName}</td>
+							<th>選択</th>
+							<th>社員ID</th>
+							<th>氏名</th>
+							<th>ふりがな</th>
+							<th>生年月日</th>
+							<th>住所</th>
+							<th>入社日</th>
+							<th>部署</th>
+							<th>役職</th>
 						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		</form>
+					</thead>
+					<tbody>
+						<c:forEach var="emp" items="${employeeList}">
+							<tr>
+								<td><input type="checkbox" name="employeeID"
+									value="${emp.employeeId}" class="row-check"></td>
+								<td>${emp.employeeId}</td>
+								<td>${emp.fullName}</td>
+								<td>${emp.furigana}</td>
+								<td>${emp.birthDate}</td>
+								<td>${emp.address}</td>
+								<td>${emp.joinDate}</td>
+								<td>${emp.departmentName}</td>
+								<td>${emp.positionName}</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</form>
+		</div>
 	</div>
 	<script type="text/javascript">
 	const checkboxes = document.querySelectorAll('.row-check');
