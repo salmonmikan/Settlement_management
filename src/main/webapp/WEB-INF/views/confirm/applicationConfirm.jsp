@@ -14,10 +14,10 @@
 <% if ("出張費申請".equals(type)) { %>
   <jsp:include page="/WEB-INF/views/confirm/businessTripConfirmBody.jsp" />
 
-<% } else if ("交通費".equals(type)) { // <<< SỬA Ở ĐÂY: Bỏ chữ "申請" %>
+<% } else if ("交通費".equals(type)) {  %>
   <jsp:include page="/WEB-INF/views/confirm/transportationConfirmBody.jsp" />
 
-<% } else if ("立替金".equals(type)) { // <<< SỬA Ở ĐÂY: Bỏ chữ "申請" %>
+<% } else if ("立替金".equals(type)) {  %>
   <jsp:include page="/WEB-INF/views/confirm/reimbursementConfirmBody.jsp" />
   
 <% } else { %>

@@ -57,7 +57,7 @@ public class ApplicationDetailServlet extends HttpServlet {
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
-                // :wrench: 修正ポイント: 各明細の expenseTotal を再計算
+                // :レンチ: 修正ポイント: 各明細の expenseTotal を再計算
                 for (TransportationDetailBean detail : bean.getDetails()) {
                     int multiplier = "往復".equals(detail.getTransTripType()) ? 2 : 1;
                     if ("自己".equals(detail.getBurden())) {
@@ -97,7 +97,7 @@ public class ApplicationDetailServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             HttpSession session = request.getSession();
-            session.setAttribute("message", "Lỗi khi tải chi tiết đơn: " + e.getMessage());
+            session.setAttribute("message", "詳細: " + e.getMessage());
             response.sendRedirect(request.getContextPath() + "/applicationMain");
         }
     }

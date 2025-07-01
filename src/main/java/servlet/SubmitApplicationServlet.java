@@ -51,7 +51,7 @@ public class SubmitApplicationServlet extends HttpServlet {
                         dao.submitApplicationIfNotYet(appId, staffId, "");
                     }
 
-                    session.setAttribute("submitSuccess", true);
+                    session.setAttribute("message", "申請を提出しました");
                     break;
 
                 case "edit":
