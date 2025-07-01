@@ -6,7 +6,6 @@
 <meta charset="UTF-8">
 <title>交通費申請</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
-<%-- SỬA LỖI: Đảm bảo tên file JS đúng. Giả sử tên đúng là transportation.js --%>
 <script src="${pageContext.request.contextPath}/static/js/transportation.js"></script>
 <style>
     /* Giữ nguyên các style cần thiết */

@@ -82,7 +82,7 @@ public class TransportationUpdateServlet extends HttpServlet {
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
             request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
             request.setAttribute("status", "error");
-            request.getRequestDispatcher("/WEB-INF/viewsserviceJSP//updateResult.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }
