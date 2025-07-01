@@ -74,7 +74,7 @@ ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("proj
 							<td><%=bean.getStart_date()%></td>
 							<td><%=bean.getEnd_date()%></td>
 							<td style="text-align: right;"><%= budgetStr %>円</td>
-							<td style="text-align: right;"><%= !("0".equals(actualStr)) ? actualStr + "円" : "未清算" %></td>
+							<td style="text-align: right;"><%= actualStr %>円</td>
 						</tr>
 						<%
 				}
