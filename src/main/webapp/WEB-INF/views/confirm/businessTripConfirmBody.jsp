@@ -24,16 +24,16 @@
             <table class="confirm-table">
                 <tr>
                     <th>出張期間</th>
-                    <td>${trip.startDate} ～ ${trip.endDate}</td>
+                    <td>${trip.step1Data.startDate} ～ ${trip.step1Data.endDate}</td>
                 </tr>
                 <tr>
                     <th>PJコード</th>
-                    <td>${trip.projectCode}</td>
+                    <td>${trip.step1Data.projectCode}</td>
                 </tr>
                 <tr>
                     <th>出張報告</th>
                     <td>
-                        <div class="memo-block">${trip.tripReport}</div>
+                        <div class="memo-block">${trip.step1Data.tripReport}</div>
                     </td>
                 </tr>
             </table>
@@ -110,7 +110,7 @@
         </div>
 
         <%-- Hiển thị tổng số tiền của toàn bộ đơn đăng ký --%>
-        <div class="<c:forEach var="detail"">
+        <div class="confirm-page-total">
             総合計金額: <fmt:formatNumber value="${trip.totalAmount}" type="number" />円
         </div>
     </div>

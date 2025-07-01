@@ -103,7 +103,8 @@
       updateToolbarState();
     });
 
-    checkboxes.forEach(cb => cb.addEventListener('change', updateToolbarState));
+    checkboxes.forEach(cb => cb.addEventListener('change', updateToolbarState)); 
+    
 
     function updateToolbarState() {
       const checked = document.querySelectorAll('.row-check:checked');

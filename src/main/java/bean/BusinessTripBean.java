@@ -22,6 +22,7 @@ public class BusinessTripBean implements Serializable {
      * デフォルトコンストラクタ。
      * ステップ1〜3のリストを初期化します。
      */
+    
     public BusinessTripBean() {
         this.step1Data = new Step1Data();
         this.step2Details = new ArrayList<>();
