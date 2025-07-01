@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -41,6 +42,9 @@ public class ApprovalMainServlet extends HttpServlet {
 
 			String approver_depId = dao.findApproverDepartment(approverId);
 			List<Application> applications = dao.getApplicationsByDepartment(approver_depId);
+			if (applications == null) {
+			    applications = new ArrayList<>(); // 空リストを代入しておく
+			}
 			//            List<Application> applications = dao.getApplicationsByApprover(approverId);
 			request.setAttribute("applications", applications);
 		} catch (Exception e) {
@@ -70,7 +74,7 @@ public class ApprovalMainServlet extends HttpServlet {
 	        ApplicationDAO dao = new ApplicationDAO();
 
 	        switch (action) {
-	            case "submit":
+	            case "approval":
 	                for (String idStr : appIds) {
 	                    int appId = Integer.parseInt(idStr);
 	                    dao.updateStatus(appId, approverId); // 例: ステータスを「承認済」に更新
