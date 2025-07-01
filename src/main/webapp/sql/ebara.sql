@@ -1,8 +1,8 @@
 -- 全DBリセット
 -- もしAWS用であれば、この部分は削除する。(手動でテーブルをDROP)
-DROP DATABASE IF EXISTS abc_system;
-CREATE DATABASE abc_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE abc_system;
+--DROP DATABASE IF EXISTS abc_system;
+--CREATE DATABASE abc_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+--USE abc_system;
 
 -- 部署マスタ
 CREATE TABLE department_master (
