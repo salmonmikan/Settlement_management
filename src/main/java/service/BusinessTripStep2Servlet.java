@@ -167,8 +167,7 @@ public class BusinessTripStep2Servlet extends HttpServlet {
 
             if (!newFileParts.isEmpty()) {
                 Step2Detail detail = detailsInSession.get(i);
-                // Xóa các file cũ trong bean (nếu có) trước khi thêm file mới
-                detail.getTemporaryFiles().clear(); 
+                
                 for (Part filePart : newFileParts) {
                     // ... (Copy/paste code xử lý upload file của bạn vào đây)
                     try {
