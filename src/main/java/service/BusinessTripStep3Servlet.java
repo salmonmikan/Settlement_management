@@ -111,7 +111,10 @@ public class BusinessTripStep3Servlet extends HttpServlet {
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
             List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
-            String realPath = getServletContext().getRealPath("");
+//            String realPath = getServletContext().getRealPath(""); 
+         // 1. Ghi nhận các file cần xóa vào bean session
+            trip.getFilesToDelete().addAll(filesToDeleteList);
+         // 2. Chỉ xóa tham chiếu file khỏi danh sách chi tiết, KHÔNG xóa file vật lý
             for (Step3Detail detail : trip.getStep3Details()) {
                 detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
             }

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import bean.BusinessTripBean;
 import bean.ReimbursementApplicationBean;
 import bean.TransportationApplicationBean;
+import bean.TransportationDetailBean;
 import dao.ApplicationDAO;
 import dao.BusinessTripApplicationDAO;
 import dao.ReimbursementDAO;
@@ -56,6 +57,16 @@ public class ApplicationDetailServlet extends HttpServlet {
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
+                // :wrench: 修正ポイント: 各明細の expenseTotal を再計算
+                for (TransportationDetailBean detail : bean.getDetails()) {
+                    int multiplier = "往復".equals(detail.getTransTripType()) ? 2 : 1;
+                    if ("自己".equals(detail.getBurden())) {
+                        detail.setExpenseTotal(detail.getFareAmount() * multiplier);
+                    } else {
+                        detail.setExpenseTotal(0);
+                    }
+                }
+                bean.calculateTotalAmount(); // 必須: 総合計も再計算
                 request.setAttribute("transportationApp", bean);
             } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();

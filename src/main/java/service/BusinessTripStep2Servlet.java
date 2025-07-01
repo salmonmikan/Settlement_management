@@ -104,19 +104,12 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
             List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
-            String realPath = getServletContext().getRealPath("");
+         // 1. Ghi nhận các file cần xóa vào bean session
+            trip.getFilesToDelete().addAll(filesToDeleteList);
+
+//            String realPath = getServletContext().getRealPath("");
+         // 2. Chỉ xóa tham chiếu file khỏi danh sách chi tiết, KHÔNG xóa file vật lý
             for (Step2Detail detail : trip.getStep2Details()) {
-                // Xóa file vật lý
-                detail.getTemporaryFiles().stream()
-                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
-                    .forEach(file -> {
-                        try {
-                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
-                        } catch (IOException e) {
-                            System.err.println("Không thể xoá file tạm: " + file.getTemporaryPath() + " - " + e.getMessage());
-                        }
-                    });
-                // Xóa file khỏi bean trong session
                 detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
             }
         }
