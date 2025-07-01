@@ -58,7 +58,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
 
             trip.calculateTotalAmount();
 
-            int applicationId = appDAO.insertApplication("出張費申請", staffId, trip.getTotalAmount(), conn);
+            int applicationId = appDAO.insertApplication("出張費", staffId, trip.getTotalAmount(), conn);
            
 
             int tripApplicationId = tripAppDAO.insert(trip.getStep1Data(), applicationId, conn);
