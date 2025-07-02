@@ -52,7 +52,7 @@ nav {
 	/*  	margin: 0px;*/
 	padding: 2rem 1.5rem;
 	box-sizing: border-box;
-	overflow-x: hidden;
+	/*	overflow-x: hidden;*/
 }
 
 .content-container {
@@ -937,7 +937,7 @@ form {
 	}
 
 	.staff-main-content {
-		padding: 0 0.5rem;
+/*		padding: 0 0.5rem;*/
 	}
 }
 

@@ -1,3 +1,4 @@
+<%@page import="java.io.Console"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
@@ -48,4 +49,5 @@
 
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 </body>
+<script>console.log("system_19:32")</script>
 </html>
