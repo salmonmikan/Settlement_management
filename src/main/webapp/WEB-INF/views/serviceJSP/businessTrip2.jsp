@@ -195,28 +195,52 @@
 								<label>宿泊費</label><input required type="number"
 									name="hotelFee[]" readonly value="${detail.hotelFee}">
 							</div>
-							<fieldset class="adjustment-group">
-							    <legend>日当の調整</legend>
 							
-							    <label for="option_half_day" class="option-item">
-							        <input type="checkbox" id="option_half_day" class="nitto-option" data-option="half_day">
-							        <span class="custom-checkbox"></span>
-							        <span class="option-label">午後の出発・午前の到着 (日当 1/2)</span>
-							    </label>
-							
-							    <label for="option_bonus" class="option-item">
-							        <input type="checkbox" id="option_bonus" class="nitto-option" data-option="bonus">
-							        <span class="custom-checkbox"></span>
-							        <span class="option-label">午前6時前出発・午後9時以降到着 (+1,500円)</span>
-							    </label>
-							
-							    <label for="option_none" class="option-item">
-							        <input type="checkbox" id="option_none" class="nitto-option" data-option="none">
-							        <span class="custom-checkbox"></span>
-							        <span class="option-label">業務活動なし (日当なし)</span>
-							    </label>
-							    
-							</fieldset>
+						<fieldset class="adjustment-group">
+						    <legend>日当の調整</legend>
+						
+						    <%-- Option 1: Nửa ngày --%>
+						    <label for="option_half_day_${loop.index}" class="option-item">
+						        <input type="checkbox" 
+						               id="option_half_day_${loop.index}" 
+						               name="adjustmentOptions[${loop.index}]" 
+						               value="half_day" 
+						               class="nitto-option" 
+						               data-option="half_day"
+						               ${detail.adjustmentOptions.contains('half_day') ? 'checked' : ''}
+						               onchange="handleAdjustmentChange(this)">
+						        <span class="custom-checkbox"></span>
+						        <span class="option-label">午後の出発・午前の到着 (日当 1/2)</span>
+						    </label>
+						
+						    <%-- Option 2: Bonus --%>
+						    <label for="option_bonus_${loop.index}" class="option-item">
+						        <input type="checkbox" 
+						               id="option_bonus_${loop.index}" 
+						               name="adjustmentOptions[${loop.index}]" 
+						               value="bonus" 
+						               class="nitto-option" 
+						               data-option="bonus"
+						               ${detail.adjustmentOptions.contains('bonus') ? 'checked' : ''}
+						               onchange="handleAdjustmentChange(this)">
+						        <span class="custom-checkbox"></span>
+						        <span class="option-label">午前6時前出発・午後9時以降到着 (+1,500円)</span>
+						    </label>
+						
+						    <%-- Option 3: Không có phụ cấp --%>
+						    <label for="option_none_${loop.index}" class="option-item">
+						        <input type="checkbox" 
+						               id="option_none_${loop.index}" 
+						               name="adjustmentOptions[${loop.index}]" 
+						               value="none" 
+						               class="nitto-option" 
+						               data-option="none"
+						               ${detail.adjustmentOptions.contains('none') ? 'checked' : ''}
+						               onchange="handleAdjustmentChange(this)">
+						        <span class="custom-checkbox"></span>
+						        <span class="option-label">業務活動なし (日当なし)</span>
+						    </label>
+						</fieldset>
 							<div class="form-group">
 								<label>日当</label><input required type="number"
 									name="dailyAllowance[]" readonly

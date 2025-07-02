@@ -47,7 +47,7 @@ public class BusinessTripConfirmServlet extends HttpServlet {
             isEditMode = false;
         }
 
-        request.setAttribute("application_type", "出張費申請");
+        request.setAttribute("application_type", "出張費");
         request.setAttribute("trip", trip);
         
         // === LOGIC MỚI: Tùy chỉnh nút bấm dựa trên isEditMode ===
