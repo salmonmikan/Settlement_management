@@ -3,8 +3,8 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - develop  # ← developブランチにpushされたときに実行
-	  - develop_renew
+		- develop  # ← developブランチにpushされたときに実行
+	    - develop_renew
 #  pull_request:
 #     branches:
 #      - develop  # develop に対する PR の merge 時にも動作
