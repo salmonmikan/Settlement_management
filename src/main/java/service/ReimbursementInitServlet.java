@@ -33,6 +33,8 @@ public class ReimbursementInitServlet extends HttpServlet {
         
         // Ghi đè Bean cũ (nếu có) trong session bằng Bean mới này
         session.setAttribute("reimbursement", reimbursement);
+        
+        session.setAttribute("isEditMode", false);
 
         // Chuyển hướng (redirect) đến servlet chính để hiển thị form
         // Redirect để đảm bảo URL trên trình duyệt là /reimbursement, không phải /reimbursementInit
