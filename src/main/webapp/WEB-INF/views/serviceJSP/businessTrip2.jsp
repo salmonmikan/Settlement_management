@@ -166,7 +166,7 @@
 									placeholder="例:APAホテル" value="${detail.hotel}">
 							</div>
 							<div class="form-group">
-								<label>地域区分</label><select name="regionType[]"
+								<label >地域区分</label><select required name="regionType[]"
 									onchange="calculateHotelFee(this)"><option value="">選択してください</option>
 									<option value="東京"
 										${detail.regionType == '東京' ? 'selected' : ''}>東京</option>
@@ -256,7 +256,7 @@
 							</div>
 							<div class="form-group">
 								<label>摘要</label>
-								<textarea name="memo[]" placeholder="メモなど">${detail.memo}</textarea>
+								<textarea required name="memo[]" placeholder="メモなど">${detail.memo}</textarea>
 							</div>
 							<div class="form-group">
 								<label>領収書添付（日当・宿泊費）</label> <input type="file"
