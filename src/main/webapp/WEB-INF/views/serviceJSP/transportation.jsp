@@ -30,14 +30,10 @@
 <div class="page-container">
   <div class="content-container">
     <h2>交通費申請</h2>
-
-    <%-- SỬA LỖI: Thêm thẻ <form> bị thiếu, đây là lỗi nghiêm trọng nhất --%>
     <form action="<%=request.getContextPath()%>/transportationRequest" method="post" enctype="multipart/form-data">
         
-      <%-- SỬA LỖI: Thêm input ẩn để xử lý xóa file, tương tự code mẫu --%>
       <input type="hidden" id="filesToDelete" name="filesToDelete" value="">
 
-      <%-- SỬA LỖI: Chỉ giữ lại MỘT container, xóa bỏ các phần bị lặp --%>
       <div id="transportation-container" style="display: flex; flex-direction: column; gap: 10px">
         <c:forEach var="detail" items="${transportationApp.details}" varStatus="loop">
           <div class="form-section transportation-block" style="position: relative;">
@@ -51,12 +47,12 @@
                 </c:forEach>
               </select>
             </div>
-            <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！">${detail.report}</textarea></div>
-            <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" value="${detail.destination}" required></div>
-            <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅" value="${detail.departure}"></div>
-            <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅" value="${detail.arrival}"></div>
+            <div class="form-group"><label>報告書</label><textarea required name="report[]" placeholder="報告書を書いてください！">${detail.report}</textarea></div>
+            <div class="form-group"><label>訪問先</label><input required type="text" name="destination[]" placeholder="例: ABC株式会社" value="${detail.destination}"></div>
+            <div class="form-group"><label>出発</label><input required type="text" name="departure[]" placeholder="例:東京駅" value="${detail.departure}"></div>
+            <div class="form-group"><label>到着</label><input required type="text" name="arrival[]" placeholder="例:大阪駅" value="${detail.arrival}"></div>
             <div class="form-group"><label>交通機関</label>
-              <select name="transport[]">
+              <select required name="transport[]">
                 <option value="">選択してください</option>
                 <option value="新幹線" ${'新幹線' == detail.transport ? 'selected' : ''}>新幹線</option>
                 <option value="電車" ${'電車' == detail.transport ? 'selected' : ''}>電車</option>
@@ -67,16 +63,16 @@
                 <option value="他の" ${'他の' == detail.transport ? 'selected' : ''}>他の</option>
               </select>
             </div>
-            <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" value="${detail.fareAmount}"></div>
+            <div class="form-group"><label>金額（税込）</label><input required type="number" name="fareAmount[]" value="${detail.fareAmount}"></div>
             <div class="form-group"><label>区分</label>
-              <select name="transTripType[]">
+              <select required name="transTripType[]">
                 <option value="">選択してください</option>
                 <option value="片道" ${'片道' == detail.transTripType ? 'selected' : ''}>片道</option>
                 <option value="往復" ${'往復' == detail.transTripType ? 'selected' : ''}>往復</option>
               </select>
             </div>
             <div class="form-group"><label>負担者</label>
-              <select name="burden[]">
+              <select required name="burden[]">
                 <option value="">選択してください</option>
                 <option value="会社" ${'会社' == detail.burden ? 'selected' : ''}>会社</option>
                 <option value="自己" ${'自己' == detail.burden ? 'selected' : ''}>自己</option>

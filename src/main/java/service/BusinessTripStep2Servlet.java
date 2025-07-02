@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -90,12 +91,12 @@ public class BusinessTripStep2Servlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
         }
-
-        String action = request.getParameter("action");
-        if ("go_back".equals(action)) {
-            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
-            return;
-        }
+        //xử lý check box
+//        String action = request.getParameter("action");
+//        if ("go_back".equals(action)) {
+//            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+//            return;
+//        }
 
         // === BẮT ĐẦU LOGIC "CẬP NHẬT TẠI CHỖ" MỚI ===
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
@@ -150,6 +151,13 @@ public class BusinessTripStep2Servlet extends HttpServlet {
             detail.setDays(Integer.parseInt(days[i]));
             detail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
             detail.setMemo(memos[i]);
+            String[] adjustmentOptions = request.getParameterValues("adjustmentOptions[" + i + "]");
+
+            if (adjustmentOptions != null) {
+                detail.setAdjustmentOptions(List.of(adjustmentOptions));
+            } else {
+                detail.setAdjustmentOptions(new ArrayList<>());
+            }
         }
 
         // 4. Xóa các block chi tiết nếu người dùng đã xóa trên giao diện
@@ -193,6 +201,11 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         }
         
         session.setAttribute("trip", trip);
-        response.sendRedirect(request.getContextPath() + "/businessTripStep3");
+        String action = request.getParameter("action");
+        if ("go_back".equals(action)) {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep3");
+        }
     }
 }

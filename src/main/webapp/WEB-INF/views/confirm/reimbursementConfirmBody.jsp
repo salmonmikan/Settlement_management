@@ -84,7 +84,7 @@
 						<strong>摘要:</strong>
 					</div>
 					<div class="memo-block">${detail.abstractNote}</div>
-				</c:if>
+		</c:if>
         <c:if test="${not empty detail.report}">
           <div><strong>報告書:</strong></div>
           <div class="memo-block">${detail.report}</div>

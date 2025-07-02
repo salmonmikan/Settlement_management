@@ -129,7 +129,7 @@
 							</div>
 							<div class="form-group">
 								<label>摘要</label>
-								<textarea name="transMemo[]" placeholder="メモなど">${detail.transMemo}</textarea>
+								<textarea required name="transMemo[]" placeholder="メモなど">${detail.transMemo}</textarea>
 							</div>
 							<div class="form-group">
 								<label>領収書添付（交通費）</label> <input type="file"
@@ -137,13 +137,7 @@
 									class="fileInput" onchange="handleFileSelection(this)">
 
 								<ul class="fileList">
-									<%-- <c:forEach var="file" items="${detail.temporaryFiles}">
-			      <li>
-			        <a href="${pageContext.request.contextPath}/uploads/${file.uniqueStoredName}" target="_blank">
-			          ${file.originalFileName}
-			        </a>
-			      </li>
-			    </c:forEach> --%>
+									
 									<c:forEach var="file" items="${detail.temporaryFiles}">
 										<li data-file-type="existing"
 											data-unique-name="${file.uniqueStoredName}"><a

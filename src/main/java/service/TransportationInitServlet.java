@@ -22,7 +22,7 @@ public class TransportationInitServlet extends HttpServlet {
         // Ghi đè Bean cũ (nếu có) trong session bằng Bean mới này
         // Tên attribute là "transportationApp" để khớp với JSP
         session.setAttribute("transportationApp", transportationApp);
-
+        session.setAttribute("isEditMode", false);
         // Chuyển hướng (redirect) đến servlet chính để hiển thị form
         response.sendRedirect(request.getContextPath() + "/transportationRequest");
     }

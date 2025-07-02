@@ -50,7 +50,7 @@ public class ApplicationDetailServlet extends HttpServlet {
                 type = type.trim();
             }
 
-            if ("出張費申請".equals(type)) {
+            if ("出張費".equals(type)) {
                 BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
                 request.setAttribute("trip", bean);

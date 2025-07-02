@@ -36,7 +36,7 @@
 					</div>
 
 					<div class="form-group">
-						<label>PJコード</label> <select name="projectCode" required>
+						<label>PJコード</label> <select name="projectCode">
 							<option value="">選択してください</option>
 							<c:forEach var="p" items="${projectList}">
 								<option value="${p.id}"
@@ -48,7 +48,7 @@
 
 					<div class="form-group">
 						<label>出張報告</label>
-						<textarea name="tripReport" class="hokoku-text"
+						<textarea required name="tripReport" class="hokoku-text"
 							placeholder="業務内容や目的を入力してください">${trip.step1Data.tripReport}</textarea>
 					</div>
 				</div>
