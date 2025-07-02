@@ -36,7 +36,7 @@
 					</div>
 
 					<div class="form-group">
-						<label>PJコード</label> <select name="projectCode" required>
+						<label>PJコード</label> <select name="projectCode">
 							<option value="">選択してください</option>
 							<c:forEach var="p" items="${projectList}">
 								<option value="${p.id}"

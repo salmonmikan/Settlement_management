@@ -44,14 +44,14 @@
             <button type="button" class="remove-btn" onclick="removeTransportationBlock(this)">×</button>
             <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" value="${detail.date}" required></div>
             <div class="form-group"><label>PJコード</label>
-              <select name="projectCode[]" required>
+              <select name="projectCode[]">
                 <option value="">選択してください</option>
                 <c:forEach var="p" items="${projectList}">
                   <option value="${p.id}" ${p.id == detail.projectCode ? 'selected' : ''}>${p.id}：${p.name}</option>
                 </c:forEach>
               </select>
             </div>
-            <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！">${detail.report}</textarea></div>
+            <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="" required>${detail.report}</textarea></div>
             <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" value="${detail.destination}" required></div>
             <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅" value="${detail.departure}"></div>
             <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅" value="${detail.arrival}"></div>
@@ -64,7 +64,7 @@
                 <option value="飛行機" ${'飛行機' == detail.transport ? 'selected' : ''}>飛行機</option>
                 <option value="自家用車" ${'自家用車' == detail.transport ? 'selected' : ''}>自家用車</option>
                 <option value="レンタカー" ${'レンタカー' == detail.transport ? 'selected' : ''}>レンタカー</option>
-                <option value="他の" ${'他の' == detail.transport ? 'selected' : ''}>他の</option>
+                <option value="他の" ${'その他' == detail.transport ? 'selected' : ''}>その他</option>
               </select>
             </div>
             <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]" value="${detail.fareAmount}"></div>
@@ -122,14 +122,14 @@
     <button type="button" class="remove-btn" onclick="removeTransportationBlock(this)">×</button>
     <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" required></div>
     <div class="form-group"><label>PJコード</label>
-      <select name="projectCode[]" required>
+      <select name="projectCode[]">
         <option value="">選択してください</option>
         <c:forEach var="p" items="${projectList}">
           <option value="${p.id}">${p.id}：${p.name}</option>
         </c:forEach>
       </select>
     </div>
-    <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！"></textarea></div>
+    <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！" required></textarea></div>
     <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" required></div>
     <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅"></div>
     <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅"></div>
@@ -138,7 +138,7 @@
           <option value="">選択してください</option>
           <option value="新幹線">新幹線</option><option value="電車">電車</option><option value="タクシー">タクシー</option>
           <option value="飛行機">飛行機</option><option value="自家用車">自家用車</option><option value="レンタカー">レンタカー</option>
-          <option value="他の">他の</option>
+          <option value="その他">その他</option>
       </select>
     </div>
     <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]"></div>
