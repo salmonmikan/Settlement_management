@@ -10,6 +10,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= isEdit ? "プロジェクト編集" : "プロジェクト登録" %></title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
   <style>

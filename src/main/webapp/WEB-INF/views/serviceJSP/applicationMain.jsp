@@ -8,10 +8,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>申請一覧 - ABC株式会社</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>申請一覧 - ABC株式会社</title>
+
+<link rel="stylesheet"
+	href="<%= request.getContextPath() %>/static/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<style>
+@media ( max-width : 768px) {
+	.content-container {
+		overflow-x: scroll;
+		margin-left: 0;
+		padding: 0 1rem;
+	}
+}
+</style>
 </head>
 <body>
   <jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -67,16 +80,22 @@
     </div>
   </div>
 
-  <% if (session.getAttribute("submitSuccess") != null) { %>
-    <script>alert('申請を提出しました。');</script>
-    <% session.removeAttribute("submitSuccess"); %>
-  <% } %>
+	<% String success = (String) session.getAttribute("success"); %>
+	<% if (success != null) { %>
+	<script>
+        alert(<%= "\"" + success.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
+    </script>
+	<% session.removeAttribute("success"); %>
+	<% } %>
 
-  <% String msg = (String) session.getAttribute("message"); %>
-  <% if (msg != null) { %>
-    <div class="custom-message error"><%= msg %></div>
-    <% session.removeAttribute("message"); %>
-  <% } %>
+	<% String msg = (String) session.getAttribute("message"); %>
+	<% String errorMsg = (String) session.getAttribute("errorMsg"); %>
+	<% if (msg != null) { %>
+	<script>
+        alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
+    </script>
+	<% session.removeAttribute("message"); %>
+	<% } %>
 
   <!-- 提出確認モーダル -->
   <div id="submitModal" class="modal hidden">
@@ -88,6 +107,24 @@
       </div>
     </div>
   </div>
+	<% if (errorMsg != null) { %>
+	<script>
+        alert(<%= "\"" + errorMsg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
+    </script>
+	<% session.removeAttribute("errorMsg"); %>
+	<% } %>
+
+
+	<%
+	String error = request.getParameter("error");
+	if ("type_not_found".equals(error)) {
+	%>
+		<script>
+	    alert('申請タイプが見つかりません。');
+	</script>
+		<%
+	}
+	%>
 
   <div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
 
