@@ -22,6 +22,7 @@
       <form action="submitApplication" method="post" id="submitForm">
         <div class="action-toolbar">
           <div class="spacer"></div>
+          <input type="hidden" name="action" id="modalActionInput" value="">
           <button type="submit" name="action" value="post" id="postBtn" disabled onclick="return confirmSubmit()">提出</button>
           <button type="submit" name="action" value="edit" id="editBtn" disabled >編集</button>
           <button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>
@@ -83,7 +84,7 @@
       <p>選択された申請を提出しますか？</p>
       <div class="modal-buttons">
         <button type="button" onclick="closeModal()">キャンセル</button>
-        <button type="button" onclick="submitForm()">提出</button>
+        <button type="button" name="action" value="post" onclick="submitForm('post')">提出</button>
       </div>
     </div>
   </div>
@@ -149,7 +150,8 @@
       modal.classList.add('hidden');
     }
 
-    function submitForm() {
+    function submitForm(action) {
+      document.getElementById('modalActionInput').value = action;
       document.getElementById('submitForm').submit();
     }
 

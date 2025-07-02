@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import bean.BusinessTripBean;
 import bean.ReimbursementApplicationBean;
 import bean.TransportationApplicationBean;
+import bean.TransportationDetailBean;
 import dao.ApplicationDAO;
 import dao.BusinessTripApplicationDAO;
 import dao.ReimbursementDAO;
@@ -26,6 +27,9 @@ public class ApplicationDetailServlet extends HttpServlet {
         
         String idParam = request.getParameter("id");
         String action = request.getParameter("action");
+        if (action == null) {
+            action = ""; // default処理に分岐させる
+        }
         if (idParam == null || idParam.trim().isEmpty()) {
             HttpSession session = request.getSession();
             session.setAttribute("message", "無効な申請IDです");
@@ -53,6 +57,16 @@ public class ApplicationDetailServlet extends HttpServlet {
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
+                // :wrench: 修正ポイント: 各明細の expenseTotal を再計算
+                for (TransportationDetailBean detail : bean.getDetails()) {
+                    int multiplier = "往復".equals(detail.getTransTripType()) ? 2 : 1;
+                    if ("自己".equals(detail.getBurden())) {
+                        detail.setExpenseTotal(detail.getFareAmount() * multiplier);
+                    } else {
+                        detail.setExpenseTotal(0);
+                    }
+                }
+                bean.calculateTotalAmount(); // 必須: 総合計も再計算
                 request.setAttribute("transportationApp", bean);
             } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();
@@ -74,6 +88,8 @@ public class ApplicationDetailServlet extends HttpServlet {
                 request.setAttribute("showBackButton", true);
                 request.setAttribute("backActionUrl", "/applicationMain");
 
+                request.setAttribute("view_mode", "view");
+                
                 rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp");
                 rd.forward(request, response);
                 break;

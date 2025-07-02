@@ -85,6 +85,7 @@ public class ReimbursementServlet extends HttpServlet {
         List<ReimbursementDetailBean> updatedDetails = new ArrayList<>();
         String[] dates = request.getParameterValues("date[]");
         String[] destinations = request.getParameterValues("destinations[]");
+        String[] abstractNotes = request.getParameterValues("abstractNote[]");
         String[] reports = request.getParameterValues("report[]");
         String[] accountingItems = request.getParameterValues("accountingItem[]");
         String[] amounts = request.getParameterValues("amount[]");
@@ -100,6 +101,7 @@ public class ReimbursementServlet extends HttpServlet {
             detail.setDestinations(destinations[i]);
             detail.setReport(reports[i]);
             detail.setAccountingItem(accountingItems[i]);
+            detail.setAbstractNote(abstractNotes[i]);
             try {
                 detail.setAmount(amounts[i] != null && !amounts[i].isEmpty() ? Integer.parseInt(amounts[i]) : 0);
             } catch (NumberFormatException e) { detail.setAmount(0); }
@@ -115,7 +117,7 @@ public class ReimbursementServlet extends HttpServlet {
             if (!newFileParts.isEmpty()) {
                 ReimbursementDetailBean detail = reimbursement.getDetails().get(i);
                 // Nếu là luồng tạo mới hoặc có file mới, ta sẽ xóa file cũ (nếu có) trong bean và thêm file mới
-                detail.getTemporaryFiles().clear();
+//                detail.getTemporaryFiles().clear();
                 for (Part filePart : newFileParts) {
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();

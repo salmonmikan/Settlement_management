@@ -82,7 +82,7 @@ public class ApplicationDAO extends DBConnection{
 	public void submitApplicationIfNotYet(int applicationId, String staffId, String approverId)
 			throws SQLException {
 		String sql = "UPDATE application_header SET status = '提出済み', approver_id = ? " +
-				"WHERE application_id = ? AND staff_id = ? AND status = '未提出'";
+				"WHERE application_id = ? AND staff_id = ? AND status IN ('未提出', '差戻し')";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setString(1, approverId);
 			ps.setInt(2, applicationId);
@@ -391,7 +391,6 @@ public class ApplicationDAO extends DBConnection{
         }
     }
 
-//    
 //    public List<Application> getApplicationsByStaffIdAndStatus(String staffId, String status) throws Exception {
 //        List<Application> list = new ArrayList<>();
 //        String sql = "SELECT application_id, application_type, created_at, amount, status " +

@@ -50,7 +50,7 @@ public class BusinessTripStep2Servlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
+    	HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("trip") == null) {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
@@ -82,7 +82,8 @@ public class BusinessTripStep2Servlet extends HttpServlet {
  // Trong file service/BusinessTripStep2Servlet.java
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+    	request.getParts();
+    	request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("trip") == null) {
@@ -103,19 +104,12 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
             List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
-            String realPath = getServletContext().getRealPath("");
+         // 1. Ghi nhận các file cần xóa vào bean session
+            trip.getFilesToDelete().addAll(filesToDeleteList);
+
+//            String realPath = getServletContext().getRealPath("");
+         // 2. Chỉ xóa tham chiếu file khỏi danh sách chi tiết, KHÔNG xóa file vật lý
             for (Step2Detail detail : trip.getStep2Details()) {
-                // Xóa file vật lý
-                detail.getTemporaryFiles().stream()
-                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
-                    .forEach(file -> {
-                        try {
-                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
-                        } catch (IOException e) {
-                            System.err.println("Không thể xoá file tạm: " + file.getTemporaryPath() + " - " + e.getMessage());
-                        }
-                    });
-                // Xóa file khỏi bean trong session
                 detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
             }
         }
@@ -173,8 +167,7 @@ public class BusinessTripStep2Servlet extends HttpServlet {
 
             if (!newFileParts.isEmpty()) {
                 Step2Detail detail = detailsInSession.get(i);
-                // Xóa các file cũ trong bean (nếu có) trước khi thêm file mới
-                detail.getTemporaryFiles().clear(); 
+                
                 for (Part filePart : newFileParts) {
                     // ... (Copy/paste code xử lý upload file của bạn vào đây)
                     try {
