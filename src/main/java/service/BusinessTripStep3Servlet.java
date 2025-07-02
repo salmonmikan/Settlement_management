@@ -170,9 +170,8 @@ public class BusinessTripStep3Servlet extends HttpServlet {
 
             if (!newFileParts.isEmpty()) {
                 Step3Detail detail = detailsInSession.get(i);
-                detail.getTemporaryFiles().clear();
+                
                 for (Part filePart : newFileParts) {
-                    // ... (Copy/paste code xử lý upload file của bạn vào đây)
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                         String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
