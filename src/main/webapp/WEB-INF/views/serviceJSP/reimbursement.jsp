@@ -4,6 +4,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>立替金精算書</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
 <script src="${pageContext.request.contextPath}/static/js/reimbursement.js"></script>

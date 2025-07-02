@@ -11,6 +11,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>スタッフダッシュボード - ABC株式会社システム</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/static/css/style.css">

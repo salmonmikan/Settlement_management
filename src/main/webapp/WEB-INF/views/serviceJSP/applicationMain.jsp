@@ -9,11 +9,22 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>申請一覧 - ABC株式会社</title>
+
 <link rel="stylesheet"
 	href="<%= request.getContextPath() %>/static/css/style.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<style>
+@media ( max-width : 768px) {
+	.content-container {
+		overflow-x: scroll;
+		margin-left: 0;
+		padding: 0 1rem;
+	}
+}
+</style>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -36,8 +47,7 @@
 					<table id="applicationTable">
 						<thead>
 							<tr>
-								<th><div>選択</div>
-									<input type="checkbox" id="selectAll"></th>
+								<th><div>選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
 								<th>申請種別</th>
 								<th>申請時間</th>
@@ -72,19 +82,30 @@
 		</div>
 	</div>
 
-	<% if (session.getAttribute("success") != null) { %>
-	<script>alert('申請を提出しました。');</script>
+	<% String success = (String) session.getAttribute("success"); %>
+	<% if (success != null) { %>
+	<script>
+        alert(<%= "\"" + success.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
+    </script>
 	<% session.removeAttribute("success"); %>
 	<% } %>
 
 	<% String msg = (String) session.getAttribute("message"); %>
 	<% String errorMsg = (String) session.getAttribute("errorMsg"); %>
-	<% if (msg != null || errorMsg != null) { %>
+	<% if (msg != null) { %>
 	<script>
         alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
     </script>
 	<% session.removeAttribute("message"); %>
 	<% } %>
+
+	<% if (errorMsg != null) { %>
+	<script>
+        alert(<%= "\"" + errorMsg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
+    </script>
+	<% session.removeAttribute("errorMsg"); %>
+	<% } %>
+
 
 	<%
 String error = request.getParameter("error");
