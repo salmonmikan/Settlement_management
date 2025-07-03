@@ -21,7 +21,7 @@ public class Step2Detail implements Serializable {
     private int expenseTotal;
     private String memo;
     private List<UploadedFile> temporaryFiles = new ArrayList<>();
-
+    private List<String> adjustmentOptions = new ArrayList<>();
     // --- Getters and Setters ---
 
     /**
@@ -182,5 +182,12 @@ public class Step2Detail implements Serializable {
      */
     public void setTemporaryFiles(List<UploadedFile> temporaryFiles) {
         this.temporaryFiles = temporaryFiles;
+    }
+    public List<String> getAdjustmentOptions() {
+        return adjustmentOptions;
+    }
+
+    public void setAdjustmentOptions(List<String> adjustmentOptions) {
+        this.adjustmentOptions = adjustmentOptions;
     }
 }

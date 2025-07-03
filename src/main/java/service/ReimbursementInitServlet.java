@@ -22,6 +22,10 @@ public class ReimbursementInitServlet extends HttpServlet {
         ReimbursementApplicationBean reimbursement = new ReimbursementApplicationBean();
         session.setAttribute("reimbursement", reimbursement);
         
+        session.setAttribute("isEditMode", false);
+
+        // Chuyển hướng (redirect) đến servlet chính để hiển thị form
+        // Redirect để đảm bảo URL trên trình duyệt là /reimbursement, không phải /reimbursementInit
         response.sendRedirect(request.getContextPath() + "/reimbursement");
     }
 }

@@ -48,7 +48,7 @@
 
 					<div class="form-group">
 						<label>出張報告</label>
-						<textarea name="tripReport" class="hokoku-text"
+						<textarea required name="tripReport" class="hokoku-text"
 							placeholder="業務内容や目的を入力してください">${trip.step1Data.tripReport}</textarea>
 					</div>
 				</div>

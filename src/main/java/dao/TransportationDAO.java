@@ -80,6 +80,7 @@ public class TransportationDAO {
      */
     public TransportationApplicationBean loadByApplicationId(int applicationId) throws SQLException {
         TransportationApplicationBean appBean = new TransportationApplicationBean();
+        appBean.setApplicationId(applicationId);
         List<TransportationDetailBean> details = new ArrayList<>();
         Connection conn = null;
         PreparedStatement ps = null;

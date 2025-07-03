@@ -79,6 +79,9 @@ public class TransportationUpdateServlet extends HttpServlet {
             
             session.setAttribute("errorMsg", "更新中にエラーが発生しました: " + e.getMessage());
             response.sendRedirect(request.getContextPath() + "/transportationSubmit");
+//             request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
+//             request.setAttribute("status", "error");
+//             request.getRequestDispatcher("/WEB-INF/views/serviceJSP//updateResult.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }

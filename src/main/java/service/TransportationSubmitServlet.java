@@ -69,6 +69,8 @@ public class TransportationSubmitServlet extends HttpServlet {
 
             session.setAttribute("success", "交通費申請が正常に送信されました。");
             response.sendRedirect(request.getContextPath() + "/applicationMain");
+//             request.setAttribute("message", "交通費申請が正常に送信されました。 (ID: " + applicationId + ")");
+//             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +94,8 @@ public class TransportationSubmitServlet extends HttpServlet {
             }
             Path destination = destinationDir.resolve(tempFile.getUniqueStoredName());
             Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
-            tempFile.setStoredFilePath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
+//            tempFile.setStoredFilePath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
+            tempFile.setTemporaryPath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
         }
     }
 }

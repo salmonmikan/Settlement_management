@@ -72,6 +72,7 @@ public class ReimbursementUpdateServlet extends HttpServlet {
 
             session.setAttribute("success", "申請を正常に更新しました。");
             response.sendRedirect(request.getContextPath() + "/applicationMain");
+//             request.setAttribute("status", "success");
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
