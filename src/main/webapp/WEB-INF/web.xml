@@ -4,5 +4,9 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
 
     <display-name>abc_system_protype</display-name>
+    
+	<session-config>
+    	<session-timeout>60</session-timeout> <!-- 分単位 -->
+	</session-config>
 
 </web-app>

@@ -47,38 +47,37 @@ public class TransportationSubmitServlet extends HttpServlet {
             conn.setAutoCommit(false);
 
             ApplicationDAO appDAO = new ApplicationDAO();
-            TransportationDAO transportationDAO = new TransportationDAO(); // Dùng DAO mới
+            TransportationDAO transportationDAO = new TransportationDAO();
             ReceiptDAO receiptDAO = new ReceiptDAO();
 
             transportationApp.calculateTotalAmount();
             
             int applicationId = appDAO.insertApplication("交通費", staffId, transportationApp.getTotalAmount(), conn);
 
-            
             for (TransportationDetailBean detail : transportationApp.getDetails()) {
-              
                 int blockId = transportationDAO.insert(detail, applicationId, conn);
-
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
                 for (int i = 0; i < filesForBlock.size(); i++) {
                     UploadedFile tempFile = filesForBlock.get(i);
                     moveFileToFinalLocation(tempFile, request);
-                    
                     receiptDAO.insert(applicationId, "transportation_request", blockId, i, tempFile, staffId, conn);
                 }
             }
             
             conn.commit();
-            session.removeAttribute("transportationApp"); 
+            session.removeAttribute("transportationApp");
 
-            request.setAttribute("message", "交通費申請が正常に送信されました。 (ID: " + applicationId + ")");
-            request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
+            session.setAttribute("success", "交通費申請が正常に送信されました。");
+            response.sendRedirect(request.getContextPath() + "/applicationMain");
+//             request.setAttribute("message", "交通費申請が正常に送信されました。 (ID: " + applicationId + ")");
+//             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
-            request.setAttribute("errorMessage", "データベース保存エラー：" + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+            
+            session.setAttribute("errorMsg", "申請中にエラーが発生しました: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/transportationSubmit");
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }
