@@ -37,7 +37,7 @@ public class TransportationDAO {
                     String formattedDate = dateStr.replace("/", "-");
                     stmt.setDate(3, java.sql.Date.valueOf(formattedDate));
                 } catch (IllegalArgumentException e) {
-                    throw new SQLException("Định dạng ngày tháng không hợp lệ (cần yyyy-MM-DD): " + dateStr, e);
+                    throw new SQLException(dateStr, e);
                 }
             } else {
                 stmt.setNull(3, java.sql.Types.DATE);
