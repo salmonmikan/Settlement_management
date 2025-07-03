@@ -117,6 +117,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             }
             Path destination = destinationDir.resolve(tempFile.getUniqueStoredName());
             Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+//            tempFile.setTemporaryPath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
             tempFile.setTemporaryPath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
         }
     }

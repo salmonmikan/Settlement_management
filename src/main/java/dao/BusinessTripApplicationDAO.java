@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import bean.BusinessTripBean;
@@ -117,7 +118,14 @@ public class BusinessTripApplicationDAO {
                 detail.setDays(rs.getInt("days"));
                 detail.setExpenseTotal(rs.getInt("expense_total"));
                 detail.setMemo(rs.getString("memo"));
-
+                String adjustmentOptionsStr = rs.getString("adjustment_options");
+                if (adjustmentOptionsStr != null && !adjustmentOptionsStr.isEmpty()) {
+                    // Chuyển chuỗi (ví dụ: "half_day,bonus") thành List và set vào đối tượng detail
+                    detail.setAdjustmentOptions(Arrays.asList(adjustmentOptionsStr.split(",")));
+                } else {
+                    // Nếu không có dữ liệu, set một danh sách rỗng để tránh lỗi NullPointerException
+                    detail.setAdjustmentOptions(new ArrayList<>());
+                }
                 String fileSql = "SELECT original_file_name, stored_file_path FROM receipt_file WHERE block_id = ? AND block_type = 'allowance_detail'";
                 try (PreparedStatement psFile = conn.prepareStatement(fileSql)) {
                     psFile.setInt(1, allowanceDetailId);

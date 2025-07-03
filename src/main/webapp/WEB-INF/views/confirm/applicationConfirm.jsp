@@ -11,7 +11,7 @@
 <jsp:include page="/WEB-INF/views/confirm/commonHeader.jsp" />
 
 <%-- SỬA LẠI CÁC CHUỖI SO SÁNH CHO ĐÚNG VỚI DATABASE --%>
-<% if ("出張費申請".equals(type)) { %>
+<% if ("出張費".equals(type)) { %>
   <jsp:include page="/WEB-INF/views/confirm/businessTripConfirmBody.jsp" />
 
 <% } else if ("交通費".equals(type)) {  %>

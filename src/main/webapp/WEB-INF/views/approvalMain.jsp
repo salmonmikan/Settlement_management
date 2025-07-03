@@ -11,12 +11,22 @@ if (mode == null)
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>承認一覧 - ABC株式会社</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+@media ( max-width : 768px) {
+	.content-container {
+		margin-left: 0;
+		padding: 0 1rem;
+		overflow-x: scroll;
+	}
+}
+</style>
 </head>
 <body data-mode="<%=mode%>">
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />

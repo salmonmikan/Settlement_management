@@ -58,35 +58,47 @@ public class BusinessTripStep1Servlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
         }
-
-        BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
-        Step1Data step1Data = trip.getStep1Data();
-
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
         String projectCode = request.getParameter("projectCode");
         String tripReport = request.getParameter("tripReport");
 
+        // ================== ✅ LOGIC SỬA LỖI BẮT ĐẦU TỪ ĐÂY ==================
+
+        if (startDateStr == null || startDateStr.length() < 10 || 
+            endDateStr == null || endDateStr.length() < 10) {
+            
+            request.setAttribute("errorMessage", "日付を正しく入力してください。");
+            
+           
+            doGet(request, response); 
+            return; // Dừng xử lý
+        }
+
+        BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
+        Step1Data step1Data = trip.getStep1Data();
         step1Data.setStartDate(startDateStr);
         step1Data.setEndDate(endDateStr);
         step1Data.setProjectCode(projectCode);
         step1Data.setTripReport(tripReport);
 
         try {
-
-        	LocalDate startDate = LocalDate.parse(startDateStr.replace('/', '-'));
-            LocalDate endDate = LocalDate.parse(endDateStr.replace('/', '-'));
-
+            LocalDate startDate = LocalDate.parse(startDateStr);
+            LocalDate endDate = LocalDate.parse(endDateStr);
+            
             long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-
+            
             if (daysBetween > 0) {
-                step1Data.setTotalDays((int) daysBetween); 
+                step1Data.setTotalDays((int) daysBetween);
             } else {
-                step1Data.setTotalDays(0); 
+                request.setAttribute("errorMessage", "終了日は開始日以降に設定してください。");
+                doGet(request, response);
+                return;
             }
         } catch (Exception e) {
-            step1Data.setTotalDays(0); 
-            System.err.println("Step 1がミスががる: " + e.getMessage());
+            request.setAttribute("errorMessage", "日付の形式が無効です。");
+            doGet(request, response);
+            return;
         }
         session.setAttribute("trip", trip);
         response.sendRedirect(request.getContextPath() + "/businessTripStep2");

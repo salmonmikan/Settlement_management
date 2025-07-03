@@ -66,6 +66,7 @@ public class ReimbursementDAO {
 
     public ReimbursementApplicationBean loadByApplicationId(int applicationId) throws SQLException {
         ReimbursementApplicationBean appBean = new ReimbursementApplicationBean();
+        appBean.setApplicationId(applicationId);
         List<ReimbursementDetailBean> details = new ArrayList<>();
         Connection conn = null;
         PreparedStatement ps = null;
@@ -93,7 +94,8 @@ public class ReimbursementDAO {
                 // === SỬA LỖI Ở ĐÂY ===
                 // Đọc từ cột "report" thay vì "abstract_note"
                 detail.setReport(rs.getString("report"));
-
+                detail.setAbstractNote(rs.getString("abstract_note"));
+                
                 String fileSql = "SELECT original_file_name, stored_file_path FROM receipt_file WHERE block_id = ? AND block_type = 'reimbursement_request'";
                 try (PreparedStatement psFile = conn.prepareStatement(fileSql)) {
                     psFile.setInt(1, reimbursementId);

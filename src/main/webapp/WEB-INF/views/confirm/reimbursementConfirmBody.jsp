@@ -131,6 +131,7 @@
 						<strong>摘要:</strong>
 					</div>
 					<div class="memo-block">${detail.abstractNote}</div>
+<<<<<<< HEAD
 				</c:if>
 				<c:if test="${not empty detail.report}">
 					<div>
@@ -138,6 +139,14 @@
 					</div>
 					<div class="memo-block">${detail.report}</div>
 				</c:if>
+=======
+		</c:if>
+        <c:if test="${not empty detail.report}">
+          <div><strong>報告書:</strong></div>
+          <div class="memo-block">${detail.report}</div>
+        </c:if>
+        
+>>>>>>> origin/develop_renew
 
 
 				<%-- 3. Hiển thị file đính kèm nếu có --%>

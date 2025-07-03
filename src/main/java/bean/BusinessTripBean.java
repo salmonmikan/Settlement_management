@@ -17,7 +17,7 @@ public class BusinessTripBean implements Serializable {
     private List<Step2Detail> step2Details;
     private List<Step3Detail> step3Details;
     private int totalAmount;
-
+    private List<String> filesToDelete = new ArrayList<>();
     /**
      * デフォルトコンストラクタ。
      * ステップ1〜3のリストを初期化します。
@@ -28,7 +28,7 @@ public class BusinessTripBean implements Serializable {
         this.step2Details = new ArrayList<>();
         this.step3Details = new ArrayList<>();
     }
-
+    
     /**
      * ステップ2とステップ3の費用を集計し、合計金額を算出します。
      * <p>
@@ -112,5 +112,12 @@ public class BusinessTripBean implements Serializable {
      */
     public void setTotalAmount(int totalAmount) {
         this.totalAmount = totalAmount;
+    }
+    public List<String> getFilesToDelete() {
+        return filesToDelete;
+    }
+
+    public void setFilesToDelete(List<String> filesToDelete) {
+        this.filesToDelete = filesToDelete;
     }
 }

@@ -16,11 +16,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>プロジェクト一覧 - 管理画面</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<style>
+@media ( max-width : 768px) {
+	.content-container {
+		margin-left: 0;
+		padding: 0 1rem;
+		overflow-x: scroll;
+	}
+}
+</style>
 </head>
 <%
 ArrayList<ProjectList> list = (ArrayList<ProjectList>)request.getAttribute("projectList_management");
