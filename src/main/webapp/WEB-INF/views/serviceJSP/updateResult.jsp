@@ -83,7 +83,6 @@
             <c:if test="${status == 'success'}">
                 <a href="${pageContext.request.contextPath}/home" class="btn btn-secondary">メニューへ戻る</a>
             </c:if>
->>>>>>> origin/develop_renew
         </div>
     </div>
 </body>

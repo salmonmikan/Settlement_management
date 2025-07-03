@@ -158,7 +158,6 @@ CREATE TABLE receipt_file (
 
 
 
-=======
 -- 部署管理テーブル_ebara
 CREATE TABLE department_master (
     department_id VARCHAR(5) NOT NULL PRIMARY KEY,
@@ -168,7 +167,6 @@ CREATE TABLE department_master (
 INSERT INTO department_master (department_id, department_name) VALUES
 ('D001', '営業部'),
 ('D002', '管理部');
->>>>>>> refs/remotes/origin/develop
 
 
 

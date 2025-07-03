@@ -111,7 +111,6 @@ public class BusinessTripUpdateServlet extends HttpServlet {
 //            request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
 //            request.setAttribute("status", "error");
 //            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
-//>>>>>>> origin/develop_renew
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }

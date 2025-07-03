@@ -92,35 +92,22 @@ if (mode == null)
 				</div>
 			</form>
 
-			<%
-			String errorMsg = (String) session.getAttribute("errorMsg");
-			if (errorMsg != null) {
-			%>
-			<div class="custom-message error">
-				<%=errorMsg%>
-			</div>
-			<%
-			session.removeAttribute("errorMsg");
-			%>
-			<%
-			}
-			%>
-
-			<%
-			String success = (String) session.getAttribute("success");
-			if (success != null) {
-			%>
-			<script>
-    alert(<%="\"" + success.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\""%>);
-</script>
-			<%
-			session.removeAttribute("success");
-			}
-			%>
 		</div>
 	</div>
 
 	<div class="footer">&copy; 2025 ABC株式会社 - All rights reserved.</div>
+
+	<%
+	Object errorObj = session.getAttribute("errorMsg");
+	Object successObj = session.getAttribute("success");
+	
+	String errorMsg = (errorObj != null) ? String.valueOf(errorObj) : null;
+	String successMsg = (successObj != null) ? String.valueOf(successObj) : null;
+	
+	// セッションから削除（事前に）
+	session.removeAttribute("errorMsg");
+	session.removeAttribute("success");
+	%>
 
 	<script>
 	const checkboxes = document.querySelectorAll('.row-check');
@@ -157,15 +144,6 @@ if (mode == null)
       });
     });
 
-    <%if (request.getAttribute("message") != null) {%>
-    Swal.fire({
-      icon: 'warning',
-      title: '注意',
-      text: '<%=request.getAttribute("message")%>',
-      confirmButtonText: 'OK'
-    });
-    <%}%>
-
  	// 社員IDでの検索用
 	document.getElementById('staffSearchInput').addEventListener('input', function () {
 	    const keyword = this.value.trim();
@@ -174,6 +152,28 @@ if (mode == null)
 	      row.style.display = (!keyword || staffId.includes(keyword)) ? '' : 'none';
 	    });
 	  });
+
+	//エラー、成功メッセージ受け取り
+	<%
+	if (errorMsg != null) {
+	    String safeError = errorMsg.replace("\\", "\\\\")
+	                               .replace("\"", "\\\"")
+	                               .replace("\n", "\\n")
+	                               .replace("\r", "");
+	%>
+	    alert("<%= safeError %>");
+	<%
+	}
+	if (successMsg != null) {
+	    String safeSuccess = successMsg.replace("\\", "\\\\")
+	                                   .replace("\"", "\\\"")
+	                                   .replace("\n", "\\n")
+	                                   .replace("\r", "");
+	%>
+	    alert("<%= safeSuccess %>");
+	<%
+	}
+	%>
   </script>
 </body>
 </html>

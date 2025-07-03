@@ -85,18 +85,15 @@ public class BusinessTripStep2Servlet extends HttpServlet {
 //            String realPath = getServletContext().getRealPath("");
          // 2. Chỉ xóa tham chiếu file khỏi danh sách chi tiết, KHÔNG xóa file vật lý
             for (Step2Detail detail : trip.getStep2Details()) {
-<<<<<<< HEAD
-                detail.getTemporaryFiles().stream()
-                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
-                    .forEach(file -> {
-                        try {
-                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
-                        } catch (IOException e) {
-                            System.err.println("ファイルが消えません: " + file.getTemporaryPath() + " - " + e.getMessage());
-                        }
-                    });
-=======
->>>>>>> origin/develop_renew
+//                detail.getTemporaryFiles().stream()
+//                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
+//                    .forEach(file -> {
+//                        try {
+//                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
+//                        } catch (IOException e) {
+//                            System.err.println("ファイルが消えません: " + file.getTemporaryPath() + " - " + e.getMessage());
+//                        }
+//                    });
                 detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
             }
         }
@@ -161,11 +158,6 @@ public class BusinessTripStep2Servlet extends HttpServlet {
 
             if (!newFileParts.isEmpty()) {
                 Step2Detail detail = detailsInSession.get(i);
-<<<<<<< HEAD
-                detail.getTemporaryFiles().clear(); 
-=======
-                
->>>>>>> origin/develop_renew
                 for (Part filePart : newFileParts) {
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
