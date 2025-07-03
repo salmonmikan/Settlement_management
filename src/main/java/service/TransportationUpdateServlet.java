@@ -88,8 +88,8 @@ public class TransportationUpdateServlet extends HttpServlet {
     }
 
     private void moveFileToFinalLocation(UploadedFile tempFile, HttpServletRequest request) throws IOException {
-        String realPath = request.getServletContext().getRealPath("");
-        Path source = Paths.get(realPath, tempFile.getTemporaryPath());
+    	  String realPath = request.getServletContext().getRealPath("");
+        Path source = Paths.get(realPath + tempFile.getTemporaryPath());
         
         if (Files.exists(source)) {
             Path destinationDir = Paths.get(realPath, PERMANENT_UPLOAD_DIR);

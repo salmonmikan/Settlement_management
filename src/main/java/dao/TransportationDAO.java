@@ -1,5 +1,6 @@
 package dao;
 
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public class TransportationDAO {
                     String formattedDate = dateStr.replace("/", "-");
                     stmt.setDate(3, java.sql.Date.valueOf(formattedDate));
                 } catch (IllegalArgumentException e) {
-                    throw new SQLException("Định dạng ngày tháng không hợp lệ (cần yyyy-MM-DD): " + dateStr, e);
+                    throw new SQLException(dateStr, e);
                 }
             } else {
                 stmt.setNull(3, java.sql.Types.DATE);
@@ -125,8 +126,20 @@ public class TransportationDAO {
                         List<UploadedFile> files = new ArrayList<>();
                         while (rsFile.next()) {
                             UploadedFile file = new UploadedFile();
-                            file.setOriginalFileName(rsFile.getString("original_file_name"));
-                            file.setTemporaryPath(rsFile.getString("stored_file_path"));
+                            String originalName = rsFile.getString("original_file_name");
+                            String storedPath = rsFile.getString("stored_file_path");
+
+                            file.setOriginalFileName(originalName);
+                            file.setTemporaryPath(storedPath);
+
+                            // ---- THÊM ĐOẠN NÀY ĐỂ SỬA LỖI ----
+                            if (storedPath != null && !storedPath.isBlank()) {
+                                // Lấy tên file từ đường dẫn (ví dụ: /uploads/abc-123.pdf -> abc-123.pdf)
+                                String uniqueName = Paths.get(storedPath).getFileName().toString();
+                                file.setUniqueStoredName(uniqueName);
+                            }
+                            // ---- KẾT THÚC PHẦN SỬA LỖI ----
+
                             files.add(file);
                         }
                         detail.setTemporaryFiles(files);
