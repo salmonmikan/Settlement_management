@@ -4,6 +4,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>交通費申請</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/static/css/style.css">
 <%-- SỬA LỖI: Đảm bảo tên file JS đúng. Giả sử tên đúng là transportation.js --%>
@@ -46,10 +47,10 @@
                 </c:forEach>
               </select>
             </div>
-            <div class="form-group"><label>報告書</label><textarea required name="report[]" placeholder="報告書を書いてください！">${detail.report}</textarea></div>
-            <div class="form-group"><label>訪問先</label><input required type="text" name="destination[]" placeholder="例: ABC株式会社" value="${detail.destination}"></div>
-            <div class="form-group"><label>出発</label><input required type="text" name="departure[]" placeholder="例:東京駅" value="${detail.departure}"></div>
-            <div class="form-group"><label>到着</label><input required type="text" name="arrival[]" placeholder="例:大阪駅" value="${detail.arrival}"></div>
+            <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="" required>${detail.report}</textarea></div>
+            <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" value="${detail.destination}" required></div>
+            <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅" value="${detail.departure}"></div>
+            <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅" value="${detail.arrival}"></div>
             <div class="form-group"><label>交通機関</label>
               <select required name="transport[]">
                 <option value="">選択してください</option>
@@ -59,7 +60,7 @@
                 <option value="飛行機" ${'飛行機' == detail.transport ? 'selected' : ''}>飛行機</option>
                 <option value="自家用車" ${'自家用車' == detail.transport ? 'selected' : ''}>自家用車</option>
                 <option value="レンタカー" ${'レンタカー' == detail.transport ? 'selected' : ''}>レンタカー</option>
-                <option value="他の" ${'他の' == detail.transport ? 'selected' : ''}>他の</option>
+                <option value="他の" ${'その他' == detail.transport ? 'selected' : ''}>その他</option>
               </select>
             </div>
             <div class="form-group"><label>金額（税込）</label><input required type="number" name="fareAmount[]" value="${detail.fareAmount}"></div>
@@ -133,7 +134,7 @@
           <option value="">選択してください</option>
           <option value="新幹線">新幹線</option><option value="電車">電車</option><option value="タクシー">タクシー</option>
           <option value="飛行機">飛行機</option><option value="自家用車">自家用車</option><option value="レンタカー">レンタカー</option>
-          <option value="他の">他の</option>
+          <option value="その他">その他</option>
       </select>
     </div>
     <div class="form-group"><label>金額（税込）</label><input required type="number" name="fareAmount[]"></div>
