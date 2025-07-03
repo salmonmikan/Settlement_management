@@ -39,7 +39,7 @@
             <button type="button" class="remove-btn" onclick="removeTransportationBlock(this)">×</button>
             <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" value="${detail.date}" required></div>
             <div class="form-group"><label>PJコード</label>
-              <select name="projectCode[]" required>
+              <select name="projectCode[]">
                 <option value="">選択してください</option>
                 <c:forEach var="p" items="${projectList}">
                   <option value="${p.id}" ${p.id == detail.projectCode ? 'selected' : ''}>${p.id}：${p.name}</option>
@@ -78,7 +78,7 @@
               </select>
             </div>
             <div class="form-group"><label>合計</label><input type="number" name="expenseTotal[]" value="${detail.expenseTotal}" readonly></div>
-            <div class="form-group"><label>摘要</label><textarea name="transMemo[]" placeholder="メモなど">${detail.transMemo}</textarea></div>
+            <div class="form-group"><label>摘要</label><textarea required name="transMemo[]" placeholder="メモなど">${detail.transMemo}</textarea></div>
             <div class="form-group">
               <label>領収書添付（交通費）</label>
               <input type="file" name="receipt_transportation_${loop.index}" multiple class="fileInput" onchange="handleFileSelection(this)">
@@ -117,38 +117,38 @@
     <button type="button" class="remove-btn" onclick="removeTransportationBlock(this)">×</button>
     <div class="form-group"><label>訪問月・日</label><input type="date" name="date[]" required></div>
     <div class="form-group"><label>PJコード</label>
-      <select name="projectCode[]" required>
+      <select name="projectCode[]">
         <option value="">選択してください</option>
         <c:forEach var="p" items="${projectList}">
           <option value="${p.id}">${p.id}：${p.name}</option>
         </c:forEach>
       </select>
     </div>
-    <div class="form-group"><label>報告書</label><textarea name="report[]" placeholder="報告書を書いてください！"></textarea></div>
+    <div class="form-group"><label>報告書</label><textarea required name="report[]" placeholder="報告書を書いてください！"></textarea></div>
     <div class="form-group"><label>訪問先</label><input type="text" name="destination[]" placeholder="例: ABC株式会社" required></div>
-    <div class="form-group"><label>出発</label><input type="text" name="departure[]" placeholder="例:東京駅"></div>
-    <div class="form-group"><label>到着</label><input type="text" name="arrival[]" placeholder="例:大阪駅"></div>
+    <div class="form-group"><label>出発</label><input required type="text" name="departure[]" placeholder="例:東京駅"></div>
+    <div class="form-group"><label>到着</label><input required type="text" name="arrival[]" placeholder="例:大阪駅"></div>
     <div class="form-group"><label>交通機関</label>
-      <select name="transport[]">
+      <select required name="transport[]">
           <option value="">選択してください</option>
           <option value="新幹線">新幹線</option><option value="電車">電車</option><option value="タクシー">タクシー</option>
           <option value="飛行機">飛行機</option><option value="自家用車">自家用車</option><option value="レンタカー">レンタカー</option>
           <option value="他の">他の</option>
       </select>
     </div>
-    <div class="form-group"><label>金額（税込）</label><input type="number" name="fareAmount[]"></div>
+    <div class="form-group"><label>金額（税込）</label><input required type="number" name="fareAmount[]"></div>
     <div class="form-group"><label>区分</label>
-      <select name="transTripType[]">
+      <select required name="transTripType[]">
           <option value="">選択してください</option><option value="片道">片道</option><option value="往復">往復</option>
       </select>
     </div>
     <div class="form-group"><label>負担者</label>
-      <select name="burden[]">
+      <select required name="burden[]">
           <option value="">選択してください</option><option value="会社">会社</option><option value="自己">自己</option>
       </select>
     </div>
     <div class="form-group"><label>合計</label><input type="number" name="expenseTotal[]" readonly></div>
-    <div class="form-group"><label>摘要</label><textarea name="transMemo[]" placeholder="メモなど"></textarea></div>
+    <div class="form-group"><label>摘要</label><textarea required name="transMemo[]" placeholder="メモなど"></textarea></div>
     <div class="form-group">
       <label>領収書添付（交通費）</label>
       <input type="file" name="receipt_transportation_" multiple class="fileInput" onchange="handleFileSelection(this)">
