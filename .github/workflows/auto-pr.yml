@@ -1,23 +1,23 @@
-name: Auto Pull Request to develop
-
-on:
-  push:
-    branches:
-      - develop_merge  # ← このブランチにpushされたとき
-      - develop_commmon
-jobs:
-  create-pull-request:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: develop
-          branch: develop_renew
-          title: "Auto PR: $target_branch → develop"
-          body: "This pull request was automatically created by GitHub Actions."
+#name: Auto Pull Request to develop
+#
+#on:
+#  push:
+#    branches:
+#      - develop_merge  # ← このブランチにpushされたとき
+#      - develop_commmon
+#jobs:
+#  create-pull-request:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Create Pull Request
+#        uses: peter-evans/create-pull-request@v6
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          base: develop
+#          branch: develop_renew
+#          title: "Auto PR: $target_branch → develop"
+#          body: "This pull request was automatically created by GitHub Actions."

@@ -37,7 +37,7 @@ public class SubmitApplicationServlet extends HttpServlet {
                     for (String idStr : appIds) {
                         int appId = Integer.parseInt(idStr);
                         String status = dao.getApplicationStatus(appId);
-                        if (!"未提出".equals(status)) {
+                        if (!"未提出".equals(status) && !"差戻し".equals(status)) {
                             request.setAttribute("message", "未提出・差戻しの申請のみ提出可能です。");
                             List<Application> apps = dao.getApplicationsByStaffId(staffId);
                             request.setAttribute("applications", apps);
