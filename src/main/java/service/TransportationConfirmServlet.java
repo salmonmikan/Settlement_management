@@ -1,8 +1,7 @@
 package service;
 
 import java.io.IOException;
-import bean.TransportationApplicationBean;
-import bean.TransportationDetailBean;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,6 +9,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import bean.TransportationApplicationBean;
+import bean.TransportationDetailBean;
 
 @WebServlet("/transportationConfirm")
 public class TransportationConfirmServlet extends HttpServlet {
@@ -48,12 +50,29 @@ public class TransportationConfirmServlet extends HttpServlet {
 
         request.setAttribute("application_type", "交通費");
         request.setAttribute("transportationApp", transportationApp); 
+        
+     // Lấy cờ isEditMode từ session
+     Boolean isEditMode = (Boolean) session.getAttribute("isEditMode");
+     if (isEditMode == null) {
+         isEditMode = false; // Mặc định là luồng tạo mới nếu không có cờ
+     }
+     // Thiết lập các thuộc tính cho các nút bấm dựa trên isEditMode
+     if (isEditMode) {
+         // Đây là luồng UPDATE
+         request.setAttribute("isEditMode", true); // Gửi cờ ra JSP để đổi chữ trên nút (nếu cần)
+         request.setAttribute("showBackButton", true);
+         request.setAttribute("backActionUrl", "/transportationRequest");
+         request.setAttribute("showSubmitButton", true);
+         request.setAttribute("submitActionUrl", "/transportationUpdate"); // Trỏ đến servlet Update
 
-        request.setAttribute("showBackButton", true);
-        request.setAttribute("showSubmitButton", true);
-        request.setAttribute("showEditButton", false);
-        request.setAttribute("backActionUrl", "/transportationRequest");
-        request.setAttribute("submitActionUrl", "/transportationSubmit");
+     } else {
+         // Đây là luồng TẠO MỚI (Submit)
+         request.setAttribute("isEditMode", false);
+         request.setAttribute("showBackButton", true);
+         request.setAttribute("backActionUrl", "/transportationRequest");
+         request.setAttribute("showSubmitButton", true);
+         request.setAttribute("submitActionUrl", "/transportationSubmit"); // Trỏ đến servlet Submit
+     }
 
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp"); 
         rd.forward(request, response);

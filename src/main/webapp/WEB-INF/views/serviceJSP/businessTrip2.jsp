@@ -5,6 +5,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>出張費申請 - 日当・宿泊費明細</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/static/css/style.css">
@@ -166,7 +167,7 @@
 									placeholder="例:APAホテル" value="${detail.hotel}">
 							</div>
 							<div class="form-group">
-								<label>地域区分</label><select name="regionType[]"
+								<label >地域区分</label><select required name="regionType[]"
 									onchange="calculateHotelFee(this)"><option value="">選択してください</option>
 									<option value="東京"
 										${detail.regionType == '東京' ? 'selected' : ''}>東京</option>
@@ -195,28 +196,52 @@
 								<label>宿泊費</label><input required type="number"
 									name="hotelFee[]" readonly value="${detail.hotelFee}">
 							</div>
-							<fieldset class="adjustment-group">
-							    <legend>日当の調整</legend>
 							
-							    <label for="option_half_day" class="option-item">
-							        <input type="checkbox" id="option_half_day" class="nitto-option" data-option="half_day">
-							        <span class="custom-checkbox"></span>
-							        <span class="option-label">午後の出発・午前の到着 (日当 1/2)</span>
-							    </label>
-							
-							    <label for="option_bonus" class="option-item">
-							        <input type="checkbox" id="option_bonus" class="nitto-option" data-option="bonus">
-							        <span class="custom-checkbox"></span>
-							        <span class="option-label">午前6時前出発・午後9時以降到着 (+1,500円)</span>
-							    </label>
-							
-							    <label for="option_none" class="option-item">
-							        <input type="checkbox" id="option_none" class="nitto-option" data-option="none">
-							        <span class="custom-checkbox"></span>
-							        <span class="option-label">業務活動なし (日当なし)</span>
-							    </label>
-							    
-							</fieldset>
+						<fieldset class="adjustment-group">
+						    <legend>日当の調整</legend>
+						
+						    <%-- Option 1: Nửa ngày --%>
+						    <label for="option_half_day_${loop.index}" class="option-item">
+						        <input type="checkbox" 
+						               id="option_half_day_${loop.index}" 
+						               name="adjustmentOptions[${loop.index}]" 
+						               value="half_day" 
+						               class="nitto-option" 
+						               data-option="half_day"
+						               ${detail.adjustmentOptions.contains('half_day') ? 'checked' : ''}
+						               onchange="handleAdjustmentChange(this)">
+						        <span class="custom-checkbox"></span>
+						        <span class="option-label">午後の出発・午前の到着 (日当 1/2)</span>
+						    </label>
+						
+						    <%-- Option 2: Bonus --%>
+						    <label for="option_bonus_${loop.index}" class="option-item">
+						        <input type="checkbox" 
+						               id="option_bonus_${loop.index}" 
+						               name="adjustmentOptions[${loop.index}]" 
+						               value="bonus" 
+						               class="nitto-option" 
+						               data-option="bonus"
+						               ${detail.adjustmentOptions.contains('bonus') ? 'checked' : ''}
+						               onchange="handleAdjustmentChange(this)">
+						        <span class="custom-checkbox"></span>
+						        <span class="option-label">午前6時前出発・午後9時以降到着 (+1,500円)</span>
+						    </label>
+						
+						    <%-- Option 3: Không có phụ cấp --%>
+						    <label for="option_none_${loop.index}" class="option-item">
+						        <input type="checkbox" 
+						               id="option_none_${loop.index}" 
+						               name="adjustmentOptions[${loop.index}]" 
+						               value="none" 
+						               class="nitto-option" 
+						               data-option="none"
+						               ${detail.adjustmentOptions.contains('none') ? 'checked' : ''}
+						               onchange="handleAdjustmentChange(this)">
+						        <span class="custom-checkbox"></span>
+						        <span class="option-label">業務活動なし (日当なし)</span>
+						    </label>
+						</fieldset>
 							<div class="form-group">
 								<label>日当</label><input required type="number"
 									name="dailyAllowance[]" readonly
@@ -232,7 +257,7 @@
 							</div>
 							<div class="form-group">
 								<label>摘要</label>
-								<textarea name="memo[]" placeholder="メモなど">${detail.memo}</textarea>
+								<textarea required name="memo[]" placeholder="メモなど">${detail.memo}</textarea>
 							</div>
 							<div class="form-group">
 								<label>領収書添付（日当・宿泊費）</label> <input type="file"

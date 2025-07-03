@@ -172,7 +172,7 @@ public class TransportationServlet extends HttpServlet {
             if (!newFileParts.isEmpty()) {
                 TransportationDetailBean detail = transportationApp.getDetails().get(i);
                 // Xóa file cũ trong bean trước khi thêm file mới (quan trọng!)
-                detail.getTemporaryFiles().clear(); 
+//                detail.getTemporaryFiles().clear(); 
                 
                 for (Part filePart : newFileParts) {
                     try {

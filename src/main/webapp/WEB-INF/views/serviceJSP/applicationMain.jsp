@@ -9,13 +9,22 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>申請一覧 - ABC株式会社</title>
+
 <link rel="stylesheet"
-
-	href="<%=request.getContextPath()%>/static/css/style.css">
-
+	href="<%= request.getContextPath() %>/static/css/style.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<style>
+@media ( max-width : 768px) {
+	.content-container {
+		overflow-x: scroll;
+		margin-left: 0;
+		padding: 0 1rem;
+	}
+}
+</style>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -31,7 +40,6 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 						disabled onclick="return confirmSubmit()">提出</button>
 					<button type="submit" name="action" value="edit" id="editBtn"
 						disabled>編集</button>
-
 					<button type="submit" name="action" value="delete" id="deleteBtn"
 						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
 				</div>

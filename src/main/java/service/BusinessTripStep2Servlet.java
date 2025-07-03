@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -65,12 +66,12 @@ public class BusinessTripStep2Servlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
         }
-
-        String action = request.getParameter("action");
-        if ("go_back".equals(action)) {
-            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
-            return;
-        }
+        //xử lý check box
+//        String action = request.getParameter("action");
+//        if ("go_back".equals(action)) {
+//            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+//            return;
+//        }
 
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
 
@@ -78,17 +79,21 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         String filesToDeleteParam = request.getParameter("filesToDelete");
         if (filesToDeleteParam != null && !filesToDeleteParam.isEmpty()) {
             List<String> filesToDeleteList = List.of(filesToDeleteParam.split(","));
-            String realPath = getServletContext().getRealPath("");
+         // 1. Ghi nhận các file cần xóa vào bean session
+            trip.getFilesToDelete().addAll(filesToDeleteList);
+
+//            String realPath = getServletContext().getRealPath("");
+         // 2. Chỉ xóa tham chiếu file khỏi danh sách chi tiết, KHÔNG xóa file vật lý
             for (Step2Detail detail : trip.getStep2Details()) {
-                detail.getTemporaryFiles().stream()
-                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
-                    .forEach(file -> {
-                        try {
-                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
-                        } catch (IOException e) {
-                            System.err.println("ファイルが消えません: " + file.getTemporaryPath() + " - " + e.getMessage());
-                        }
-                    });
+//                detail.getTemporaryFiles().stream()
+//                    .filter(file -> filesToDeleteList.contains(file.getUniqueStoredName()))
+//                    .forEach(file -> {
+//                        try {
+//                            Files.deleteIfExists(Paths.get(realPath + file.getTemporaryPath()));
+//                        } catch (IOException e) {
+//                            System.err.println("ファイルが消えません: " + file.getTemporaryPath() + " - " + e.getMessage());
+//                        }
+//                    });
                 detail.getTemporaryFiles().removeIf(file -> filesToDeleteList.contains(file.getUniqueStoredName()));
             }
         }
@@ -129,6 +134,13 @@ public class BusinessTripStep2Servlet extends HttpServlet {
             detail.setDays(Integer.parseInt(days[i]));
             detail.setExpenseTotal(Integer.parseInt(expenseTotals[i]));
             detail.setMemo(memos[i]);
+            String[] adjustmentOptions = request.getParameterValues("adjustmentOptions[" + i + "]");
+
+            if (adjustmentOptions != null) {
+                detail.setAdjustmentOptions(List.of(adjustmentOptions));
+            } else {
+                detail.setAdjustmentOptions(new ArrayList<>());
+            }
         }
 
         // 4. 消える
@@ -146,7 +158,6 @@ public class BusinessTripStep2Servlet extends HttpServlet {
 
             if (!newFileParts.isEmpty()) {
                 Step2Detail detail = detailsInSession.get(i);
-                detail.getTemporaryFiles().clear(); 
                 for (Part filePart : newFileParts) {
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -171,6 +182,11 @@ public class BusinessTripStep2Servlet extends HttpServlet {
         }
         
         session.setAttribute("trip", trip);
-        response.sendRedirect(request.getContextPath() + "/businessTripStep3");
+        String action = request.getParameter("action");
+        if ("go_back".equals(action)) {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep1");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/businessTripStep3");
+        }
     }
 }

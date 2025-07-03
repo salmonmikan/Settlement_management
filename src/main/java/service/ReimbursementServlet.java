@@ -116,8 +116,8 @@ public class ReimbursementServlet extends HttpServlet {
                 .collect(Collectors.toList());
             if (!newFileParts.isEmpty()) {
                 ReimbursementDetailBean detail = reimbursement.getDetails().get(i);
-                
-                detail.getTemporaryFiles().clear();
+                // Nếu là luồng tạo mới hoặc có file mới, ta sẽ xóa file cũ (nếu có) trong bean và thêm file mới
+//                detail.getTemporaryFiles().clear();
                 for (Part filePart : newFileParts) {
                     try {
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();

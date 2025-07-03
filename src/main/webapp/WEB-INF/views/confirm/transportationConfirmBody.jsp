@@ -182,25 +182,26 @@
 
 </div>
 <%
-String msg = (String) session.getAttribute("errorMsg");
-if (msg != null) {
-%>
-<script>
-    alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
-</script>
-<%
-    session.removeAttribute("errorMsg");
-}
+String errorMsg = String.valueOf(request.getAttribute("errorMsg"));
+String successMsg = String.valueOf(request.getAttribute("success"));
+session.removeAttribute("errorMsg");
+session.removeAttribute("success");
 %>
 
-<%
-String success = (String) session.getAttribute("success");
-if (success != null) {
-%>
 <script>
-    alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
-</script>
 <%
-    session.removeAttribute("success");
+if (errorMsg != null) {
+    String safeError = errorMsg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+%>
+    alert("<%= safeError %>");
+<%
+}
+if (successMsg != null) {
+    String safeSuccess = successMsg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+%>
+    alert("<%= safeSuccess %>");
+<%
 }
 %>
+</script>
+

@@ -50,7 +50,7 @@ public class ApplicationDetailServlet extends HttpServlet {
                 type = type.trim();
             }
 
-            if ("出張費申請".equals(type)) {
+            if ("出張費".equals(type)) {
                 BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
                 request.setAttribute("trip", bean);
@@ -58,7 +58,7 @@ public class ApplicationDetailServlet extends HttpServlet {
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
-
+                // :wrench: 修正ポイント: 各明細の expenseTotal を再計算
                 for (TransportationDetailBean detail : bean.getDetails()) {
                     int multiplier = "往復".equals(detail.getTransTripType()) ? 2 : 1;
                     if ("自己".equals(detail.getBurden())) {

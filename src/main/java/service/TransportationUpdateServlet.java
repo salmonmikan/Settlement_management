@@ -80,15 +80,14 @@ public class TransportationUpdateServlet extends HttpServlet {
             request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
             request.setAttribute("status", "error");
             request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
-
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }
     }
 
     private void moveFileToFinalLocation(UploadedFile tempFile, HttpServletRequest request) throws IOException {
-        String realPath = request.getServletContext().getRealPath("");
-        Path source = Paths.get(realPath, tempFile.getTemporaryPath());
+    	String realPath = request.getServletContext().getRealPath("");
+        Path source = Paths.get(realPath + tempFile.getTemporaryPath());
         
         if (Files.exists(source)) {
             Path destinationDir = Paths.get(realPath, PERMANENT_UPLOAD_DIR);
