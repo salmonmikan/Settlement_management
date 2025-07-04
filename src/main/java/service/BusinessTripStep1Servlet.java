@@ -19,10 +19,6 @@ import bean.Step1Data;
 import dao.ProjectDAO;
 import dao.ProjectListDAO;
 
-/**
- * 出張申請のステップ1を処理するサーブレット。
- * (Servlet xử lý Step 1 của đơn đăng ký công tác)
- */
 @WebServlet("/businessTripStep1")
 public class BusinessTripStep1Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -54,7 +50,6 @@ public class BusinessTripStep1Servlet extends HttpServlet {
         
         request.getRequestDispatcher("/WEB-INF/views/serviceJSP/businessTrip1.jsp").forward(request, response);
     }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -64,7 +59,6 @@ public class BusinessTripStep1Servlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/businessTripInit");
             return;
         }
-
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
         String projectCode = request.getParameter("projectCode");
@@ -84,7 +78,6 @@ public class BusinessTripStep1Servlet extends HttpServlet {
 
         BusinessTripBean trip = (BusinessTripBean) session.getAttribute("trip");
         Step1Data step1Data = trip.getStep1Data();
-
         step1Data.setStartDate(startDateStr);
         step1Data.setEndDate(endDateStr);
         step1Data.setProjectCode(projectCode);
@@ -108,7 +101,6 @@ public class BusinessTripStep1Servlet extends HttpServlet {
             doGet(request, response);
             return;
         }
-
         session.setAttribute("trip", trip);
         response.sendRedirect(request.getContextPath() + "/businessTripStep2");
     }

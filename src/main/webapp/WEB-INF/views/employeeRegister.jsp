@@ -4,6 +4,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>社員登録</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
@@ -79,11 +80,11 @@ h2 {
 						required maxlength="8" value="${confirmPassword}">
 				</div>
 				<div class="form-group">
-					<label>部署ID</label> <input type="text" name="departmentId" required
+					<label>部署ID</label> <input type="text" name="departmentId" 
 						maxlength="5" value="${departmentId}">
 				</div>
 				<div class="form-group">
-					<label>役職ID</label> <input type="text" name="positionId" required
+					<label>役職ID</label> <input type="text" name="positionId" 
 						maxlength="5" value="${positionId}">
 				</div>
 			</div>

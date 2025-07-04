@@ -1,5 +1,3 @@
-// File: src/main/java/service/BusinessTripInitServlet.java
-// (Phiên bản ĐÚNG)
 package service;
 
 import java.io.IOException;
@@ -14,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/businessTripInit")
 public class BusinessTripInitServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
     /**
      * 出張申請の初期画面（Step1）を表示するためのGET処理。
      * <p>
@@ -37,7 +34,6 @@ public class BusinessTripInitServlet extends HttpServlet {
         session.setAttribute("trip", trip);
 
         session.setAttribute("isEditMode", false);
-
         response.sendRedirect(request.getContextPath() + "/businessTripStep1");
     }
 }

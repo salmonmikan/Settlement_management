@@ -105,7 +105,6 @@ public class BusinessTripUpdateServlet extends HttpServlet {
             request.setAttribute("message", "出張費申請（ID: " + applicationId + "）を正常に更新しました。");
             request.setAttribute("status", "success");
             request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
-
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }

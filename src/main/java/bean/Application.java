@@ -13,7 +13,6 @@ public class Application {
     private Timestamp createdAt;       // 作成日時（旧: applicationDate）
     private int amount;                // 金額
     private String status;             // ステータス
-
     private String staffId;            // 承認者表示用（追加済みなら giữ nguyên）
     private String staffName;
 

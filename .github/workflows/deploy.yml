@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - develop  # ← developブランチにpushされたときに実行
-	  - develop_renew
 #  pull_request:
 #     branches:
 #      - develop  # develop に対する PR の merge 時にも動作
+      - develop_renew  # ← develop_renewブランチにpushされたときに実行
 
 jobs:
   deploy:
@@ -42,6 +42,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
+            sudo rm -rf /opt/tomcat/webapps/ROOT /opt/tomcat/webapps/ROOT.war
+            sudo mv /opt/tomcat/webapps/target/ROOT.war /opt/tomcat/webapps/
             /opt/tomcat/bin/shutdown.sh || true
             sleep 5
             /opt/tomcat/bin/startup.sh

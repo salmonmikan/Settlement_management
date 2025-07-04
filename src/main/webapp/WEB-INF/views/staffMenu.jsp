@@ -11,6 +11,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>スタッフダッシュボード - ABC株式会社システム</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/static/css/style.css">
@@ -22,7 +23,7 @@
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 	<div class="page-container">
-		<div class="content-container">
+		<div class="content-container menu_style">
 			<p style="text-align: right;">ようこそ、${sessionScope.staffName} さん！</p>
 			<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 			<div class="staff-main-content">

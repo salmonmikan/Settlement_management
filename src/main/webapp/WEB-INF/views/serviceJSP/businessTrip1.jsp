@@ -1,10 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>出張費申請 - Step 1</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/static/css/style.css">
@@ -33,7 +36,7 @@
 					</div>
 
 					<div class="form-group">
-						<label>PJコード</label> <select name="projectCode" required>
+						<label>PJコード</label> <select name="projectCode">
 							<option value="">選択してください</option>
 							<c:forEach var="p" items="${projectList}">
 								<option value="${p.id}"
@@ -45,7 +48,7 @@
 
 					<div class="form-group">
 						<label>出張報告</label>
-						<textarea name="tripReport" class="hokoku-text"
+						<textarea required name="tripReport" class="hokoku-text"
 							placeholder="業務内容や目的を入力してください">${trip.step1Data.tripReport}</textarea>
 					</div>
 				</div>

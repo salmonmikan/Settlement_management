@@ -5,6 +5,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>支払い管理 - ABC株式会社</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
@@ -16,19 +17,23 @@
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<div class="page-container">
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-		<div class="content-container">
+		<div class="content-container-form">
 			<h2>支払い管理</h2>
 
-			<form action="payment" method="post">
-				<div class="action-toolbar">
-					<div class="spacer"></div>
-					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-					<button id="paidBtn" type="submit" disabled>支払済</button>
-				</div>
+			<form class="info_table" action="payment" method="post">
 
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
+							<tr>
+								<th class="th-action-toolbar" colspan="100" style="text-align: right;">
+									<div class="action-toolbar">
+										<div class="spacer"></div>
+										<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+										<button id="paidBtn" type="submit" disabled>支払済</button>
+									</div>
+								</th>
+							</tr>
 							<tr>
 								<th><div>すべて選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>

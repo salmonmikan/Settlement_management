@@ -3,9 +3,19 @@
 String position = (String) session.getAttribute("position_id");
 String department = (String) session.getAttribute("department_id");
 %>
+
 <div class="sidebar">
-	<div class="menu-block">
-		<h3>メニュー</h3>
+    <!-- Nút ba gạch mở menu -->
+    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+
+    <!-- Lớp phủ nền mờ -->
+    <div class="menu-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="menu-content">
+        <!-- Nút thu menu -->
+        <div class="menu-close" onclick="toggleSidebar()">✕</div>
+
+        <h3>メニュー</h3>
 		<ul>
 			<%
 			if ("P0002".equals(position) && "D0002".equals(department)) {
@@ -88,8 +98,14 @@ String department = (String) session.getAttribute("department_id");
 			}
 			%>
 		</ul>
-	</div>
-	<div class="back_top" style="text-align: center; margin-top: 30px;">
+				<div class="back_top" style="text-align: center; margin-top: 30px;">
 		<a href="<%=request.getContextPath()%>/menu">トップに戻る</a>
 	</div>
+	</div>
 </div>
+<script>
+function toggleSidebar() {
+    const sidebar = document.querySelector(".sidebar");
+    sidebar.classList.toggle("open");
+}
+</script>

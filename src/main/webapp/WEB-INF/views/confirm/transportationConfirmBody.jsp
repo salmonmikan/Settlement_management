@@ -4,11 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
-<%-- 
-  File này hiển thị nội dung chi tiết của đơn "Chi phí đi lại" (交通費)
-  theo cấu trúc hiển thị riêng cho từng block.
---%>
-
 <style>
 /* Style chung cho trang confirm */
 .confirm-table {
@@ -93,19 +88,12 @@
 	style="display: flex; flex-direction: column; gap: 15px;">
 	<div class="content-container">
 
-
-		<%-- =================================================================== --%>
-		<%-- BẮT ĐẦU VÒNG LẶP CHO MỖI BLOCK --%>
-		<%-- =================================================================== --%>
 		<c:forEach var="detail" items="${transportationApp.details}"
 			varStatus="loop">
 
-			<%-- Khung bao quanh cho một block duy nhất --%>
 			<div class="confirm-section">
 				<h3>精算明細 ${loop.count}</h3>
-				<%-- Tiêu đề cho block: Chi tiết 1, Chi tiết 2... --%>
 
-				<%-- 1. Bảng chứa thông tin chính của block --%>
 				<table class="confirm-table">
 					<tr>
 						<th>PJコード</th>
@@ -151,10 +139,8 @@
 					</tr>
 				</table>
 
-				<%-- Khu vực chứa ghi chú và file của RIÊNG block này --%>
 				<div class="detail-extra-info">
 
-					<%-- 2. Hiển thị ghi chú (摘要) của RIÊNG block này --%>
 					<c:if test="${not empty detail.transMemo}">
 						<div>
 							<strong>摘要:</strong>
@@ -169,8 +155,6 @@
 						</div>
 						<div class="memo-block">${detail.report}</div>
 					</c:if>
-
-					<%-- 3. Hiển thị file của RIÊNG block này --%>
 					<c:if test="${not empty detail.temporaryFiles}">
 						<div style="margin-top: 10px;">
 							<strong>領収書ファイル:</strong>
@@ -185,12 +169,9 @@
 					</c:if>
 				</div>
 			</div>
-			<%-- Kết thúc khung của một block --%>
 
 		</c:forEach>
-		<%-- Kết thúc vòng lặp --%>
-
-		<%-- Hiển thị tổng số tiền của toàn bộ đơn đăng ký (nằm ngoài vòng lặp) --%>
+		
 		<div class="confirm-page-total">
 			総合計金額:
 			<fmt:formatNumber value="${transportationApp.totalAmount}"
@@ -198,5 +179,6 @@
 			円
 		</div>
 	</div>
-
 </div>
+
+

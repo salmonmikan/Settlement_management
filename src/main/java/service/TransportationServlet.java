@@ -143,7 +143,6 @@ public class TransportationServlet extends HttpServlet {
         }
         transportationApp.setDetails(updatedDetails);
 
-        // 3. Xử lý file upload
         Collection<Part> allParts = request.getParts();
         for (int i = 0; i < numSubmittedBlocks; i++) {
             String fileInputName = "receipt_transportation_" + i;

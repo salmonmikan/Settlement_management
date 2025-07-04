@@ -26,7 +26,6 @@ public class ApplicationListServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-
         // --- Set thuộc tính để dùng trong JSP ---
         request.setAttribute("position", session.getAttribute("position"));
 

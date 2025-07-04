@@ -50,10 +50,11 @@ public class ApplicationDetailServlet extends HttpServlet {
                 type = type.trim();
             }
 
-            if ("出張費申請".equals(type)) {
+            if ("出張費".equals(type)) {
                 BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
                 request.setAttribute("trip", bean);
+
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
@@ -67,7 +68,9 @@ public class ApplicationDetailServlet extends HttpServlet {
                     }
                 }
                 bean.calculateTotalAmount(); // 必須: 総合計も再計算
+
                 request.setAttribute("transportationApp", bean);
+
             } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();
                 ReimbursementApplicationBean bean = dao.loadByApplicationId(applicationId);

@@ -44,7 +44,7 @@ public class EditApplicationServlet extends HttpServlet {
             
             type = type.trim();
 
-            if ("出張費申請".equals(type)) {
+            if ("出張費".equals(type)) {
                 BusinessTripApplicationDAO dao = new BusinessTripApplicationDAO();
                 BusinessTripBean bean = dao.loadBusinessTripByApplicationId(applicationId);
                 bean.getStep1Data().setApplicationId(applicationId);
@@ -54,15 +54,13 @@ public class EditApplicationServlet extends HttpServlet {
             } else if ("交通費".equals(type)) {
                 TransportationDAO dao = new TransportationDAO();
                 TransportationApplicationBean bean = dao.loadByApplicationId(applicationId);
-                // Bạn cần thêm trường applicationId và getter/setter vào TransportationApplicationBean
-                // bean.setApplicationId(applicationId); 
+
                 session.setAttribute("transportationApp", bean);
-                targetServlet = "/transportationRequest"; // Giả định servlet đăng ký là /transportation
+                targetServlet = "/transportationRequest"; 
 
             } else if ("立替金".equals(type)) {
                 ReimbursementDAO dao = new ReimbursementDAO();
                 ReimbursementApplicationBean bean = dao.loadByApplicationId(applicationId);
-                // Bạn cần thêm trường applicationId và getter/setter vào ReimbursementApplicationBean
                 bean.setApplicationId(applicationId); 
                 session.setAttribute("reimbursement", bean);
                 targetServlet = "/reimbursement";

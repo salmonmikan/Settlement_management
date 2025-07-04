@@ -34,17 +34,19 @@ public class SubmitApplicationServlet extends HttpServlet {
 
             switch (action) {
                 case "post":
-                    for (String idStr : appIds) {
-                        int appId = Integer.parseInt(idStr);
-                        String status = dao.getApplicationStatus(appId);
-                        if (!"未提出".equals(status)) {
-                            request.setAttribute("message", "未提出・差戻しの申請のみ提出可能です。");
-                            List<Application> apps = dao.getApplicationsByStaffId(staffId);
-                            request.setAttribute("applications", apps);
-                            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/applicationMain.jsp").forward(request, response);
-                            return;
-                        }
-                    }
+                	for (String idStr : appIds) {
+                	    int appId = Integer.parseInt(idStr);
+                	    String status = dao.getApplicationStatus(appId);
+                	    
+                	    if (!"未提出".equals(status) && !"差戻し".equals(status)) {
+                	        
+                	        request.setAttribute("message", "未提出、または差戻し状態の申請のみ提出可能です。");
+                	        List<Application> apps = dao.getApplicationsByStaffId(staffId);
+                	        request.setAttribute("applications", apps);
+                	        request.getRequestDispatcher("/WEB-INF/views/serviceJSP/applicationMain.jsp").forward(request, response);
+                	        return;
+                	    }
+                	}
 
                     for (String idStr : appIds) {
                         int appId = Integer.parseInt(idStr);

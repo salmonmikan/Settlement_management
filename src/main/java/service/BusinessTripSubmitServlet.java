@@ -58,12 +58,12 @@ public class BusinessTripSubmitServlet extends HttpServlet {
 
             trip.calculateTotalAmount();
 
-            int applicationId = appDAO.insertApplication("出張費申請", staffId, trip.getTotalAmount(), conn);
+            int applicationId = appDAO.insertApplication("出張費", staffId, trip.getTotalAmount(), conn);
            
 
             int tripApplicationId = tripAppDAO.insert(trip.getStep1Data(), applicationId, conn);
 
-            // Xử lý Step 2
+            // Step 2
             for (Step2Detail detail : trip.getStep2Details()) {
                 int blockId = allowanceDAO.insert(detail, tripApplicationId, conn);
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
@@ -74,7 +74,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
                 }
             }
             
-            // Xử lý Step 3
+            // Step 3
             for (Step3Detail detail : trip.getStep3Details()) {
                 int blockId = transportDAO.insert(detail, tripApplicationId, conn);
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
@@ -115,6 +115,7 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             }
             Path destination = destinationDir.resolve(tempFile.getUniqueStoredName());
             Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+//            tempFile.setTemporaryPath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
             tempFile.setTemporaryPath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
         }
     }

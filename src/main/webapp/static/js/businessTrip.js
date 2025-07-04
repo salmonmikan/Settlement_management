@@ -12,16 +12,27 @@ function initializeStep2(diffDays, positionId) {
     validateTotalDays(diffDays);
 }
 
+/**
+ * Gán sự kiện và logic cho một khối chi phí.
+ * @param {HTMLElement} block - Phần tử .allowance-block
+ * @param {number} diffDays - Tổng số ngày công tác từ Step 1
+ * @param {string} positionId - Mã chức vụ
+ */
 function setupAllowanceBlock(block, diffDays, positionId) {
     // --- BẮT ĐẦU PHẦN SỬA LỖI CHO Ô "日数" ---
     const daysInput = block.querySelector("input[name='days[]']");
     if (daysInput) {
         const isFirstBlock = block === document.querySelector(".allowance-block");
+        const allBlocks = document.querySelectorAll(".allowance-block");
 
-        // Luôn gán số ngày tính từ Step 1 cho block đầu tiên khi trang tải.
-        // Các block được thêm sau sẽ được xử lý bởi hàm addAllowanceBlock.
-        if (isFirstBlock) {
-            daysInput.value = diffDays;
+        // CHỈ gán tổng số ngày cho block đầu tiên NẾU đây là block duy nhất
+        // VÀ giá trị của nó đang là 0 hoặc rỗng.
+        // Điều này giữ lại giá trị người dùng đã sửa khi back lại trang.
+        if (isFirstBlock && allBlocks.length === 1) {
+            const existingDays = parseInt(daysInput.value || 0);
+            if (existingDays === 0) {
+                daysInput.value = diffDays;
+            }
         }
 
         // Gắn ghi chú nếu chưa có
@@ -45,12 +56,18 @@ function setupAllowanceBlock(block, diffDays, positionId) {
     if (dailyAllowanceInput) {
         const dailyFee = (positionId === 'P0004') ? 2200 : 4000;
         dailyAllowanceInput.dataset.baseAllowance = dailyFee;
-        dailyAllowanceInput.value = dailyFee;
+        
+        // Chỉ gán giá trị mặc định nếu ô input chưa có giá trị
+        if (!dailyAllowanceInput.value) {
+           dailyAllowanceInput.value = dailyFee;
+        }
 
         const options = block.querySelectorAll(".nitto-option");
         options.forEach(checkbox => {
             checkbox.addEventListener('change', () => calculateDailyAllowance(block));
         });
+        // Tính toán lại phụ cấp khi tải trang để áp dụng các checkbox đã check
+        calculateDailyAllowance(block);
     }
 
     ['regionType[]', 'tripType[]', 'burden[]'].forEach(name => {
@@ -62,7 +79,8 @@ function setupAllowanceBlock(block, diffDays, positionId) {
 
     const fileInput = block.querySelector(".fileInput");
     if (fileInput) {
-        fileInput.addEventListener("change", () => handleFileSelection(fileInput));
+        // Gán lại sự kiện onchange để sử dụng hàm quản lý file mới
+        fileInput.onchange = function() { handleFileSelection(this); };
     }
     
     // Gọi hàm tính tổng sau khi đã thiết lập xong
@@ -106,6 +124,12 @@ function calculateDailyAllowance(block) {
 
     // QUAN TRỌNG: Gọi lại hàm tính tổng của block để cập nhật ô "合計"
     calculateTotal(block);
+}
+
+// Thêm vào file businessTrip.js
+function handleAdjustmentChange(checkbox) {
+    const block = checkbox.closest('.allowance-block');
+    calculateDailyAllowance(block);
 }
 
 function calculateHotelFee(elem) {
@@ -220,23 +244,59 @@ function addAllowanceBlock() {
     const clone = template.cloneNode(true);
     const newIndex = container.children.length;
 
-    // Reset nội dung input
-    clone.querySelectorAll("input[type='text'], input[type='number'], textarea").forEach(el => el.value = "");
+    // Reset các giá trị input cơ bản
+    clone.querySelectorAll("input[type='text'], input[type='number'], textarea").forEach(el => {
+        if (!el.readOnly) el.value = "";
+    });
     clone.querySelectorAll("select").forEach(sel => sel.selectedIndex = 0);
 
+    // --- BẮT ĐẦU SỬA LỖI ---
+    // Cập nhật lại ID và FOR cho các checkbox trong khối mới để đảm bảo chúng là duy nhất
+    const adjustmentLabels = clone.querySelectorAll(".adjustment-group .option-item");
+    adjustmentLabels.forEach(label => {
+        const checkbox = label.querySelector(".nitto-option");
+        if (checkbox) {
+            // Lấy tên gốc của option từ thuộc tính data-option
+            const optionName = checkbox.dataset.option;
+            
+            // Tạo ID mới duy nhất bằng cách ghép với newIndex
+            const newId = `option_${optionName}_${newIndex}`;
+            
+            // Gán ID mới cho checkbox và thuộc tính 'for' cho label
+            checkbox.id = newId;
+            label.setAttribute('for', newId);
+
+            // Cập nhật lại thuộc tính 'name' để dữ liệu gửi đi không bị lẫn lộn
+            checkbox.name = `adjustmentOptions[${newIndex}]`;
+            
+            // Reset trạng thái của checkbox
+            checkbox.checked = false;
+            checkbox.disabled = false;
+        }
+    });
+    // --- KẾT THÚC SỬA LỖI ---
+
+    // Reset file input và danh sách file
     const fileInput = clone.querySelector(".fileInput");
     if (fileInput) {
         fileInput.name = "receipt_allowance_" + newIndex;
         fileInput.value = "";
+        // Xóa bộ đệm file tùy chỉnh nếu có
+        if (fileInput._customFiles) {
+            fileInput._customFiles = [];
+        }
     }
-
     const fileList = clone.querySelector(".fileList");
     if (fileList) fileList.innerHTML = "";
-
+    
+    // Hiển thị nút xóa
     const removeBtn = clone.querySelector('.remove-btn');
     if (removeBtn) removeBtn.style.display = 'block';
 
+    // Thêm khối đã được sửa vào container
     container.appendChild(clone);
+    
+    // Gọi hàm setup để gán các sự kiện cần thiết cho khối mới
     setupAllowanceBlock(clone, diffDays, positionId);
 }
 

@@ -54,16 +54,12 @@ public class TransportationSubmitServlet extends HttpServlet {
             
             int applicationId = appDAO.insertApplication("交通費", staffId, transportationApp.getTotalAmount(), conn);
 
-            
             for (TransportationDetailBean detail : transportationApp.getDetails()) {
-              
                 int blockId = transportationDAO.insert(detail, applicationId, conn);
-
                 List<UploadedFile> filesForBlock = detail.getTemporaryFiles();
                 for (int i = 0; i < filesForBlock.size(); i++) {
                     UploadedFile tempFile = filesForBlock.get(i);
                     moveFileToFinalLocation(tempFile, request);
-                    
                     receiptDAO.insert(applicationId, "transportation_request", blockId, i, tempFile, staffId, conn);
                 }
             }
@@ -71,8 +67,9 @@ public class TransportationSubmitServlet extends HttpServlet {
             conn.commit();
             session.removeAttribute("transportationApp"); 
 
-            request.setAttribute("message", "交通費申請が正常に送信されました。 (applicationId + ");
+            request.setAttribute("message", "交通費申請が正常に送信されました。 (ID: " + applicationId + ")");
             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +92,8 @@ public class TransportationSubmitServlet extends HttpServlet {
             }
             Path destination = destinationDir.resolve(tempFile.getUniqueStoredName());
             Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
-            tempFile.setStoredFilePath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
+//            tempFile.setStoredFilePath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
+            tempFile.setTemporaryPath(PERMANENT_UPLOAD_DIR + "/" + tempFile.getUniqueStoredName());
         }
     }
 }
