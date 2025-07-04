@@ -23,7 +23,7 @@
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 	<div class="page-container">
-		<div class="content-container">
+		<div class="content-container menu_style">
 			<p style="text-align: right;">ようこそ、${sessionScope.staffName} さん！</p>
 			<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 			<div class="staff-main-content">

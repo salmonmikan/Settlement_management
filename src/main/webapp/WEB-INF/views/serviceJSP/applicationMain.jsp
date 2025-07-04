@@ -30,23 +30,25 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<div class="page-container">
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-		<div class="content-container">
+		<div class="content-container-form">
 			<h2>申請一覧</h2>
-			<form action="submitApplication" method="post" id="submitForm">
-				<div class="action-toolbar">
-					<div class="spacer"></div>
-
-					<button type="submit" name="action" value="post" id="postBtn"
-						disabled onclick="return confirmSubmit()">提出</button>
-					<button type="submit" name="action" value="edit" id="editBtn"
-						disabled>編集</button>
-					<button type="submit" name="action" value="delete" id="deleteBtn"
-						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
-				</div>
+			<form class="info_table" action="submitApplication" method="post" id="submitForm">
 
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
+							<tr>
+								<th class="th-action-toolbar" colspan="100" style="text-align: right;">
+									<div class="action-toolbar">
+										<button type="submit" name="action" value="post" id="postBtn"
+											disabled onclick="return confirmSubmit()">提出</button>
+										<button type="submit" name="action" value="edit" id="editBtn"
+											disabled>編集</button>
+										<button type="submit" name="action" value="delete" id="deleteBtn"
+											disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+									</div>
+								</th>
+							</tr>
 							<tr>
 								<th><div>選択</div>
 									<input type="checkbox" id="selectAll"></th>

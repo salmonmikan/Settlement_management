@@ -32,23 +32,23 @@ if (mode == null)
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<div class="page-container">
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-		<div class="content-container">
+		<div class="content-container-form">
 			<h2><%="approver".equals(mode) ? "承認一覧" : "管理部：承認済み一覧"%></h2>
 
 
-			<form action="approverApplications" method="post">
-				<div class="action-toolbar">
-					<div class="spacer"></div>
-
-					<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-					<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="">差戻</button>
-<!--					<button type="submit" name="action" value="delete" id="deleteBtn" disabled onclick="return confirm('本当に削除しますか？')">削除</button>-->
-					<button type="submit" name="action" value="approval" id="applovalBtn" disabled>承認</button>
-
-				</div>
+			<form class="info_table" action="approverApplications" method="post">
 				<div class="table-area">
 					<table id="applicationTable">
 						<thead>
+							<tr>
+								<th class="th-action-toolbar" colspan="100" style="text-align: right;">
+									<div class="action-toolbar">
+										<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+										<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="">差戻</button>
+										<button type="submit" name="action" value="approval" id="applovalBtn" disabled>承認</button>
+									</div>
+								</th>
+							</tr>
 							<tr>
 								<th><div>選択</div> <input type="checkbox" id="selectAll"></th>
 								<th>申請ID</th>
@@ -59,7 +59,6 @@ if (mode == null)
 								<th>金額（税込）</th>
 								<th><select id="statusFilter" class="status-filter-button">
 										<option value="">申請ステータス</option>
-										<!--										<option value="未提出">未提出</option>-->
 										<option value="提出済み">提出済み</option>
 										<option value="差戻し">差戻し</option>
 										<option value="承認済み">承認済み</option>
@@ -100,10 +99,10 @@ if (mode == null)
 	<%
 	Object errorObj = session.getAttribute("errorMsg");
 	Object successObj = session.getAttribute("success");
-	
+
 	String errorMsg = (errorObj != null) ? String.valueOf(errorObj) : null;
 	String successMsg = (successObj != null) ? String.valueOf(successObj) : null;
-	
+
 	// セッションから削除（事前に）
 	session.removeAttribute("errorMsg");
 	session.removeAttribute("success");
@@ -154,26 +153,14 @@ if (mode == null)
 	  });
 
 	//エラー、成功メッセージ受け取り
-	<%
-	if (errorMsg != null) {
-	    String safeError = errorMsg.replace("\\", "\\\\")
-	                               .replace("\"", "\\\"")
-	                               .replace("\n", "\\n")
-	                               .replace("\r", "");
-	%>
-	    alert("<%= safeError %>");
-	<%
-	}
-	if (successMsg != null) {
-	    String safeSuccess = successMsg.replace("\\", "\\\\")
-	                                   .replace("\"", "\\\"")
-	                                   .replace("\n", "\\n")
-	                                   .replace("\r", "");
-	%>
-	    alert("<%= safeSuccess %>");
-	<%
-	}
-	%>
+	<%if (errorMsg != null) {
+	String safeError = errorMsg.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");%>
+	    alert("<%=safeError%>");
+	<%}
+if (successMsg != null) {
+String safeSuccess = successMsg.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");%>
+	    alert("<%=safeSuccess%>");
+	<%}%>
   </script>
 </body>
 </html>

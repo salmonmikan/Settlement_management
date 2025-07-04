@@ -36,48 +36,52 @@ table {
 <body>
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-	<div class="page-container">
-		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-		<div class="content-container">
-			<h2>役職一覧</h2>
-			<form action="positionControl" method="post">
-				<div class="action-toolbar">
-					<div class="spacer"></div>
-					<button type="button"
-						onclick="location.href='positionControl?action=add'">＋
-						新規追加</button>
-					<button type="submit" name="action" value="edit" id="editBtn"
-						disabled>編集</button>
-					<button type="submit" name="action" value="delete" id="deleteBtn"
-						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
-				</div>
-				<table>
-					<thead>
-						<tr>
-							<th>選択</th>
-							<th>役職ID</th>
-							<th>役職名</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach var="pos" items="${positionList}">
-							<tr>
-								<td><input type="checkbox" name="position_id"
-									value="${pos.position_id}" class="row-check"
-									<c:if test="${pos.delete_flag == 9}">disabled</c:if>></td>
-								<td>${pos.position_id}</td>
-								<td>${pos.position_name}<c:if
-										test="${pos.delete_flag == 9}">
-										<span style="color: gray;">（削除不可）</span>
-									</c:if>
-								</td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</form>
-		</div>
-	</div>
+<div class="page-container">
+  <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+  <div class="content-container-form">
+    <h2>役職一覧</h2>
+    <form class="info_table" action="positionControl" method="post">
+      <table>
+        <thead>
+          <tr>
+            <th class="th-action-toolbar" colspan="100" style="text-align: right;">
+              <div class="action-toolbar">
+                <button type="button"
+                  onclick="location.href='positionControl?action=add'">＋ 新規追加</button>
+                <button type="submit" name="action" value="edit" id="editBtn" disabled>編集</button>
+                <button type="submit" name="action" value="delete" id="deleteBtn" disabled
+                  onclick="return confirm('本当に削除しますか？')">削除</button>
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <th>選択</th>
+            <th>役職ID</th>
+            <th>役職名</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:forEach var="pos" items="${positionList}">
+            <tr>
+              <td>
+                <input type="checkbox" name="position_id" value="${pos.position_id}" class="row-check"
+                  <c:if test="${pos.delete_flag == 9}">disabled</c:if>>
+              </td>
+              <td>${pos.position_id}</td>
+              <td>
+                ${pos.position_name}
+                <c:if test="${pos.delete_flag == 9}">
+                  <span style="color: gray;">（削除不可）</span>
+                </c:if>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </form>
+  </div>
+</div>
+
 
 	<script>
 	const checkboxes = document.querySelectorAll('.row-check');

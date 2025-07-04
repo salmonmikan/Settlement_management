@@ -27,20 +27,23 @@
 	<div class="page-container">
 		<!-- Sidebar -->
 		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
-		<div class="content-container">
+		<div class="content-container-form">
 			<h2>社員一覧</h2>
-			<form method="post" action="employeeControl">
-				<div class="action-toolbar">
-					<div class="spacer"></div>
-					<button type="button" onclick="goToRegister()">＋ 新規追加</button>
-					<button type="submit" name="action" value="edit" id="editBtn"
-						disabled>編集</button>
-					<button type="submit" name="action" value="delete" id="deleteBtn"
-						disabled onclick="return confirm('本当に削除しますか？')">削除</button>
-				</div>
+			<form class="info_table" method="post" action="employeeControl">
 				<table>
 					<thead>
 						<tr>
+							<th class="th-action-toolbar" colspan="100" style="text-align: right;">
+								<div class="action-toolbar">
+									<button type="button" onclick="goToRegister()">＋ 新規追加</button>
+									<button type="submit" name="action" value="edit" id="editBtn"
+										disabled>編集</button>
+									<button type="submit" name="action" value="delete" id="deleteBtn"
+										disabled onclick="return confirm('本当に削除しますか？')">削除</button>
+								</div>
+							</th>
+						</tr>
+					<tr>
 							<th>選択</th>
 							<th>社員ID</th>
 							<th>氏名</th>
