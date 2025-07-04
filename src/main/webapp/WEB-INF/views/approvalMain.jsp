@@ -44,8 +44,8 @@ if (mode == null)
 								<th class="th-action-toolbar" colspan="100" style="text-align: right;">
 									<div class="action-toolbar">
 										<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-										<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="">差戻</button>
-										<button type="submit" name="action" value="approval" id="applovalBtn" disabled>承認</button>
+										<button type="submit" name="action" value="reject" id="rejectBtn" disabled onclick="return confirm('選択した精算を差戻します。よろしいですか？')">差戻</button>
+										<button type="submit" name="action" value="approval" id="applovalBtn" disabled onclick="return confirm('選択した精算を承認します。よろしいですか？')">承認</button>
 									</div>
 								</th>
 							</tr>
