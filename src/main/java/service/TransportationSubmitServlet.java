@@ -47,7 +47,7 @@ public class TransportationSubmitServlet extends HttpServlet {
             conn.setAutoCommit(false);
 
             ApplicationDAO appDAO = new ApplicationDAO();
-            TransportationDAO transportationDAO = new TransportationDAO();
+            TransportationDAO transportationDAO = new TransportationDAO(); // Dùng DAO mới
             ReceiptDAO receiptDAO = new ReceiptDAO();
 
             transportationApp.calculateTotalAmount();
@@ -65,18 +65,17 @@ public class TransportationSubmitServlet extends HttpServlet {
             }
             
             conn.commit();
-            session.removeAttribute("transportationApp");
+            session.removeAttribute("transportationApp"); 
 
-            request.setAttribute("message", "交通費申請が正常に送信されました。 (申請ID: " + applicationId + ")");
+            request.setAttribute("message", "交通費申請が正常に送信されました。 (ID: " + applicationId + ")");
             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
-            
-            session.setAttribute("errorMsg", "申請中にエラーが発生しました: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/transportationSubmit");
+            request.setAttribute("errorMessage", "データベース保存エラー：" + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }

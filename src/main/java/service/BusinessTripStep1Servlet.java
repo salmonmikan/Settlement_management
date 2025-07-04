@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import bean.BusinessTripBean;
 import bean.Project;
 import bean.Step1Data;
+import dao.ProjectDAO;
 import dao.ProjectListDAO;
 
 @WebServlet("/businessTripStep1")

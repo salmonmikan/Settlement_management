@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -89,18 +90,15 @@ public class BusinessTripSubmitServlet extends HttpServlet {
             session.removeAttribute("trip");
 
             request.setAttribute("applicationId", applicationId);
-            session.setAttribute("success", "出張費申請が正常に送信されました。");
-            response.sendRedirect(request.getContextPath() + "/applicationMain");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp");
+            dispatcher.forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
             
-//            request.setAttribute("errorMessage", "ミス: " + e.getMessage());
-//            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
-            session.setAttribute("errorMsg", "エラーが発生しました。再度ご確認ください。");
-            response.sendRedirect(request.getContextPath() + "/businessTripSubmit");
-
+            request.setAttribute("errorMessage", "Lỗi nghiêm trọng khi nộp đơn: " + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }
