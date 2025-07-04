@@ -189,19 +189,5 @@ session.removeAttribute("success");
 %>
 
 <script>
-<%
-if (errorMsg != null) {
-    String safeError = errorMsg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
-%>
-    alert("<%= safeError %>");
-<%
-}
-if (successMsg != null) {
-    String safeSuccess = successMsg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
-%>
-    alert("<%= safeSuccess %>");
-<%
-}
-%>
 </script>
 

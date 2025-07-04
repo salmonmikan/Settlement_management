@@ -167,25 +167,3 @@
 
 </div>
 
-<%
-String msg = (String) request.getAttribute("errorMsg");
-if (msg != null) {
-%>
-<script>
-    alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
-</script>
-<%
-}
-%>
-<%
-String success = (String) session.getAttribute("success");
-if (success != null) {
-%>
-<script>
-    alert(<%= "\"" + success.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
-</script>
-<%
-    session.removeAttribute("success");
-}
-%>
-
