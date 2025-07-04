@@ -1,9 +1,7 @@
-// File: src/main/java/service/BusinessTripInitServlet.java
-// (Phiên bản ĐÚNG)
 package service;
 
 import java.io.IOException;
-import bean.BusinessTripBean;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

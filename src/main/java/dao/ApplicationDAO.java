@@ -80,16 +80,16 @@ public class ApplicationDAO extends DBConnection{
 	 */
 
 	public void submitApplicationIfNotYet(int applicationId, String staffId, String approverId)
-	        throws SQLException {
-	    String sql = "UPDATE application_header SET status = '提出済み', approver_id = ? " +
-	            "WHERE application_id = ? AND staff_id = ? AND status IN ('未提出', '差戻し')";
-	    
-	    try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-	        ps.setString(1, approverId);
-	        ps.setInt(2, applicationId);
-	        ps.setString(3, staffId);
-	        ps.executeUpdate();
-	    }
+			throws SQLException {
+		String sql = "UPDATE application_header SET status = '提出済み', approver_id = ? " +
+				"WHERE application_id = ? AND staff_id = ? AND status IN ('未提出', '差戻し')";
+			
+		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+			ps.setString(1, approverId);
+			ps.setInt(2, applicationId);
+			ps.setString(3, staffId);
+			ps.executeUpdate();
+		}
 	}
 
 	// =========================================================================

@@ -133,11 +133,11 @@ public class TransportationDAO {
                             file.setTemporaryPath(storedPath);
 
                             // ---- THÊM ĐOẠN NÀY ĐỂ SỬA LỖI ----
-//                            if (storedPath != null && !storedPath.isBlank()) {
-//                                // Lấy tên file từ đường dẫn (ví dụ: /uploads/abc-123.pdf -> abc-123.pdf)
-//                                String uniqueName = Paths.get(storedPath).getFileName().toString();
-//                                file.setUniqueStoredName(uniqueName);
-//                            }
+                            if (storedPath != null && !storedPath.isBlank()) {
+                                // Lấy tên file từ đường dẫn (ví dụ: /uploads/abc-123.pdf -> abc-123.pdf)
+                                String uniqueName = Paths.get(storedPath).getFileName().toString();
+                                file.setUniqueStoredName(uniqueName);
+                            }
                             // ---- KẾT THÚC PHẦN SỬA LỖI ----
 
                             files.add(file);
