@@ -138,31 +138,26 @@
         </c:if>
        
 
-				<%-- 3. Hiển thị file đính kèm nếu có --%>
-				<c:if test="${not empty detail.temporaryFiles}">
-					<div style="margin-top: 10px;">
-						<strong>領収書ファイル:</strong>
-					</div>
-					<ul class="receipt-list">
-						<c:forEach var="file" items="${detail.temporaryFiles}">
-							<li><a
-								href="${pageContext.request.contextPath}${file.temporaryPath}"
-								target="_blank"> ${file.originalFileName} </a></li>
-						</c:forEach>
-					</ul>
-				</c:if>
-			</div>
-		</div>
-		<%-- Kết thúc khung của một block --%>
+        <%-- 3. Hiển thị file đính kèm nếu có --%>
+        <c:if test="${not empty detail.temporaryFiles}">
+          <div style="margin-top: 10px;"><strong>領収書ファイル:</strong></div>
+          <ul class="receipt-list">
+            <c:forEach var="file" items="${detail.temporaryFiles}">
+              <li>
+                <a href="${pageContext.request.contextPath}${file.temporaryPath}" target="_blank">
+                  ${file.originalFileName}
+                </a>
+              </li>
+            </c:forEach>
+          </ul>
+        </c:if>
+      </div>
+    </div> <%-- Kết thúc khung của một block --%>
 
-	</c:forEach>
-
-	<%-- Tổng số tiền của toàn bộ đơn --%>
-	<div class="confirm-page-total">
-		総合計金額:
-		<fmt:formatNumber value="${reimbursementApp.totalAmount}"
-			type="number" />
-		円
-	</div>
-</div>
+  </c:forEach>
+  
+  <%-- Tổng số tiền của toàn bộ đơn --%>
+  <div class="confirm-page-total">
+    総合計金額: <fmt:formatNumber value="${reimbursementApp.totalAmount}" type="number" /> 円
+  </div>
 

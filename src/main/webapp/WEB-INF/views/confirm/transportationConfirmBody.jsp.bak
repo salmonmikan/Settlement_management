@@ -4,11 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
-<%-- 
-  File này hiển thị nội dung chi tiết của đơn "Chi phí đi lại" (交通費)
-  theo cấu trúc hiển thị riêng cho từng block.
---%>
-
 <style>
 /* Style chung cho trang confirm */
 .confirm-table {

@@ -85,34 +85,14 @@ public class ApplicationDetailServlet extends HttpServlet {
             	rd.forward(request, response);
             	return;
             default: // 通常はここで詳細表示画面へ遷移する
-                String context = request.getParameter("context");
-
-                // Thêm logic phân luồng dựa vào context
-                if ("approval".equals(context)) {
-                    // --- Cấu hình cho NGƯỜI DUYỆT ---
-                    request.setAttribute("showEditButton", false);
-                    request.setAttribute("showApprovalActionButtons", true); // Bật cờ cho nút Duyệt/Trả về
-                    request.setAttribute("backActionUrl", "/approverApplications"); 
-
-                } else if ("payment".equals(context)) {
-                    // --- Cấu hình cho NGƯỜI QUẢN LÝ THANH TOÁN ---
-                    request.setAttribute("showEditButton", false);
-                    request.setAttribute("showApprovalActionButtons", false);
-                    request.setAttribute("showPaymentActionButton", true); // Bật cờ cho nút "Thanh toán"
-                    request.setAttribute("backActionUrl", "/payment"); // Quay về trang quản lý thanh toán
-
-                } else {
-                    // --- Cấu hình cho NHÂN VIÊN (mặc định) ---
-                    request.setAttribute("showEditButton", true);
-                    request.setAttribute("showApprovalActionButtons", false);
-                    request.setAttribute("backActionUrl", "/applicationMain");
-                }
-                
-                // Các thuộc tính chung
-                request.setAttribute("showSubmitButton", false);
+            	request.setAttribute("showSubmitButton", false);
+                request.setAttribute("showEditButton", true);
+                request.setAttribute("editActionUrl", "/editApplication");
                 request.setAttribute("showBackButton", true);
-                request.setAttribute("view_mode", "view");
+                request.setAttribute("backActionUrl", "/applicationMain");
 
+                request.setAttribute("view_mode", "view");
+                
                 rd = request.getRequestDispatcher("/WEB-INF/views/confirm/applicationConfirm.jsp");
                 rd.forward(request, response);
                 break;

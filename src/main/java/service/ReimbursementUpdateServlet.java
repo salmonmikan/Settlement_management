@@ -82,7 +82,7 @@ public class ReimbursementUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
-            request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
+            request.setAttribute("message", "立替金申請の更新中にエラーが発生しました: " + e.getMessage());
             request.setAttribute("status", "error");
             request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
         } finally {
