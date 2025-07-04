@@ -28,11 +28,7 @@ import bean.UploadedFile;
 import dao.ProjectListDAO;
 
 @WebServlet("/transportationRequest")
-@MultipartConfig(
-	    fileSizeThreshold = 1024 * 1024,
-	    maxFileSize = 10 * 1024 * 1024,
-	    maxRequestSize = 50 * 1024 * 1024
-	)
+@MultipartConfig
 public class TransportationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     // SỬA LỖI: Sử dụng thư mục temp_uploads nhất quán với code mẫu
@@ -138,13 +134,7 @@ public class TransportationServlet extends HttpServlet {
             
             try {
                 detail.setFareAmount(fareAmounts[i] != null && !fareAmounts[i].isEmpty() ? Integer.parseInt(fareAmounts[i]) : 0);
-//                detail.setExpenseTotal(expenseTotals[i] != null && !expenseTotals[i].isEmpty() ? Integer.parseInt(expenseTotals[i]) : 0);
-                int multiplier = "往復".equals(detail.getTransTripType()) ? 2 : 1;
-                if ("自己".equals(detail.getBurden())) {
-                    detail.setExpenseTotal(detail.getFareAmount() * multiplier);
-                } else {
-                    detail.setExpenseTotal(0);
-                }
+                detail.setExpenseTotal(expenseTotals[i] != null && !expenseTotals[i].isEmpty() ? Integer.parseInt(expenseTotals[i]) : 0);
             } catch (NumberFormatException e) {
                 detail.setFareAmount(0);
                 detail.setExpenseTotal(0);
@@ -154,15 +144,6 @@ public class TransportationServlet extends HttpServlet {
         transportationApp.setDetails(updatedDetails);
 
         Collection<Part> allParts = request.getParts();
-        long fileCount = allParts.stream()
-        	    .filter(part -> part.getSubmittedFileName() != null && !part.getSubmittedFileName().isBlank())
-        	    .count();
-
-        	if (fileCount >100) {
-        	    request.setAttribute("errorMessage", "ファイルの添付は最大100件までです。");
-        	    request.getRequestDispatcher("/WEB-INF/views/serviceJSP/transportation.jsp").forward(request, response);
-        	    return;
-        	}
         for (int i = 0; i < numSubmittedBlocks; i++) {
             String fileInputName = "receipt_transportation_" + i;
             List<Part> newFileParts = allParts.stream()

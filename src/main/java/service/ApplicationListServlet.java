@@ -52,7 +52,7 @@ public class ApplicationListServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("applications", List.of()); // Trả về list rỗng nếu lỗi
-            request.setAttribute("errorMsg", "申請一覧の取得中にエラーが発生しました。");
+            request.setAttribute("message", "申請一覧の取得中にエラーが発生しました。");
         }
 
         // --- Chuyển đến trang hiển thị ---

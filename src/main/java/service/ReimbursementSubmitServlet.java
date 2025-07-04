@@ -68,17 +68,16 @@ public class ReimbursementSubmitServlet extends HttpServlet {
             }
             
             conn.commit();
-            session.removeAttribute("reimbursement");
-            session.setAttribute("success", "申請が正常に送信されました。(applicationID: " + applicationId + ")");
-            response.sendRedirect(request.getContextPath() + "/applicationMain");
-			request.setAttribute("message", "申請が正常に送信されました。 (Mã đơn: " + applicationId + ")");
+            session.removeAttribute("reimbursement"); 
+
+            request.setAttribute("message", "申請が正常に送信されました。 (Mã đơn: " + applicationId + ")");
             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
-            request.setAttribute("errorMsg", "エラーが発生しました：" + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/reimbursementConfirmBody.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "データベース保存エラー：" + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }

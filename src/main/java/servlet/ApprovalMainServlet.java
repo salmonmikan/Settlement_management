@@ -1,7 +1,7 @@
 package servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -36,15 +36,16 @@ public class ApprovalMainServlet extends HttpServlet {
 			ApplicationDAO dao = new ApplicationDAO();
 
 			String approver_depId = dao.findApproverDepartment(approverId);
-			List<Application> applications = dao.getApplicationsByDepartment(approver_depId);
-			if (applications == null) {
-			    applications = new ArrayList<>(); // 空リストを代入しておく
-			}
+			
+            // SỬA LỖI: Đảm bảo list không bao giờ null ngay cả khi không tìm thấy phòng ban
+			List<Application> applications = (approver_depId != null)
+                ? dao.getApplicationsByDepartment(approver_depId)
+                : Collections.emptyList();
 			//            List<Application> applications = dao.getApplicationsByApprover(approverId);
 			request.setAttribute("applications", applications);
 		} catch (Exception e) {
 			e.printStackTrace();
-			request.setAttribute("applications", new java.util.ArrayList<Application>());
+			request.setAttribute("applications", Collections.emptyList()); // SỬA LỖI: Luôn trả về list rỗng
 		}
 
 		request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
@@ -60,8 +61,8 @@ public class ApprovalMainServlet extends HttpServlet {
 	    String action = request.getParameter("action");
 
 	    if (approverId == null || appIds == null || appIds.length == 0 || action == null) {
-	        request.setAttribute("errorMsg", "申請が選択されていません。");
-	        request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
+	        request.setAttribute("message", "申請が選択されていません。");
+	        loadAndForward(request, response, approverId); // Gọi hàm helper để tải lại dữ liệu
 	        return;
 	    }
 
@@ -69,51 +70,63 @@ public class ApprovalMainServlet extends HttpServlet {
 	        ApplicationDAO dao = new ApplicationDAO();
 
 	        switch (action) {
-	            case "approval":
+	            case "approval": // SỬA LỖI: Đổi tên từ "submit" thành "approval" để khớp với JSP
 	                for (String idStr : appIds) {
 	                    int appId = Integer.parseInt(idStr);
 	                    dao.updateStatus(appId, approverId); // 例: ステータスを「承認済」に更新
 	                }
-	                session.setAttribute("success", true);
+	                session.setAttribute("message", "選択された申請を承認しました。");
 	                break;
 
 	            case "reject":
 	                // 差戻し処理
-	                try {
-//	                    ApplicationDAO dao = new ApplicationDAO();
-	                    for (String idStr : appIds) {
-	                        int appId = Integer.parseInt(idStr);
-	                        dao.rejectApplication(appId); // 差戻し処理メソッドを呼び出し
-	                    }
-	                    session.setAttribute("success", "選択された申請を差戻しました。");
-	                } catch (Exception e) {
-	                    e.printStackTrace();
-	                    session.setAttribute("errorMsg", "差戻し中にエラーが発生しました。");
-	                }
-	                response.sendRedirect("approverApplications");
-	                return;
+                    for (String idStr : appIds) {
+                        int appId = Integer.parseInt(idStr);
+                        dao.rejectApplication(appId); // Gọi phương thức xử lý trả về
+                    }
+                    session.setAttribute("message", "選択された申請を差戻しました。");
+	                break;
 
 	            case "delete":
 	                for (String idStr : appIds) {
 	                    int appId = Integer.parseInt(idStr);
 	                    dao.deleteApplication(appId);
 	                }
-	                session.setAttribute("success", "選択された申請を削除しました。");
+	                session.setAttribute("message", "選択された申請を削除しました。");
 	                break;
 
 	            default:
-	                request.setAttribute("errorMsg", "不明な操作が指定されました。");
-	                request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
+	                request.setAttribute("message", "不明な操作が指定されました。");
+	                loadAndForward(request, response, approverId); // SỬA LỖI: Tải lại dữ liệu
 	                return;
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        request.setAttribute("errorMsg", "操作中にエラーが発生しました。");
-	        request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
+	        request.setAttribute("message", "操作中にエラーが発生しました。");
+	        loadAndForward(request, response, approverId); // SỬA LỖI: Tải lại dữ liệu
 	        return;
 	    }
 
 	    // 正常終了 → 一覧ページへリダイレクト
 	    response.sendRedirect("approverApplications");
+	}
+
+    /**
+     * Hàm helper để tải lại danh sách đơn khi có lỗi và forward.
+     * Tránh lặp code và ngăn lỗi NullPointerException.
+     */
+	private void loadAndForward(HttpServletRequest request, HttpServletResponse response, String approverId) throws ServletException, IOException {
+	    try {
+	        ApplicationDAO dao = new ApplicationDAO();
+	        String approver_depId = dao.findApproverDepartment(approverId);
+	        List<Application> applications = (approver_depId != null) 
+	            ? dao.getApplicationsByDepartment(approver_depId) 
+	            : Collections.emptyList();
+	        request.setAttribute("applications", applications);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        request.setAttribute("applications", Collections.emptyList());
+	    }
+	    request.getRequestDispatcher("/WEB-INF/views/approvalMain.jsp").forward(request, response);
 	}
 }

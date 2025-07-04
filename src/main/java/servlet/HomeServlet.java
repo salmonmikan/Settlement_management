@@ -17,7 +17,7 @@ public class HomeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false); 
-        System.out.println("staffId in session: " + session.getAttribute("staffId"));
+
         if (session == null || session.getAttribute("staffId") == null) {
             res.sendRedirect(req.getContextPath() + "/LoginServlet");
             return; 

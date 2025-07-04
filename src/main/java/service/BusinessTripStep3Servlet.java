@@ -25,11 +25,7 @@ import bean.Step3Detail;
 import bean.UploadedFile;
 
 @WebServlet("/businessTripStep3")
-@MultipartConfig(
-	    fileSizeThreshold = 1024 * 1024,
-	    maxFileSize = 10 * 1024 * 1024,
-	    maxRequestSize = 50 * 1024 * 1024
-	)
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 15)
 public class BusinessTripStep3Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -147,7 +143,7 @@ public class BusinessTripStep3Servlet extends HttpServlet {
                         uploadedFile.setTemporaryPath(TEMP_UPLOAD_DIR + "/" + uniqueFileName);
                         detail.getTemporaryFiles().add(uploadedFile);
                     } catch (Exception e) {
-                        System.err.println("Step 3のミス, index " + i + ": " + e.getMessage());
+                        System.err.println("Lỗi xử lý file upload ở Step 3, index " + i + ": " + e.getMessage());
                     }
                 }
             }

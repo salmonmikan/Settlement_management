@@ -100,7 +100,7 @@ public class ApplicationDetailServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             HttpSession session = request.getSession();
-            session.setAttribute("message", "詳細: " + e.getMessage());
+            session.setAttribute("message", "Lỗi khi tải chi tiết đơn: " + e.getMessage());
             response.sendRedirect(request.getContextPath() + "/applicationMain");
         }
     }

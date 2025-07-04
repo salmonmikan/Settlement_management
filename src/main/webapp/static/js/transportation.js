@@ -125,23 +125,6 @@
         container.appendChild(clone);
         reindexBlocks();
     }
-	
-	function addTransportationBlock() {
-	    const container = document.getElementById('transportation-container');
-	    const template = document.getElementById('transportation-template').innerHTML;
-
-	    // Tính index mới dựa trên số block hiện tại
-	    const newIndex = container.querySelectorAll('.transportation-block').length;
-
-	    // Thay tất cả {{index}} trong template bằng số thực tế
-	    const processedHTML = template.replace(/{{index}}/g, newIndex);
-
-	    // Tạo block mới và thêm vào DOM
-	    const wrapper = document.createElement('div');
-	    wrapper.innerHTML = processedHTML;
-	    const newBlock = wrapper.firstElementChild;
-	    container.appendChild(newBlock);
-	}
     function removeTransportationBlock(btn) {
         const container = document.getElementById("transportation-container");
         if (container.children.length > 1) {
