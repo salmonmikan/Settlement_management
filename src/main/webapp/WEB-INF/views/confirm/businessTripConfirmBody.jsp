@@ -270,15 +270,3 @@
 	</div>
 </div>
 
-<%
-String msg = (String) session.getAttribute("errorMsg");
-if (msg != null) {
-%>
-<script>
-      alert(<%= "\"" + msg.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"" %>);
-  </script>
-<%
-    session.removeAttribute("errorMsg");
-  }
-%>
-
