@@ -1,6 +1,8 @@
 package service;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,13 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.util.UUID;
 
 import bean.ReimbursementApplicationBean;
 import bean.ReimbursementDetailBean;
@@ -23,6 +19,14 @@ import dao.ApplicationDAO;
 import dao.ReceiptDAO;
 import dao.ReimbursementDAO;
 import util.DBConnection;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
 @WebServlet("/reimbursementUpdate")
 public class ReimbursementUpdateServlet extends HttpServlet {
@@ -70,16 +74,17 @@ public class ReimbursementUpdateServlet extends HttpServlet {
             session.removeAttribute("reimbursement");
             session.removeAttribute("isEditMode");
 
-            session.setAttribute("success", "申請を正常に更新しました。");
-            response.sendRedirect(request.getContextPath() + "/applicationMain");
-//            request.setAttribute("message", "立替金精算書（ID: " + applicationId + "）を正常に更新しました。");
+            request.setAttribute("message", "立替金精算書（ID: " + applicationId + "）を正常に更新しました。");
+            request.setAttribute("status", "success");
+            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
 //            request.setAttribute("status", "success");
 //            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) { try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); } }
-            session.setAttribute("errorMsg", "更新中にエラーが発生しました: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/reimbursementConfirmBody.jsp").forward(request, response);
+            request.setAttribute("message", "出張費申請の更新中にエラーが発生しました: " + e.getMessage());
+            request.setAttribute("status", "error");
+            request.getRequestDispatcher("/WEB-INF/views/serviceJSP/updateResult.jsp").forward(request, response);
         } finally {
             if (conn != null) { try { conn.close(); } catch (SQLException e) { e.printStackTrace(); } }
         }

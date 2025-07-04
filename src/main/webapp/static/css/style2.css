@@ -1,0 +1,386 @@
+/*
+ * style2.css
+ * File CSS tai c?u truc cho H? th?ng Qu?n ly Thanh toan
+ * Version: 1.0
+ * Author: Gemini AI Front-end Expert
+ */
+
+/* === 1. N?N T?NG (BASE) === */
+
+/* --- 1.1 Bi?n s? h? th?ng (Variables) --- */
+:root {
+  /* Font */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  
+  /* Mau s?c - Phong cach Nh?t B?n, chuyen nghi?p */
+  --color-brand: #007A8D; /* Xanh mong ket ??m, tinh t? */
+  --color-brand-hover: #005F6B;
+  --color-text-primary: #333333;
+  --color-text-secondary: #555555;
+  --color-surface-main: #FFFFFF;
+  --color-surface-background: #F4F6F8; /* Xam r?t nh?t */
+  --color-border-soft: #EAECEE;
+  --color-border-strong: #D1D5DB;
+  --color-danger: #D32F2F;
+
+  /* H? th?ng kho?ng cach */
+  --spacing-unit: 8px;
+  --spacing-xs: calc(var(--spacing-unit) * 0.5);  /* 4px */
+  --spacing-sm: var(--spacing-unit);             /* 8px */
+  --spacing-md: calc(var(--spacing-unit) * 2);   /* 16px */
+  --spacing-lg: calc(var(--spacing-unit) * 3);   /* 24px */
+  --spacing-xl: calc(var(--spacing-unit) * 4);   /* 32px */
+
+  /* Bo goc */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+
+  /* Bong ?? */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 1.2 Reset & Thi?t l?p c? b?n --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === 2. LAYOUT CHINH === */
+
+/* --- 2.1 Page Wrapper --- */
+.page-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.main-content {
+  padding-top: var(--spacing-lg);
+}
+
+.page-footer {
+  text-align: center;
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg) 0;
+  color: #777;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color-soft);
+}
+
+/* --- 2.2 Form Layout --- */
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-title {
+  text-align: center;
+  color: var(--color-brand);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color-soft);
+}
+
+/* === 3. COMPONENTS (THANH PH?N) === */
+
+/* --- 3.1 Button --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: 10px 20px;
+  font-family: var(--font-family-base);
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background-color: var(--color-brand);
+  color: var(--color-surface-main);
+}
+.btn--primary:hover {
+  background-color: var(--color-brand-hover);
+}
+
+.btn--secondary {
+  background-color: var(--color-surface-main);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+.btn--secondary:hover {
+  background-color: var(--color-surface-background);
+  border-color: var(--color-text-primary);
+}
+
+.btn--danger {
+  background-color: var(--color-danger);
+  color: var(--color-surface-main);
+}
+.btn--danger:hover {
+  opacity: 0.85;
+}
+
+.btn--icon-only {
+  padding: var(--spacing-sm);
+  width: 36px;
+  height: 36px;
+}
+
+.btn--text {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-secondary);
+}
+.btn--text:hover {
+  background-color: var(--color-surface-background);
+}
+
+/* --- 3.2 Card --- */
+.card {
+  background-color: var(--color-surface-main);
+  border: 1px solid var(--border-color-soft);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.card__body {
+  padding: var(--spacing-lg);
+}
+
+.card--repeater {
+  position: relative;
+  padding-top: var(--spacing-lg);
+}
+
+.card__remove-btn {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  color: var(--color-text-secondary);
+  z-index: 10;
+}
+.card__remove-btn:hover {
+  color: var(--color-danger);
+}
+
+/* --- 3.3 Form Elements --- */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  font-family: var(--font-family-base);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--border-radius-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px rgba(0, 122, 141, 0.2);
+}
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+.input-group__separator {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.form-group--full-width {
+  grid-column: 1 / -1;
+}
+
+/* Custom Checkbox Group */
+.custom-checkbox-group {
+  border: 1px solid var(--border-color-soft);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-surface-background);
+}
+.custom-checkbox-group legend {
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0 var(--spacing-sm);
+}
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  position: relative;
+}
+.checkbox-option:hover {
+  background-color: #e9ecef;
+}
+.checkbox-option input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+.checkbox-option .checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--border-radius-sm);
+  display: inline-block;
+  margin-right: var(--spacing-md);
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+  position: relative;
+}
+.checkbox-option input[type="checkbox"]:checked + .checkmark {
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.checkbox-option .checkmark::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  opacity: 0;
+  transition: opacity 0.1s ease-in-out;
+}
+.checkbox-option input[type="checkbox"]:checked + .checkmark::after {
+  opacity: 1;
+}
+
+/* --- 3.4 File Input --- */
+.file-input-wrapper .file-list {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--spacing-md);
+}
+.file-input-wrapper .file-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background-color: var(--color-surface-background);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-sm);
+}
+.file-input-wrapper .file-list-item a {
+  color: var(--color-brand);
+  text-decoration: none;
+  font-weight: 500;
+}
+.file-input-wrapper .file-list-item a:hover {
+  text-decoration: underline;
+}
+
+/* --- 3.5 Summary Page --- */
+.summary-section {
+  background: var(--color-surface-main);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-color-soft);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+.summary-section__title {
+  font-size: 1.25rem;
+  color: var(--color-brand);
+  margin-top: 0;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-brand);
+}
+.summary-subsection {
+  border: 1px solid var(--border-color-soft);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+.definition-list {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: var(--spacing-md);
+}
+.definition-list dt {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+.definition-list dd {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* --- 3.6 Repeater --- */
+.repeater__add-action {
+  text-align: center;
+  margin-top: var(--spacing-md);
+}/* Them vao khu v?c CSS cho Form */
+.form-grid {
+  display: grid;
+  /* T? ??ng chia c?t, m?i c?t t?i thi?u 250px */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md) var(--spacing-lg); /* 16px kho?ng cach d?c, 24px kho?ng cach ngang */
+}
+
+/* Class ?? m?t tr??ng input chi?m toan b? chi?u r?ng */
+.form-group--full-width {
+  grid-column: 1 / -1;
+}

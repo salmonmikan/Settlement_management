@@ -26,20 +26,21 @@ public class ApplicationListServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-
+        // --- Set thuộc tính để dùng trong JSP ---
         request.setAttribute("position", session.getAttribute("position"));
 
-        Boolean success = (Boolean) session.getAttribute("submitSuccess");
-        if (Boolean.TRUE.equals(success)) {
-            request.setAttribute("success", true);
-            session.removeAttribute("success");
+        // --- Xử lý thông báo thành công ---
+        Boolean submitSuccess = (Boolean) session.getAttribute("submitSuccess");
+        if (Boolean.TRUE.equals(submitSuccess)) {
+            request.setAttribute("submitSuccess", true);
+            session.removeAttribute("submitSuccess");
         }
 
         // --- Xử lý thông báo lỗi (nếu có) ---
-        String errorMsg = (String) session.getAttribute("errorMsg");
-        if (errorMsg != null) {
-            request.setAttribute("errorMsg", errorMsg);
-            session.removeAttribute("errorMsg");
+        String message = (String) session.getAttribute("message");
+        if (message != null) {
+            request.setAttribute("message", message);
+            session.removeAttribute("message");
         }
 
         // --- Lấy danh sách đơn đăng ký ---
