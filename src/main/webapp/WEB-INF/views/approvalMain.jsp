@@ -137,9 +137,22 @@ if (mode == null)
 
     document.querySelectorAll('.clickable-row').forEach(row => {
       row.addEventListener('click', function (e) {
-        if (e.target.tagName === 'INPUT') return;
+        if (e.target.closest('td')?.cellIndex === 0) {
+            return;
+        }
+        
         const id = this.dataset.id;
-        window.location.href = 'applicationDetail?id=' + id;
+        const mode = document.body.dataset.mode; 
+        
+        let url = 'applicationDetail?id=' + id;
+        
+        if (mode === 'approver') {
+          url += '&context=approval';
+        } else if (mode === 'payment') {
+          url += '&context=payment';
+        }
+        
+        window.location.href = url;
       });
     });
 

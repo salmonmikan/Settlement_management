@@ -23,9 +23,10 @@
 	
 	if ("view".equals(view_mode)) {
 	    title = "申請内容の詳細";
-	    message = "以下は登録済みの申請内容です。編集したい場合は「編集」をクリックしてください。";
+	    message = "以下は登録済みの申請内容です。";
 	}
 %>
+<!--編集したい場合は「編集」をクリックしてください。コメントアウト中-->
 <div style="padding-bottom: 0" class="page-container">
   <h2><%= type %><%= title %></h2>
   <p style="text-align:center; margin-bottom: 0"><%= message %></p>

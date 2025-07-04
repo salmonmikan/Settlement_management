@@ -42,7 +42,7 @@
         <form action="${pageContext.request.contextPath}/approverApplications" method="post" style="display:inline;">
             <input type="hidden" name="action" value="reject">
             <input type="hidden" name="appIds" value="${applicationId}">
-            <button type="submit" class="reject-btn" onclick="return confirm('この申請を差戻します。よろしいですか？')">差戻し</button>
+<!--            <button type="submit" class="reject-btn" onclick="return confirm('この申請を差戻します。よろしいですか？')">差戻し</button>-->
         </form>
         <%-- Form cho nút "Duyệt" (Approve) --%>
         <form action="${pageContext.request.contextPath}/approverApplications" method="post" style="display:inline;">

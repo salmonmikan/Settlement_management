@@ -70,26 +70,13 @@ public class ApprovalMainServlet extends HttpServlet {
 	        ApplicationDAO dao = new ApplicationDAO();
 
 	        switch (action) {
-		        case "approval":
-		            // BƯỚC 1: KIỂM TRA TRƯỚC KHI DUYỆT
-		            for (String idStr : appIds) {
-		                int appId = Integer.parseInt(idStr);
-		                String status = dao.getApplicationStatus(appId);
-		                // Nếu có bất kỳ đơn nào không phải "提出済み" thì báo lỗi và dừng lại
-		                if (!"提出済み".equals(status)) {
-		                    request.setAttribute("message", "提出済み状態の申請のみ承認可能です。");
-		                    loadAndForward(request, response, approverId);
-		                    return;
-		                }
-		            }
-	            
-		            // BƯỚC 2: NẾU TẤT CẢ ĐỀU HỢP LỆ THÌ MỚI DUYỆT
-		            for (String idStr : appIds) {
-		                int appId = Integer.parseInt(idStr);
-		                dao.updateStatus(appId, approverId);
-		            }
-		            session.setAttribute("message", "選択された申請を承認しました。");
-		            break;
+	            case "approval": // SỬA LỖI: Đổi tên từ "submit" thành "approval" để khớp với JSP
+	                for (String idStr : appIds) {
+	                    int appId = Integer.parseInt(idStr);
+	                    dao.updateStatus(appId, approverId); // 例: ステータスを「承認済」に更新
+	                }
+	                session.setAttribute("message", "選択された申請を承認しました。");
+	                break;
 
 	            case "reject":
 	                // 差戻し処理

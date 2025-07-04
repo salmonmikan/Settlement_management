@@ -20,14 +20,18 @@ public class PaymentListServlet extends HttpServlet {
 	/**
      * 
      */
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            PaymentDAO dao = new PaymentDAO();
-            List<PaymentBean> paymentList = dao.findAll();
-            req.setAttribute("paymentList", paymentList);
-            req.getRequestDispatcher("payment.jsp").forward(req, resp);
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    try {
+	        PaymentDAO dao = new PaymentDAO();
+	        List<PaymentBean> paymentList = dao.findAll();
+	        req.setAttribute("paymentList", paymentList);
+
+	        // THEM DONG NAY ?? ?ANH D?U CONTEXT
+	        req.setAttribute("mode", "payment"); 
+
+	        req.getRequestDispatcher("payment.jsp").forward(req, resp);
+	    } catch (Exception e) {
+	        throw new ServletException(e);
+	    }
+	}
 }
