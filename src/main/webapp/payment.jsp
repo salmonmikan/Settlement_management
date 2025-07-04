@@ -30,7 +30,7 @@
 									<div class="action-toolbar">
 										<div class="spacer"></div>
 										<input type="text" id="staffSearchInput" placeholder="社員IDで検索" maxlength="5" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-										<button id="paidBtn" type="submit" disabled>支払済</button>
+										<button id="paidBtn" type="submit" disabled onclick="return confirm('この申請を支払済みにします。よろしいですか？')">支払済</button>
 									</div>
 								</th>
 							</tr>
@@ -67,7 +67,7 @@
 <!--									<td>${p.updatedAt}</td>-->
 									<td><fmt:formatNumber value="${p.amount}" type="number"
 											pattern="#,##0" />円</td>
-									<td>領収書</td>
+									<td></td>
 									<td>${p.status}</td>
 								</tr>
 							</c:forEach>
