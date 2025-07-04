@@ -179,9 +179,6 @@
 			円
 		</div>
 	</div>
-
 </div>
 
-<script>
-</script>
 
