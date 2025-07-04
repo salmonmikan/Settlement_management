@@ -35,7 +35,6 @@ public class PaymentServlet extends HttpServlet {
         ArrayList<PaymentBean> list = dao.findAll();
 
         req.setAttribute("paymentList", list);
-        req.setAttribute("mode", "payment");
         req.getRequestDispatcher("/payment.jsp").forward(req, resp);
     }
 
