@@ -16,13 +16,8 @@ import jakarta.servlet.http.HttpSession;
 import bean.BusinessTripBean;
 import bean.Project;
 import bean.Step1Data;
-import dao.ProjectDAO;
 import dao.ProjectListDAO;
 
-/**
- * 出張申請のステップ1を処理するサーブレット。
- * (Servlet xử lý Step 1 của đơn đăng ký công tác)
- */
 @WebServlet("/businessTripStep1")
 public class BusinessTripStep1Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

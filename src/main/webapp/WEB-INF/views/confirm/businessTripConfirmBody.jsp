@@ -3,10 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<%-- 
-  File này hiển thị toàn bộ nội dung của đơn "Công tác phí" (出張費)
-  với cấu trúc hiển thị mới, rõ ràng và đồng nhất.
---%>
 
 <%-- ★★★ Áp dụng style chung từ file transportationConfirmBody.jsp ★★★ --%>
 <style>
