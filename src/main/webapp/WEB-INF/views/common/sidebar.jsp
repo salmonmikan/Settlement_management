@@ -98,9 +98,9 @@ String department = (String) session.getAttribute("department_id");
 			}
 			%>
 		</ul>
-	</div>
-	<div class="back_top" style="text-align: center; margin-top: 30px;">
+				<div class="back_top" style="text-align: center; margin-top: 30px;">
 		<a href="<%=request.getContextPath()%>/menu">トップに戻る</a>
+	</div>
 	</div>
 </div>
 <script>
