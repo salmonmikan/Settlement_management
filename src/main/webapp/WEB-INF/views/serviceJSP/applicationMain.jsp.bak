@@ -143,8 +143,6 @@ List<Application> applications = (List<Application>) request.getAttribute("appli
       const checked = document.querySelectorAll('.row-check:checked');
       postBtn.disabled = (checked.length !== 1);
       editBtn.disabled = (checked.length !== 1);
-}
-if (deleteBtn) {
       deleteBtn.disabled = (checked.length === 0);
     }
 
@@ -171,9 +169,7 @@ if (deleteBtn) {
       }
 
       for (const cb of checked) {
-const row = cb.closest('tr');
-const status = row.getAttribute('data-status');
-
+        const status = cb.closest('tr').getAttribute('data-status');
         if (status !== '未提出' && status !== '差戻し') {
           alert('未提出または差戻しの申請のみ提出可能です。');
           return false;

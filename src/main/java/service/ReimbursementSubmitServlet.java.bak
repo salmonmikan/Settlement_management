@@ -69,7 +69,9 @@ public class ReimbursementSubmitServlet extends HttpServlet {
             
             conn.commit();
             session.removeAttribute("reimbursement");
-			request.setAttribute("message", "申請が正常に送信されました。(applicationID: " + applicationId + ")");
+            session.setAttribute("success", "申請が正常に送信されました。(applicationID: " + applicationId + ")");
+            response.sendRedirect(request.getContextPath() + "/applicationMain");
+			request.setAttribute("message", "申請が正常に送信されました。 (Mã đơn: " + applicationId + ")");
             request.getRequestDispatcher("/WEB-INF/views/submitSuccess.jsp").forward(request, response);
 
         } catch (Exception e) {
