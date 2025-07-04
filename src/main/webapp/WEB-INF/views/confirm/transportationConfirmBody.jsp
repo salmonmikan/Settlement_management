@@ -181,12 +181,6 @@
 	</div>
 
 </div>
-<%
-String errorMsg = String.valueOf(request.getAttribute("errorMsg"));
-String successMsg = String.valueOf(request.getAttribute("success"));
-session.removeAttribute("errorMsg");
-session.removeAttribute("success");
-%>
 
 <script>
 </script>
